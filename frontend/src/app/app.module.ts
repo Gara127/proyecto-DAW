@@ -2,8 +2,7 @@ import { NgModule } from '@angular/core'; // Importar NgModule
 import { BrowserModule } from '@angular/platform-browser'; // Importar BrowserModule
 import { AppComponent } from './app.component'; // Importar el componente raíz
 import { AuthModule } from './Modulos/auth/auth.module';
-
-
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -12,6 +11,7 @@ import { AuthModule } from './Modulos/auth/auth.module';
   ],
   imports: [
     BrowserModule, // Importar el módulo del navegador
+    ReactiveFormsModule,
     AuthModule // Importa el módulo de autenticación
   ],
   providers: [],

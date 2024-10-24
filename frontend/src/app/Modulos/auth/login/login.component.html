@@ -1,1 +1,22 @@
-<p>login works!</p>
+<h1>Let's plan together</h1>
+<div id="contenedor">
+    <div id="form">
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <h2>Inicia sesión</h2>
+            <label class="etiqueta" for="username">Nombre de usuario:</label>
+            <input id="username" formControlName="username">
+            <label class="etiqueta" for="password">Contraseña:</label>
+            <input id="password" type="password" formControlName="password">
+            <button type="submit">Iniciar sesión</button>
+            <div id="campos">
+                <div id="registro">
+                    <span>¿No tienes cuenta? </span>
+                    <a href=""> Registrate aquí</a>
+                </div>
+                <div id="forgetpassword">
+                    <a href=""> Contraseña olvidada</a>
+                </div>
+            </div>
+        </form>    
+    </div>        
+</div>
