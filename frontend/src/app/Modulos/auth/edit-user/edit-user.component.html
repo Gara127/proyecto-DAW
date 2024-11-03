@@ -1,0 +1,15 @@
+<form (ngSubmit)="guardarCambios()">
+  <label for="nombre">Nombre:</label>
+  <input type="text" id="nombre" [(ngModel)]="usuario.nombre" name="nombre" required />
+
+  <label for="contrasena">Contraseña:</label>
+  <input type="password" id="contrasena" [(ngModel)]="usuario.pass" name="contrasena" required />
+
+  <label for="rol">Rol:</label>
+  <select id="rol" [(ngModel)]="usuario.rol" name="rol" required>
+      <option value="admin">Admin</option>
+      <option value="user">User</option>
+  </select>
+
+  <button type="submit">Guardar Cambios</button>
+</form>
