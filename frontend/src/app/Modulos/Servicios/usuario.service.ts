@@ -26,7 +26,7 @@ export class UsuarioService {
   eliminarUsuario(id_usuario: number): Observable<any> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     return this.http.delete<any>(`${this.apiUrl}/${id_usuario}`, { headers });
-}
+  }
 
   // Método para iniciar sesión
   iniciarSesion(usuario: { username: string; password: string }): Observable<any> {
@@ -36,7 +36,11 @@ export class UsuarioService {
 
   obtenerUsuarioPorId(id_usuario: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}?id_usuario=${id_usuario}`);
-}
+  }
+
+  obtenerUsuarioPorNombre(username: string): Observable<any> {
+    return this.http.get<Usuario>(`${this.apiUrl}?nombre=${username}`);
+  }  
   
   actualizarUsuario(id_usuario: number, usuario: any): Observable<any> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
