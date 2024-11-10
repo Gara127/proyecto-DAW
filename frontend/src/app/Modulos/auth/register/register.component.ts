@@ -38,8 +38,7 @@ export class RegisterComponent {
     // Llamamos al servicio para crear el usuario
     this.usuarioService.crearUsuario(registerData).subscribe(
       (response: any) => {
-        console.log('Usuario creado:', response);
-        alert('Usuario creado con éxito');
+        console.log(response);
         // Redirige a otra página, por ejemplo, a la página de inicio
         this.router.navigate(['./login']);
       },
