@@ -3,7 +3,6 @@ import { FormsModule } from '@angular/forms';
 import { UsuarioService } from '../../Servicios/usuario.service';
 import { Router } from '@angular/router';
 
-
 @Component({
   standalone: true,
   selector: 'app-register',
@@ -16,12 +15,24 @@ export class RegisterComponent {
   email: string = '';
   password: string = '';
   confirm: string = '';
+  formSubmitted: boolean = false;
 
-  constructor(private usuarioService: UsuarioService, private router: Router) {} // Inyectamos el servicio y el router
+  constructor(private usuarioService: UsuarioService, private router: Router) {}
 
   onSubmit(event: Event) {
     event.preventDefault(); // Evita que la página se recargue
 
+    // Expresión regular para validar la contraseña
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&+])[A-Za-z\d@$!%*?&+]{8,}$/
+
+
+    // Comprobamos si la contraseña es válida
+    if (!passwordPattern.test(this.password)) {
+      alert('La contraseña debe contener al menos una letra mayúscula, una letra minúscula, un número y un carácter especial.');
+      return; // Detenemos la ejecución si la contraseña no cumple con los requisitos
+    }
+
+    // Verificación de contraseñas
     if (this.password !== this.confirm) {
       console.error("Las contraseñas no coinciden");
       alert('Las contraseñas no coinciden');
@@ -29,9 +40,9 @@ export class RegisterComponent {
     }
 
     const registerData = {
-      nombre: this.email, // Usamos email como nombre, asegúrate de que esto sea lo que deseas
+      nombre: this.email, // Usamos email como nombre
       pass: this.password,
-      rol: "normal", // Puedes definir el rol aquí, asumiendo que siempre es "normal"
+      rol: "normal", // Asumimos rol "normal"
       action: 'register'
     };
 
@@ -48,6 +59,10 @@ export class RegisterComponent {
       }
     );
   }
+}
+
+
+
   // signInWithGoogle() {
   //   // Implementa la lógica para la autenticación con Google aquí
   //   console.log('Registro con Google');
@@ -59,4 +74,3 @@ export class RegisterComponent {
   //   console.log('Registro con Facebook');
   //   // Aquí puedes integrar la API de autenticación de Facebook
   // }
-}
