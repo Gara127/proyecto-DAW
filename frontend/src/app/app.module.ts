@@ -7,22 +7,20 @@ import { provideHttpClient } from '@angular/common/http';
 import { LoginComponent } from './Modulos/auth/login/login.component';
 import { AdmiHomeComponent } from './Modulos/auth/home-admi/home-admi.component';
 import { RegisterComponent } from './Modulos/auth/register/register.component';
-
+import { HomeModule } from './Modulos/home/home.module';
 
 
 
 @NgModule({
   declarations: [
-    AppComponent, // Declarar el componente raíz
-    LoginComponent,
-    AdmiHomeComponent,
-    RegisterComponent
+    AppComponent,
   ],
   imports: [
     BrowserModule, // Importar el módulo del navegador
     AuthModule, // Importa el módulo de autenticación
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    HomeModule
   ],
   providers: [
     provideHttpClient(),
