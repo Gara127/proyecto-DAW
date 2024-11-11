@@ -1,0 +1,10 @@
+.container {
+    max-width: 500px;
+    margin-top: 20px;
+  }
+  
+  .text-danger {
+    font-size: 0.9em;
+    color: red;
+  }
+  

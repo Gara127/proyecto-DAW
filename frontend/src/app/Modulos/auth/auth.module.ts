@@ -8,6 +8,7 @@ import { AdmiHomeComponent } from './home-admi/home-admi.component';
 import { EditUserComponent } from './edit-user/edit-user.component';
 import { RegisterComponent } from './register/register.component';
 import { RouterModule } from '@angular/router';
+import { ChangePassComponent } from './changePass/changePass.component';
 
 
 
@@ -17,7 +18,8 @@ import { RouterModule } from '@angular/router';
     LoginComponent, // declaramos los componentes creados en el archivo de config. del módulo padre.
     AdmiHomeComponent,
     EditUserComponent,
-    RegisterComponent
+    RegisterComponent,
+    ChangePassComponent
   ],
   imports: [
     CommonModule,
