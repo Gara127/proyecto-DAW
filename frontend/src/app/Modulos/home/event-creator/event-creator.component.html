@@ -1,0 +1,54 @@
+<form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
+    <div>
+      <label for="title" class="etiqueta">Nombre del evento:</label>
+      <input id="title" type="text" formControlName="title" placeholder="Nombre del evento" />
+      <div *ngIf="eventForm.get('title')?.hasError('required')">
+        <small>Este campo es obligatorio.</small>
+      </div>
+    </div>
+  
+    <div>
+      <label for="date" class="etiqueta">Fecha</label>
+      <input id="date" type="date" formControlName="date" />
+      <div *ngIf="eventForm.get('date')?.hasError('required')">
+        <small>Este campo es obligatorio.</small>
+      </div>
+    </div>
+  
+    <div>
+      <label for="time" class="etiqueta">Hora</label>
+      <input id="time" type="time" formControlName="time" />
+      <div *ngIf="eventForm.get('time')?.hasError('required')">
+        <small>Este campo es obligatorio.</small>
+      </div>
+    </div>
+  
+    <div>
+      <label for="location" class="etiqueta">Ubicación:</label>
+      <input id="location" type="text" formControlName="location" placeholder="Nombre del lugar o enlace" />
+      <div *ngIf="eventForm.get('location')?.hasError('required')">
+        <small>Este campo es obligatorio.</small>
+      </div>
+    </div>
+  
+    <div>
+      <label for="description" class="etiqueta">Descripción</label>
+      <textarea id="description" formControlName="description" placeholder="Detalles del evento"></textarea>
+    </div>
+  
+    <div>
+        <label for="participants">Participantes</label>
+        <input
+          id="participants"
+          type="text"
+          placeholder="Nombre del usuario"
+          formControlName="participants"  
+        />
+        <button type="button" id="btnAddUser" (click)="addParticipant()">Agregar Participante</button>
+        <div *ngIf="participantError">Usuario no encontrado.</div>
+      </div>
+        
+    
+    <button type="submit" [disabled]="!eventForm.valid">Crear Evento</button>
+  </form>
+  

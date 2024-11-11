@@ -1,0 +1,31 @@
+<div class="container">
+    <h2>Regístrate</h2>
+    <form (submit)="onSubmit($event)">
+        <div>
+            <label for="email"></label>
+            <input type="email" id="email" [(ngModel)]="email" name="email" placeholder="Correo" required>
+        </div>
+
+        <div class="form-group">    
+            <div>
+                <label for="password"></label>
+                <input type="password" id="password" [(ngModel)]="password" name="password" placeholder="Contraseña" required>
+            </div>
+
+            <div>
+                <label for="confirm_password"></label>
+                <input type="password" id="confirm_password" [(ngModel)]="confirm" name="confirm_password" placeholder="Confirma tu contraseña" required>
+            </div>
+
+            <div>
+                <input type="submit" value="Sign up">
+            </div>
+        </div>
+    </form>
+<!-- 
+    <div>
+        <p>Login with:</p>
+        <button class="button-gmail" (click)="signInWithGoogle()">Google</button>
+        <button class="button-facebook" (click)="signInWithFacebook()">Facebook</button>
+    </div> -->
+</div>
