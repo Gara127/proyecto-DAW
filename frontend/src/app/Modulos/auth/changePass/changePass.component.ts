@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-changepass',
+  standalone: true,
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './changePass.component.html',
   styleUrls: ['./changePass.component.css']
 })
@@ -18,7 +21,6 @@ export class ChangePassComponent {
     }, { validator: this.passwordsMatchValidator });
   }
 
-  // Validador personalizado para verificar si las contraseñas coinciden
   passwordsMatchValidator(form: AbstractControl): { [key: string]: boolean } | null {
     const newPassword = form.get('newPassword');
     const confirmPassword = form.get('confirmPassword');
@@ -31,13 +33,10 @@ export class ChangePassComponent {
       return null;
     }
   }
-  
 
   onSubmit() {
     if (this.changePassForm.valid) {
-      // Lógica para enviar el formulario de cambio de contraseña
       console.log(this.changePassForm.value);
-      // Aquí puedes agregar lógica para enviar los datos al backend
     } else {
       console.log("Formulario inválido");
     }

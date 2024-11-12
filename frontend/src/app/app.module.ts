@@ -8,12 +8,13 @@ import { LoginComponent } from './Modulos/auth/login/login.component';
 import { AdmiHomeComponent } from './Modulos/auth/home-admi/home-admi.component';
 import { RegisterComponent } from './Modulos/auth/register/register.component';
 import { HomeModule } from './Modulos/home/home.module';
+import { ChangePassComponent } from './Modulos/auth/changePass/changePass.component';
 
 
 
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent
   ],
   imports: [
     BrowserModule, // Importar el módulo del navegador
