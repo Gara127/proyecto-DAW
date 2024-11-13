@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/fo
 
 @Component({
   selector: 'app-changepass',
+  standalone: true,
   templateUrl: './changePass.component.html',
   styleUrls: ['./changePass.component.css']
 })
