@@ -40,6 +40,10 @@ export class LoginComponent implements OnInit {
     this.router.navigate(['/register']);
   }
 
+  irACambioDeContrasena() {
+    this.router.navigate(['/change-password']);
+  }
+
   onSubmit() {
     
     if (this.loginForm.valid) {
