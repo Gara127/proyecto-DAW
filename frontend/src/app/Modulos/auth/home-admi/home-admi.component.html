@@ -1,6 +1,14 @@
-<h1>BIENVENIDO ADMINISTRADOR</h1>
+<div id="header">
+  <div id="app-name-container">
+    <img id="logo" src="/assets/img/fotoLogo.png" alt="Logo" />
+    <h1 id="app-name">Crew Connect</h1>
+  </div>
+</div>
 
-<table>
+<h1 id="admin-welcome">Bienvenido Administrador</h1>
+
+<div id="user-table-container">
+  <table>
     <thead>
       <tr>
         <th>Nombre</th>
@@ -11,10 +19,14 @@
     </thead>
     <tbody>
       <tr *ngFor="let usuario of usuarios">
-        <td>{{usuario.nombre}}</td>
-        <td>{{usuario.rol}}</td>
+        <td>{{ usuario.nombre }}</td>
+        <td>{{ usuario.rol }}</td>
         <td><input type="button" value="Editar" (click)="editarUsuario(usuario.id_usuario)"></td>
         <td><input type="button" value="Borrar" (click)="borrarUsuario(usuario.id_usuario)"></td>
       </tr>
     </tbody>
   </table>
+</div>
+
+<br>
+<button class="back-button" onclick="window.history.back()">Atrás</button>
