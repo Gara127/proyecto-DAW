@@ -7,7 +7,10 @@
     function init(){
         $con = conectar(); // Conectar a la base de datos
         crear_tabla_usuario($con); // Crear tabla de usuario
+        crear_eventos($con);
+        evento_participantes($con);
         cerrar_conexion($con); // Cerrar la conexión
+        
     }
 
     function conectar(){
@@ -44,8 +47,28 @@
             mysqli_query($con, "insert into usuario (nombre, pass, rol) values ('$nombre', '$password', '$rol')");
         }
     }
-    
 
+    function crear_eventos($con){
+        mysqli_query($con,"create table if not exists eventos(
+                    id_evento INT AUTO_INCREMENT PRIMARY KEY,
+                    title VARCHAR(255) NOT NULL,
+                    date DATE NOT NULL,
+                    time TIME NOT NULL,
+                    location VARCHAR(255),
+                    description TEXT
+                    )") or die("Error al crear la tabla evento: " . mysqli_error($con));
+    }
+
+    function evento_participantes($con){
+         mysqli_query($con,"create table if not exists evento_participantes(
+             id_evento INT,
+            id_usuario INT,
+            PRIMARY KEY (id_evento, id_usuario),
+            FOREIGN KEY (id_evento) REFERENCES eventos(id_evento) ON DELETE CASCADE,
+            FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
+            )") or die("Error al crear la tabla evento_participantes: " . mysqli_error($con));    
+    }
+    
     // AUX
 
     function cerrar_conexion($con){
