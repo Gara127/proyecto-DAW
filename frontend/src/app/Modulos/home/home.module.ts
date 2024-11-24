@@ -5,12 +5,14 @@ import { EventCreatorComponent } from './event-creator/event-creator.component';
 import { RouterModule } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HomeUserComponent } from './home-user/home-user.component';
 
 
 
 @NgModule({
   declarations: [
-    EventCreatorComponent
+    EventCreatorComponent,
+    HomeUserComponent
   ],
   imports: [
     CommonModule,

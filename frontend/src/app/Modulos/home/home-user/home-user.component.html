@@ -1,0 +1,39 @@
+<!-- Header -->
+<header class="bg-primary text-white py-3">
+    <div class="container d-flex justify-content-between align-items-center">
+      <!-- Logo -->
+      <h1 class="h3 mb-0">Organizador de Quedadas</h1>
+  
+      <!-- Navegación -->
+      <nav class="d-flex align-items-center">
+        <button class="btn btn-outline-light me-3">Iniciar Sesión</button>
+        <button class="btn btn-outline-light me-3">Registrarse</button>
+        <div class="dropdown">
+          <button class="btn btn-outline-light dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="assets/img/default-profile.png" alt="Foto de perfil" class="rounded-circle" width="30" height="30">
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+            <li><a class="dropdown-item" href="#">Mi Perfil</a></li>
+            <li><a class="dropdown-item" href="#">Cerrar Sesión</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </header>
+  
+  <!-- Hero Section -->
+  <section class="hero bg-light py-5">
+    <div class="container text-center">
+      <h2 class="display-4 mb-4">¡Organiza tus Quedadas y Eventos Fácilmente!</h2>
+      <p class="lead mb-4">Haz que tus planes con amigos y familiares sean perfectos, sin complicaciones.</p>
+      <button class="btn btn-primary btn-lg" (click)="navigateToCreateEvent()">Crear Evento</button>
+    </div>
+  </section>
+  
+  <!-- Footer -->
+  <footer class="bg-dark text-white py-3">
+    <div class="container text-center">
+      <p class="mb-0">&copy; 2024 Organizador de Quedadas. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+  

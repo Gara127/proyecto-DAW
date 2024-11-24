@@ -7,6 +7,7 @@ header("Access-Control-Allow-Headers: Content-Type");
 require_once("database.php");
 require_once("comprobacionDatos.php"); 
 require_once("comprobacionRegistro.php"); 
+require_once("comprobarChangePass.php");
 
 $con = conectar();
 $method = $_SERVER['REQUEST_METHOD'];
@@ -54,7 +55,7 @@ switch ($method) {
         
     case 'POST':
         $data =json_decode(file_get_contents("php://input"), true);
-
+        
         if (isset($data['action']) && $data['action'] === 'login') {
             comprobarLogin($con);
         } elseif (isset($data['action']) && $data['action']=== 'register') {
@@ -115,6 +116,20 @@ switch ($method) {
         break;
      
     case 'PUT': // actualizar
+
+        //MANEJO  DE CAMBIO DE CONTRASEÑA
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        // **Manejo de cambio de contraseña**
+        if (isset($data['email']) && isset($data['oldPassword']) && isset($data['newPassword'])) {
+            comprobarChangePass($con); // Llama a la función separada
+            exit; // Detén la ejecución aquí
+        }
+
+    
+        //FIN MANEJO  CAMBIO DE CONTRASEÑA
+
+
         // Obtiene el ID del usuario desde la URL
         if (isset($_GET['id_usuario'])) {
             $id_usuario = intval($_GET['id_usuario']);
