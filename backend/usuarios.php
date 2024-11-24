@@ -37,7 +37,7 @@ switch ($method) {
         
     case 'POST':
         $data =json_decode(file_get_contents("php://input"), true);
-
+        
         if (isset($data['action']) && $data['action'] === 'login') {
             comprobarLogin($con);
         } elseif (isset($data['action']) && $data['action']=== 'register') {
@@ -85,6 +85,41 @@ switch ($method) {
         break;
      
     case 'PUT': // actualizar
+
+        //MANEJO  DE CAMBIO DE CONTRASEÑA
+
+        // Decodifica los datos JSON recibidos
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        // **Manejo de cambio de contraseña**
+        if (isset($data['email']) && isset($data['oldPassword']) && isset($data['newPassword'])) {
+        $email = $data['email'];
+        $oldPassword = $data['oldPassword'];
+        $newPassword = $data['newPassword'];
+
+        // Verifica si el email y la contraseña antigua coinciden
+        $query = "SELECT * FROM usuario WHERE nombre = '$email' AND pass = '$oldPassword'";
+        $resultado = mysqli_query($con, $query);
+
+        if (mysqli_num_rows($resultado) === 0) {
+            http_response_code(400);
+            echo json_encode(["error" => "Correo o contraseña actual incorrectos"]);
+            exit;
+        }
+
+        // Actualiza la contraseña
+        $updateQuery = "UPDATE usuario SET pass = '$newPassword' WHERE nombre = '$email'";
+        if (mysqli_query($con, $updateQuery)) {
+            echo json_encode(["mensaje" => "Contraseña cambiada con éxito"]);
+        } else {
+            http_response_code(500);
+            echo json_encode(["error" => "Error al actualizar la contraseña: " . mysqli_error($con)]);
+        }
+        exit; // Importante: Salir después de manejar el cambio de contraseña
+    }
+        //FIN MANEJO  CAMBIO DE CONTRASEÑA
+
+
         // Obtiene el ID del usuario desde la URL
         if (isset($_GET['id_usuario'])) {
             $id_usuario = intval($_GET['id_usuario']);
