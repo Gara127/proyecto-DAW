@@ -61,7 +61,7 @@ body, html {
 }
 
 form {
-    max-width: 15em; 
+    max-width: 20em; 
     max-height: 30em;
     padding: 3%; 
     border: 1px solid #0a0a0a; 
@@ -76,19 +76,23 @@ form {
     color:black;
     display: block;
     margin-bottom: 10px; 
+    font-weight: bold;
 }
 
 h2 {
     text-align: center; 
-    color: #333; 
+    color: black; 
+
 }
 
 #campos {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content:center;
     align-items: center; 
-    margin-top: 20px; 
+    margin-top: 20px;
+    font-size: 16px;
+    
 }
 
 #registro, #forgetpassword {
@@ -123,7 +127,7 @@ button {
 }
 
 button:hover {
-    background-color: #0056b3; 
+    background-color: #09335f; 
 }   
 
 body {

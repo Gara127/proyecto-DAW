@@ -23,7 +23,8 @@ export class RegisterComponent {
     event.preventDefault(); // Evita que la página se recargue
 
     // Expresión regular para validar la contraseña
-    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&+])[A-Za-z\d@$!%*?&+]{8,}$/
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&+])[A-Za-z\d@$!%*?&+]{6,}$/;
+
 
 
     // Comprobamos si la contraseña es válida
