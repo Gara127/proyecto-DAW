@@ -1,12 +1,58 @@
-/* .html{
-    background-image: url("assets/img/fotoLogin.png");
-} */
-
-h1{
-    margin-top: 5%;
-    margin-left: 20%;
-    
+body, html {
+    margin: 0;
+    padding: 0;
+    overflow: hidden; 
+    height: 100%;
 }
+
+#header {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 20px 50px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#slogan {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 32px; 
+    font-weight: 700; 
+    color: rgb(44, 58, 94); 
+    margin: 0; 
+    text-transform: uppercase; 
+}
+
+#logo {
+    width: 40px; 
+    height: 40px; 
+    margin-right: 10px; 
+  }
+
+  #app-name-container {
+    display: flex;
+    align-items: center;  
+  }
+
+#app-name {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 32px; 
+    font-weight: 700; 
+    color: #0056b3; 
+    margin: 0; 
+    text-transform: uppercase; 
+}
+
+
+#contenedor{
+    background-image: url("/assets/img/fotoLogin.png");
+    background-size: cover;
+    background-position-x: center;
+    background-position-y: center;
+    height: 100vh;
+    width: 100%;
+    background-repeat: no-repeat;
+}
+
 #form{
         margin-top: 5%;
         display: flex;
@@ -14,17 +60,15 @@ h1{
         align-items: center;
 }
 
-
-/* Estilo para el contenedor del formulario */
 form {
-    max-width: 15em; /* Ancho máximo del formulario */
+    max-width: 15em; 
     max-height: 30em;
-    /* margin: 0 auto; Centra el formulario en la página */
-    padding: 3%; /* Espaciado interno */
-    border: 1px solid #0a0a0a; /* Borde gris claro */
-    border-radius: 20px; /* Bordes redondeados */
-    background-color: #8ada9c; /* Color de fondo claro */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    padding: 3%; 
+    border: 1px solid #0a0a0a; 
+    border-radius: 20px; 
+    background-color:rgb(236, 215, 183);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); 
+    margin: 5%;
 }
 
 .etiqueta{
@@ -33,55 +77,56 @@ form {
     display: block;
     margin-bottom: 10px; 
 }
-/* Estilo para los encabezados del formulario */
+
 h2 {
-    text-align: center; /* Centra el texto */
-    color: #333; /* Color del texto */
+    text-align: center; 
+    color: #333; 
 }
 
 #campos {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center; /* Centra los elementos dentro de #campos */
-    margin-top: 20px; /* Espacio superior */
+    align-items: center; 
+    margin-top: 20px; 
 }
 
 #registro, #forgetpassword {
-    margin: 10px 0; /* Margen superior e inferior de 10px para separación */
+    margin: 10px 0; 
 }
 
 #registro-enlace, #pass-forgot {
-    color: #007bff; /* Color del enlace */
-    text-decoration: underline; /* Subrayado */
-    cursor: pointer; /* Cambia el cursor al pasar sobre el enlace */
-    transition: color 0.2s; /* Transición suave al cambiar el color */
+    color: #0056b3;  
+    text-decoration: underline; 
+    cursor: pointer; 
+    transition: color 0.2s; 
 }
 
-/* Estilo para los inputs */
 input {
-    width: 100%; /* Ancho completo del contenedor */
-    padding: 10px; /* Espaciado interno del input */
-    margin-bottom: 15px; /* Espacio inferior entre inputs */
-    border: 1px solid #ccc; /* Borde gris claro */
-    border-radius: 4px; /* Bordes redondeados para inputs */
-    font-size: 16px; /* Tamaño de fuente */
+    width: 100%; 
+    padding: 10px; 
+    margin-bottom: 15px; 
+    border: 1px solid #ccc; 
+    border-radius: 4px; 
+    font-size: 16px; 
 }
 
-/* Estilo para el botón */
 button {
-    width: 100%; /* Ancho completo del contenedor */
-    padding: 10px; /* Espaciado interno del botón */
-    background-color: #007bff; /* Color de fondo azul */
-    color: #fff; /* Color de texto blanco */
-    border: none; /* Sin borde */
-    border-radius: 4px; /* Bordes redondeados para el botón */
-    font-size: 16px; /* Tamaño de fuente */
-    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
-    transition: background-color 0.3s; /* Efecto de transición */
+    width: 100%; 
+    padding: 10px; 
+    background-color: #0056b3; 
+    border: none; 
+    border-radius: 4px; 
+    font-size: 16px; 
+    cursor: pointer; 
+    transition: background-color 0.3s;
 }
 
-/* Efecto hover para el botón */
 button:hover {
-    background-color: #0056b3; /* Cambia el color al pasar el mouse */
-}
+    background-color: #0056b3; 
+}   
+
+body {
+    overflow-y: hidden;
+  }
+  

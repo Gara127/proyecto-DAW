@@ -11,6 +11,7 @@ require_once("comprobacionRegistro.php");
 $con = conectar();
 $method = $_SERVER['REQUEST_METHOD'];
 
+
 switch ($method) {
 
     case 'GET':
@@ -25,15 +26,31 @@ switch ($method) {
             } else {
                 echo json_encode(["error" => "Usuario no encontrado"]);
             }
-        } elseif (isset($_GET['init']) && boolval($_GET['init'])) {
+        }
+        // Verificar si se proporciona el parámetro 'init'
+        elseif (isset($_GET['init']) && boolval($_GET['init'])) {
             init();
-        } else {
-            // Obtener todos los usuarios si no se proporciona id_usuario
+        }
+        // Verificar si se proporciona el parámetro 'nombre' para buscar por nombre de usuario
+        elseif (isset($_GET['nombre'])) {
+            $userName = mysqli_real_escape_string($con, $_GET['nombre']); // Evitar inyección SQL
+            $query = "SELECT * FROM usuario WHERE nombre = '$userName'"; // Buscar por nombre
+            $resultado = mysqli_query($con, $query);
+
+            if ($resultado && mysqli_num_rows($resultado) > 0) {
+                echo json_encode(mysqli_fetch_assoc($resultado));
+            } else {
+                echo json_encode(["error" => "Usuario no encontrado"]);
+            }
+        }
+        // Si no se proporciona id_usuario, nombre o init, obtener todos los usuarios
+        else {
             $usuarios = mysqli_query($con, "SELECT * FROM usuario");
             $resultado = mysqli_fetch_all($usuarios, MYSQLI_ASSOC);
             echo json_encode($resultado);
         }
         break;
+    
         
     case 'POST':
         $data =json_decode(file_get_contents("php://input"), true);
@@ -41,7 +58,20 @@ switch ($method) {
         if (isset($data['action']) && $data['action'] === 'login') {
             comprobarLogin($con);
         } elseif (isset($data['action']) && $data['action']=== 'register') {
-            comprobarRegistro($con);
+
+            $nombre = mysqli_real_escape_string($con, $data['nombre']);
+            if (isset($data['nombre'])) {
+            $query = "SELECT nombre FROM usuario WHERE nombre = '$nombre'";
+            $resultado = mysqli_query($con, $query);
+
+                if (mysqli_num_rows($resultado) > 0) {
+                    echo json_encode(["error" => "El nombre de usuario ya existe"]);
+                } else {
+                    comprobarRegistro($con);
+                }
+            } else {
+            echo json_encode(["error" => "Falta el nombre de usuario en los datos."]);
+            }
         } else {
             echo json_encode(["error" => "Acción no válida. Debe ser 'login' o 'register'."]);
         }

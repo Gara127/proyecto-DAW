@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { UsuarioService } from '../../Servicios/usuario.service';
 import { Usuario } from '../../models/usuario.model';
+import { EventoService } from '../../Servicios/evento.service';
 
 @Component({
   selector: 'app-event-creator',
@@ -21,7 +22,9 @@ export class EventCreatorComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private usuarioService: UsuarioService
+    private usuarioService: UsuarioService,
+    private eventoService: EventoService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -31,7 +34,7 @@ export class EventCreatorComponent implements OnInit {
       time: ['', Validators.required],
       location: ['', Validators.required],
       description: ['', Validators.required],
-      participants: ['', Validators.required] 
+      participants: ['',] 
     });
   }
 
@@ -59,12 +62,28 @@ export class EventCreatorComponent implements OnInit {
 
   onSubmit(): void {
     if (this.eventForm.valid) {
-      // Aquí puedes manejar el envío del formulario con la lista de participantes
       const eventData = {
-        ...this.eventForm.value,
-        participants: this.participants
+        title: this.eventForm.get('title')?.value,
+        date: this.eventForm.get('date')?.value,
+        time: this.eventForm.get('time')?.value,
+        location: this.eventForm.get('location')?.value,
+        description: this.eventForm.get('description')?.value,
+        participants: this.participants.map(participant => participant.id_usuario) 
       };
-      console.log('Evento creado:', eventData);
+  
+      this.eventoService.crearEvento(eventData).subscribe(
+        (response: any) => {
+          console.log('Evento creado con éxito:', response);
+          this.router.navigate(['./event-creator']); 
+        },
+        (error: any) => {
+          console.error('Error al crear evento:', error);
+          alert('Error al crear evento');
+          console.log('Detalles del error:', error);
+        }
+      );
+    } else {
+      alert('Por favor, completa todos los campos requeridos.');
     }
   }
-}
+}  

@@ -4,8 +4,8 @@ require_once("usuarios.php");
 
 function comprobarLogin($con) {
     $data = json_decode(file_get_contents("php://input"), true);
-    $username = mysqli_real_escape_string($con, $data['username']); // Evitar SQL injection
-    $password = mysqli_real_escape_string($con, $data['password']); // Evitar SQL injection
+    $username = mysqli_real_escape_string($con, $data['username']); 
+    $password = mysqli_real_escape_string($con, $data['password']); 
 
     $query = "SELECT * FROM usuario WHERE nombre = '$username' AND pass = '$password'";
     $result = mysqli_query($con, $query);

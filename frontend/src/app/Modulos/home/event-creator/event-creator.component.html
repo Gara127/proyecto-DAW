@@ -1,3 +1,9 @@
+<div id="header">
+  <div id="app-name-container">
+    <img id="logo" src="/assets/img/fotoLogo.png" alt="Logo" />
+    <h1 id="app-name">Crew Connect</h1>
+  </div>
+</div>
 <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
     <div>
       <label for="title" class="etiqueta">Nombre del evento:</label>
@@ -47,8 +53,9 @@
         <button type="button" id="btnAddUser" (click)="addParticipant()">Agregar Participante</button>
         <div *ngIf="participantError">Usuario no encontrado.</div>
       </div>
-        
-    
     <button type="submit" [disabled]="!eventForm.valid">Crear Evento</button>
+    <button class="back-button" onclick="window.history.back()">Atrás</button>
   </form>
+
+  
   
