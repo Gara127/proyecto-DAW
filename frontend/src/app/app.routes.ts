@@ -16,7 +16,7 @@ export const routes: Routes = [
     { path: 'edit-user/:id', component: EditUserComponent},
     { path: 'register', component: RegisterComponent },
     { path: 'event-creator', component: EventCreatorComponent},
-    { path: 'home-user', component: HomeUserComponent }, // Página del usuario principal
-    { path: 'change-password', component: ChangePassComponent }
+    { path: 'home-user', component: HomeUserComponent }, 
+    { path: 'change-password', component: ChangePassComponent}
 ];
 

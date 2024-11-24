@@ -145,11 +145,8 @@ switch ($method) {
             echo json_encode(["error" => "Error al actualizar usuario: " . mysqli_error($con)]);
         }
         break;
-
- 
 }            
         
-
 // Cerrar conexión
 cerrar_conexion($con);
 ?>
