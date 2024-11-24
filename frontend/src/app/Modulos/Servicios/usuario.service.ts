@@ -50,5 +50,11 @@ export class UsuarioService {
   iniciarUsuarios(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}?init=true`);
   }
+
+  // Método para cambiar la contraseña
+  cambiarPassword(datos: { email: string; oldPassword: string; newPassword: string }): Observable<any> {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.put<any>(`${this.apiUrl}`, datos, { headers });
+  }
  
 }
