@@ -1,0 +1,22 @@
+.home-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  .section {
+    margin-bottom: 40px;
+  }
+  .card {
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  .btn-link {
+    text-decoration: none;
+    font-weight: bold;
+    color: #007bff;
+  }
+  .btn-link:hover {
+    color: #0056b3;
+  }
+  .accordion .card-header {
+    cursor: pointer;
+  }
