@@ -1,4 +1,5 @@
 <?php
+session_start();
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
@@ -114,35 +115,63 @@ switch ($method) {
         }
         break;
      
-    case 'PUT': // actualizar
-        // Obtiene el ID del usuario desde la URL
-        if (isset($_GET['id_usuario'])) {
-            $id_usuario = intval($_GET['id_usuario']);
-        } else {
-            http_response_code(400);
-            echo json_encode(["error" => "ID de usuario no proporcionado"]);
-            exit;
-        }
-
-        // Decodifica los datos JSON recibidos
+    case 'PUT':
         $data = json_decode(file_get_contents("php://input"), true);
-        if (!$data || !isset($data['nombre']) || !isset($data['pass']) || !isset($data['rol'])) {
-            http_response_code(400);
-            echo json_encode(["error" => "Datos no válidos"]);
-            exit;
-        }
-
-        // Obtiene los valores de nombre, contraseña y rol
-        $nombre = $data['nombre'];
-        $pass = $data['pass'];
-        $rol = $data['rol'];
-
-        // Ejecuta la consulta de actualización
-        $query = "UPDATE usuario SET nombre = '$nombre', pass = '$pass', rol = '$rol' WHERE id_usuario = $id_usuario";
-        if (mysqli_query($con, $query)) {
-            echo json_encode(["mensaje" => "Usuario actualizado con éxito"]);
+    
+        // Verifica si se está intentando cambiar la contraseña (puedes usar un campo "action" o directamente los campos oldPassword y newPassword)
+        if (isset($data['email']) && isset($data['oldPassword']) && isset($data['newPassword'])) {
+            // Cambio de contraseña
+    
+            $email = mysqli_real_escape_string($con, $data['email']);
+            $oldPassword = mysqli_real_escape_string($con, $data['oldPassword']);
+            $newPassword = mysqli_real_escape_string($con, $data['newPassword']);
+    
+            // Verifica que el usuario exista con el email y la oldPassword
+            $queryUser = "SELECT id_usuario FROM usuario WHERE nombre = '$email' AND pass = '$oldPassword'";
+            $resultUser = mysqli_query($con, $queryUser);
+    
+            if ($resultUser && mysqli_num_rows($resultUser) > 0) {
+                // Si el usuario existe, obtén su id_usuario
+                $row = mysqli_fetch_assoc($resultUser);
+                $id_usuario = $row['id_usuario'];
+    
+                // Actualiza la contraseña
+                $queryUpdatePass = "UPDATE usuario SET pass = '$newPassword' WHERE id_usuario = $id_usuario";
+                if (mysqli_query($con, $queryUpdatePass)) {
+                    echo json_encode(["mensaje" => "Contraseña actualizada con éxito"]);
+                } else {
+                    http_response_code(500);
+                    echo json_encode(["error" => "Error al actualizar la contraseña: " . mysqli_error($con)]);
+                }
+            } else {
+                http_response_code(401); // No autorizado
+                echo json_encode(["error" => "Email o contraseña anterior no coinciden"]);
+            }
+    
+        } else if (isset($_GET['id_usuario'])) {
+            // Logica existente para actualizar datos generales del usuario
+            $id_usuario = intval($_GET['id_usuario']);
+    
+            if (!$data || !isset($data['nombre']) || !isset($data['pass']) || !isset($data['rol'])) {
+                http_response_code(400);
+                echo json_encode(["error" => "Datos no válidos"]);
+                exit;
+            }
+    
+            $nombre = mysqli_real_escape_string($con, $data['nombre']);
+            $pass = mysqli_real_escape_string($con, $data['pass']);
+            $rol = mysqli_real_escape_string($con, $data['rol']);
+    
+            $query = "UPDATE usuario SET nombre = '$nombre', pass = '$pass', rol = '$rol' WHERE id_usuario = $id_usuario";
+            if (mysqli_query($con, $query)) {
+                echo json_encode(["mensaje" => "Usuario actualizado con éxito"]);
+            } else {
+                echo json_encode(["error" => "Error al actualizar usuario: " . mysqli_error($con)]);
+            }
+    
         } else {
-            echo json_encode(["error" => "Error al actualizar usuario: " . mysqli_error($con)]);
+            http_response_code(400);
+            echo json_encode(["error" => "No se pudo determinar la acción a realizar"]);
         }
         break;
 }            

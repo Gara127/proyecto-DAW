@@ -14,12 +14,19 @@ function comprobarLogin($con) {
         // Obtiene el rol del usuario de la consulta
         $row = mysqli_fetch_assoc($result);
         $rol = $row['rol'];
+        $id_del_usuario = $row['id_usuario'];
+        $nombre = $row['nombre'];
 
-        // Devuelve la respuesta con el rol
+            // Asignamos las variables de sesión
+        $_SESSION['logged_in'] = true;
+        $_SESSION['user_id'] = $id_del_usuario;
+        $_SESSION['rol'] = $rol;         // Devuelve la respuesta con el rol
+
         echo json_encode([
             "status" => "success", 
             "message" => "Inicio de sesión exitoso",
-            "rol" => $rol // Incluye el rol en la respuesta
+            "rol" => $rol, // Incluye el rol en la respuesta
+            "nombre" => $row['nombre'] // Incluye el nombre
         ]);
     } else {
         http_response_code(401); // Código 401 para credenciales incorrectas
