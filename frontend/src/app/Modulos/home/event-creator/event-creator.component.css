@@ -26,6 +26,13 @@
   text-transform: uppercase;
 }
 
+#user-info {
+  font-size: 15px;
+  color: #333;
+  font-weight: bold;
+  justify-content: end;
+}
+
 #form {
   display: flex;
   justify-content: center; 

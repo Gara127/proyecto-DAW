@@ -8,8 +8,6 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-
-
 #logo {
   width: 40px;
   height: 40px;
@@ -30,6 +28,12 @@
   text-transform: uppercase;
 }
 
+#user-info {
+  font-size: 15px;
+  color: #333;
+  font-weight: bold;
+}
+
 /* Estilo para el título de bienvenida */
 #admin-welcome {
   font-family: 'Poppins', sans-serif;
@@ -40,12 +44,12 @@
   margin-top: 50px;
 }
 
-/* Estilos para la tabla */
+
 #user-table-container {
   width: 80%; 
   margin: 20px auto;
-  overflow-x: auto; /* Para que la tabla sea responsiva en pantallas pequeñas */
-}
+  overflow-x: auto; 
+}  
 
 table {
   width: 100%;

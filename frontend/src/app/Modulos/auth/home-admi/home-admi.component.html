@@ -3,10 +3,12 @@
     <img id="logo" src="/assets/img/fotoLogo.png" alt="Logo" />
     <h1 id="app-name">Crew Connect</h1>
   </div>
+  <div id="user-info" *ngIf="username" style="margin-left:auto;">
+    Hola, {{username}}
+  </div>
 </div>
 
 <h1 id="admin-welcome">Bienvenido Administrador</h1>
-
 <div id="user-table-container">
   <table>
     <thead>
@@ -27,6 +29,5 @@
     </tbody>
   </table>
 </div>
-
 <br>
 <button class="back-button" onclick="window.history.back()">Atrás</button>
