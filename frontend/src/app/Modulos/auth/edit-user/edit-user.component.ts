@@ -2,12 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UsuarioService } from '../../Servicios/usuario.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 
 @Component({
   selector: 'app-edit-user',
   standalone: true,
-  imports: [ReactiveFormsModule,FormsModule],
+  imports: [ReactiveFormsModule,FormsModule,CommonModule],
   templateUrl: './edit-user.component.html',
   styleUrl: './edit-user.component.css'
 })
@@ -16,6 +17,7 @@ export class EditUserComponent implements OnInit {
   
   usuario: any = { nombre: '', contrasena: '', rol: '' };
   id_usuario: number | null = null;
+  username: string | null = null; // para login usuario
 
   constructor(
     private usuarioService: UsuarioService,
@@ -24,6 +26,7 @@ export class EditUserComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.username = localStorage.getItem('username');
     const idParam = this.route.snapshot.paramMap.get('id');
     this.id_usuario = idParam ? +idParam : null; // Maneja null
 

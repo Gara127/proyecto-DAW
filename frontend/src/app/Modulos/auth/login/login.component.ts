@@ -57,12 +57,13 @@ export class LoginComponent implements OnInit {
       this.usuarioService.iniciarSesion(loginData).subscribe(
         (response: any) => { // Asegúrate de que el backend devuelva un objeto con el rol
           console.log('Inicio de sesión exitoso!', response);
-  
+          localStorage.setItem('username', response.nombre); // guardamos el nombre en localstorage
+          
           if (response && response.rol) {
             // Verifica el rol y redirige
             if (response.rol === 'admin') {
               this.router.navigate(['/home']);
-            } else if (response.rol === 'normal') {
+            } else if (response.rol === 'user') {
               this.router.navigate(['/home-user']);
             } else {
               console.error('Rol desconocido:', response.rol);

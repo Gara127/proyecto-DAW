@@ -19,6 +19,7 @@ export class EventCreatorComponent implements OnInit {
   participants: Usuario[] = [];
   participantError: boolean = false;
   userService: any;
+  username: string | null = null; // para login usuario
 
   constructor(
     private fb: FormBuilder,
@@ -28,6 +29,7 @@ export class EventCreatorComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.username = localStorage.getItem('username');
     this.eventForm = this.fb.group({
       title: ['', Validators.required],
       date: ['', Validators.required],
