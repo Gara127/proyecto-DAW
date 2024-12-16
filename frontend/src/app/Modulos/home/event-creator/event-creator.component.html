@@ -3,7 +3,11 @@
     <img id="logo" src="/assets/img/fotoLogo.png" alt="Logo" />
     <h1 id="app-name">Crew Connect</h1>
   </div>
+  <div id="user-info" *ngIf="username" style="margin-left:auto;">
+    Hola, {{username}}
+  </div>
 </div>
+
 <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
     <div>
       <label for="title" class="etiqueta">Nombre del evento:</label>

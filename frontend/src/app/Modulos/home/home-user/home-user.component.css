@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .home-container {
     padding: 20px;
     font-family: Arial, sans-serif;
@@ -20,3 +21,114 @@
   .accordion .card-header {
     cursor: pointer;
   }
+=======
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%; 
+    font-family: Arial, sans-serif;
+  }
+  
+  body {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff; 
+  }
+  
+  /* Header */
+  #header {
+    display: flex;
+    align-items: center;
+    padding: 20px 50px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: rgb(236, 215, 183);
+  }
+  
+  #app-name-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  #logo {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+  }
+  
+  #app-name {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: #0056b3;
+    margin: 0;
+    text-transform: uppercase;
+  }
+  
+  #user-info {
+    margin-left: auto;
+    font-size: 15px;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  .main-content {
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    text-align: center;
+  }
+  
+  /* Sección Hero */
+  .hero {
+    padding: 50px 20px;
+    max-width: 600px;
+    width: 80%;
+    margin: 0 auto;
+  }
+  
+  .hero-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 20px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+  }
+  
+  .hero-subtitle {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 30px;
+  }
+  
+  .action-button {
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .action-button:hover {
+    background-color: #004a9c;
+  }
+  
+  #footer {
+    background-color: rgb(236, 215, 183);
+    text-align: center;
+    padding: 15px 0;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  #footer p {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+  }
+  
+>>>>>>> 3bfd86e4c6fe25894a2b97422731decb873a5ae8

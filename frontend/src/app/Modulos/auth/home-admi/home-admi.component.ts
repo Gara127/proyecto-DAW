@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 
 export class AdmiHomeComponent implements OnInit {
   usuarios: any[] = []; // Array para almacenar los usuarios
+  username: string | null = null; // para login usuario
 
 
   constructor(private usuarioService: UsuarioService,
@@ -21,6 +22,7 @@ export class AdmiHomeComponent implements OnInit {
   ) {}
     
   ngOnInit() {
+    this.username = localStorage.getItem('username');
     this.cargarUsuarios(); // Cargar los usuarios al inicializar el componente
   }
 
