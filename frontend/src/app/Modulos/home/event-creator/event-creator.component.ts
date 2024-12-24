@@ -76,12 +76,19 @@ export class EventCreatorComponent implements OnInit {
       this.eventoService.crearEvento(eventData).subscribe(
         (response: any) => {
           console.log('Evento creado con éxito:', response);
-          this.router.navigate(['./event-creator']); 
+  
+          // Construir el objeto del evento a partir de la respuesta del backend y los datos locales
+          const nuevoEvento = {
+            id_evento: response.id_evento, // Obtenido del backend
+            ...eventData, // Combinar con los datos enviados desde el frontend
+          };
+  
+          this.eventoService.notificarEventoCreado(nuevoEvento); // Notificar al servicio
+          this.router.navigate(['./home-user']); // Redirigir al componente home-user
         },
         (error: any) => {
           console.error('Error al crear evento:', error);
           alert('Error al crear evento');
-          console.log('Detalles del error:', error);
         }
       );
     } else {
