@@ -14,6 +14,22 @@ switch ($method) {
 
     case 'GET':
         
+        // Consulta para obtener todos los eventos con sus participantes
+        $query = "SELECT e.id_evento, e.title, e.date, e.time, e.location, e.description, 
+                         GROUP_CONCAT(u.nombre) AS participants
+                  FROM eventos e
+                  LEFT JOIN evento_participantes ep ON e.id_evento = ep.id_evento
+                  LEFT JOIN usuario u ON ep.id_usuario = u.id_usuario
+                  GROUP BY e.id_evento";
+        $result = mysqli_query($con, $query);
+
+        if ($result) {
+            $eventos = mysqli_fetch_all($result, MYSQLI_ASSOC);
+            echo json_encode($eventos); // Devuelve un array JSON válido
+        } else {
+            http_response_code(500);
+            echo json_encode(["error" => "Error al obtener eventos: " . mysqli_error($con)]);
+        }
         break;
     
         
