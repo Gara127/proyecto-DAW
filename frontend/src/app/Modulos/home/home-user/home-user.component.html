@@ -33,34 +33,19 @@
 <!-- Sección de Eventos Destacados -->
 <div class="section featured-events mb-5">
   <h2 class="mb-4">Eventos Destacados</h2>
-  <div class="row">
-    <div class="col-md-6 mb-4">
-      <div class="card h-100">
-        <div class="card-body">
-          <h3 class="card-title">Cena Familiar</h3>
-          <p class="card-text">Fecha: 24 de diciembre, 20:00</p>
-          <p class="card-text">Ubicación: Restaurante La Buena Mesa</p>
-          <div class="card-text">
-            Miembros: <span class="member-list">Juan, María, Pedro, Ana</span>... y 8 más
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6 mb-4">
-      <div class="card h-100">
-        <div class="card-body">
-          <h3 class="card-title">Salida al Cine</h3>
-          <p class="card-text">Fecha: 5 de enero, 18:30</p>
-          <p class="card-text">Ubicación: Cinepolis Plaza Mayor</p>
-          <p class="card-text">Descripción: Quedada parra ir a ver la película de "La Sustancia".</p>
-          <div class="card-text">
-            Miembros: <span class="member-list">Carlos, Sofía, Raúl</span>... y 5 más
-          </div>
-        </div>
+  <div *ngFor="let evento of eventos" class="col-md-6 mb-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h3 class="card-title">{{ evento.title }}</h3>
+        <p class="card-text"><strong>Fecha:</strong> {{ evento.date }} a las {{ evento.time }}</p>
+        <p class="card-text"><strong>Ubicación:</strong> {{ evento.location }}</p>
+        <p class="card-text"><strong>Descripción:</strong> {{ evento.description }}</p>
       </div>
     </div>
   </div>
 </div>
+
+
 
 
 
