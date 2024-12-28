@@ -79,7 +79,7 @@ export class EventCreatorComponent implements OnInit {
 
   onSubmit(): void {
     if (this.eventForm.valid) {
-        const eventData: any = { // Cambiar a 'any'
+        const eventData: any = {
             title: this.eventForm.get('title')?.value,
             date: this.eventForm.get('date')?.value,
             time: this.eventForm.get('time')?.value,
@@ -113,7 +113,7 @@ export class EventCreatorComponent implements OnInit {
 
                     const nuevoEvento = {
                         ...eventData,
-                        id_evento: response.id_evento, // Solo se añade aquí
+                        id_evento: response.id_evento,
                     };
 
                     this.eventoService.notificarEventoCreado(nuevoEvento);
