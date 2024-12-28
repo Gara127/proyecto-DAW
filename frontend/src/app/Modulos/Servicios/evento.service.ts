@@ -39,6 +39,12 @@ export class EventoService {
     return this.http.delete<any>(`${this.apiUrl}?id_evento=${id_evento}`);
   }
 
+  // Editar un evento
+  editarEvento(evento: Evento): Observable<any> {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.put<any>(`${this.apiUrl}?id_evento=${evento.id_evento}`, evento, { headers });
+  }
+
   // Notificar sobre un nuevo evento creado
   notificarEventoCreado(evento: Evento) {
     console.log('Evento notificado:', evento); // Verifica aquí
