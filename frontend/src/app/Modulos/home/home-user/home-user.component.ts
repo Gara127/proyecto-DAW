@@ -45,4 +45,21 @@ export class HomeUserComponent implements OnInit {
       this.eventos = [];
     });
   }
+
+  eliminarEvento(id_evento: number): void {
+    if (confirm('¿Estás seguro de que deseas eliminar este evento?')) {
+      this.eventoService.eliminarEvento(id_evento).subscribe(() => {
+        this.eventos = this.eventos.filter(evento => evento.id_evento !== id_evento);
+        alert('Evento eliminado con éxito.');
+      }, error => {
+        console.error('Error al eliminar el evento:', error);
+        alert('Error al eliminar el evento.');
+      });
+    }
+  }
+  
+  editarEvento(evento: any): void {
+    this.router.navigate(['/event-creator'], { queryParams: { id_evento: evento.id_evento } });
+  }
+  
 }
