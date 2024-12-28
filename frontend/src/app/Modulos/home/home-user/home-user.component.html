@@ -1,14 +1,13 @@
-<<<<<<< HEAD
-<!-- Header -->
+<!-- Encabezado principal de la página -->
 <header class="bg-primary text-white py-3">
   <div class="container d-flex justify-content-between align-items-center">
-    <!-- Logo -->
+    <!-- Logo y nombre de la aplicación -->
     <div id="app-name-container">
       <img id="logo" src="assets/img/fotoLogo.png" alt="Logo" />
       <h1 id="app-name">Crew Connect</h1>
     </div>
 
-    <!-- Navegación -->
+    <!-- Navegación de usuario con opciones de perfil -->
     <nav class="d-flex align-items-center">
       <div class="dropdown">
         <button class="btn btn-outline-light dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -18,7 +17,6 @@
           </div>
         </button>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-          <li><a class="dropdown-item" href="#">Mi Perfil</a></li>
           <li><a class="dropdown-item" href="#">Cerrar Sesión</a></li>
         </ul>
       </div>
@@ -26,7 +24,7 @@
   </div>
 </header>
 
-<!-- Hero Section -->
+<!-- Sección introductoria o Hero -->
 <section class="hero bg-light py-5">
   <div class="container text-center">
     <h2 class="display-4 mb-4">¡Bienvenido a la Plataforma de Organización de Quedadas!</h2>
@@ -34,13 +32,34 @@
     <button class="btn btn-primary btn-lg" (click)="navigateToCreateEvent()">Crear Evento</button>
   </div>
 </section>
+
 <br><br><br>
 
 <!-- Sección de Eventos Destacados -->
 <div class="section featured-events mb-5">
-  <h2 class="mb-4">Eventos Destacados</h2>
+  <!-- Controles de Filtro -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Eventos Destacados</h2>
+    <div class="filter-container d-flex align-items-center">
+      <div class="me-3">
+        <label for="fechaMin">Fecha mínima:</label>
+        <input type="date" id="fechaMin" [(ngModel)]="fechaMin" class="form-control">
+      </div>
+      <div class="me-3">
+        <label for="fechaMax">Fecha máxima:</label>
+        <input type="date" id="fechaMax" [(ngModel)]="fechaMax" class="form-control">
+      </div>
+      <div class="me-3 d-flex align-items-center">
+        <input type="checkbox" id="mostrarSoloCaducados" [(ngModel)]="mostrarSoloCaducados" class="me-2">
+        <label for="mostrarSoloCaducados" class="mb-0">Mostrar solo eventos caducados</label>
+      </div>
+      <button class="btn btn-primary" (click)="aplicarFiltros()">Aplicar Filtros</button>
+    </div>
+  </div>
+
+  <!-- Lista de eventos destacados -->
   <div *ngFor="let evento of eventos" class="col-md-6 mb-4">
-    <div class="card h-100">
+    <div class="card h-100" [ngClass]="{'caducado-card': esEventoCaducado(evento)}">
       <div class="card-body">
         <h3 class="card-title">{{ evento.title }}</h3>
         <p class="card-text"><strong>Fecha:</strong> {{ evento.date }} a las {{ evento.time }}</p>
@@ -54,10 +73,6 @@
     </div>
   </div>
 </div>
-
-
-
-
 
 <!-- Sección de Encuestas de Planificación -->
 <div class="section polls mb-5">
@@ -193,31 +208,9 @@
   </div>
 </div>
 
-<!-- Footer -->
+<!-- Footer de la página -->
 <footer class="bg-dark text-white py-3">
   <div class="container text-center">
     <p class="mb-0">&copy; 2024 Organizador de Quedadas. Todos los derechos reservados.</p>
   </div>
 </footer>
-=======
-<div id="header">
-  <div id="app-name-container">
-    <img id="logo" src="assets/img/fotoLogo.png" alt="Logo" />
-    <h1 id="app-name">Crew Connect</h1>
-  </div>
-  <div id="user-info" *ngIf="username">
-    Hola, {{username}}
-  </div>
-</div>
-
-<div class="main-content">
-  <section class="hero">
-    <h2 class="hero-title">¡Organiza tus Quedadas y Eventos Fácilmente!</h2>
-    <p class="hero-subtitle">Haz que tus planes con amigos y familiares sean perfectos, sin complicaciones.</p>
-    <button class="action-button" (click)="navigateToCreateEvent()">Crear Evento</button>
-  </section>
-</div>
-<footer id="footer">
-  <p>&copy; 2024 Organizador de Quedadas. Todos los derechos reservados.</p>
-</footer>
->>>>>>> 3bfd86e4c6fe25894a2b97422731decb873a5ae8

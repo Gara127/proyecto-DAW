@@ -56,4 +56,17 @@ export class EventoService {
   obtenerEventoCreado$(): Observable<Evento> {
     return this.eventoCreado.asObservable(); // Devolver el observable
   }
+
+  // Obtener eventos con filtrado opcional
+  obtenerEventosFiltrados(fecha_min?: string, fecha_max?: string, solo_caducados?: boolean): Observable<Evento[]> {
+  let params: any = {};
+  if (fecha_min) params.fecha_min = fecha_min;
+  if (fecha_max) params.fecha_max = fecha_max;
+  if (solo_caducados) params.solo_caducados = solo_caducados;
+
+  return this.http.get<Evento[]>(this.apiUrl, { params });
+  }
+
+
+  
 }

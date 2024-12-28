@@ -135,3 +135,44 @@ body {
   cursor: pointer;
 }
 
+.filter-container {
+  display: flex;
+  gap: 1rem; /* Espaciado entre elementos */
+  flex-wrap: wrap; /* Permitir que los filtros se muevan a la siguiente línea en pantallas pequeñas */
+}
+
+.filter-container label {
+  margin-bottom: 0.25rem;
+  font-weight: bold;
+}
+
+.filter-container .form-control {
+  width: auto; /* Ajusta los inputs al contenido */
+  min-width: 150px; /* Asegura un tamaño mínimo */
+}
+
+#mostrarSoloCaducados {
+  margin-top: 0.25rem;
+}
+
+.caducado-card {
+  background-color: #f0f0f0; /* Fondo gris claro */
+  border: 1px solid #d6d6d6; /* Borde gris */
+  border-radius: 0.5rem; /* Bordes redondeados */
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra interna */
+}
+
+.carousel-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-item {
+  display: flex;
+  justify-content: space-between;
+}
+
+
+
+
