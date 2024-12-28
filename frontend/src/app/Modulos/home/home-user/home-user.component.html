@@ -3,13 +3,19 @@
 <header class="bg-primary text-white py-3">
   <div class="container d-flex justify-content-between align-items-center">
     <!-- Logo -->
-    <h1 class="h3 mb-0">Organizador de Quedadas</h1>
+    <div id="app-name-container">
+      <img id="logo" src="assets/img/fotoLogo.png" alt="Logo" />
+      <h1 id="app-name">Crew Connect</h1>
+    </div>
 
     <!-- Navegación -->
     <nav class="d-flex align-items-center">
       <div class="dropdown">
         <button class="btn btn-outline-light dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
           <img src="assets/img/fotodeperfil.webp" alt="Foto de perfil" class="rounded-circle" width="30" height="30">
+          <div id="user-info" *ngIf="username">
+            Hola, {{username}}
+          </div>
         </button>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
           <li><a class="dropdown-item" href="#">Mi Perfil</a></li>
@@ -40,6 +46,10 @@
         <p class="card-text"><strong>Fecha:</strong> {{ evento.date }} a las {{ evento.time }}</p>
         <p class="card-text"><strong>Ubicación:</strong> {{ evento.location }}</p>
         <p class="card-text"><strong>Descripción:</strong> {{ evento.description }}</p>
+        <div class="d-flex justify-content-between">
+          <button class="btn btn-danger" (click)="eliminarEvento(evento.id_evento)">Eliminar</button>
+          <button class="btn btn-warning" (click)="editarEvento(evento)">Editar</button>
+        </div>
       </div>
     </div>
   </div>
