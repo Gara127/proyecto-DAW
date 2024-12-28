@@ -19,21 +19,41 @@ switch ($method) {
 
     // Obtener todos los eventos
     case 'GET':
-        // Consulta para obtener los eventos y los participantes asociados
+        $fecha_min = isset($_GET['fecha_min']) ? $_GET['fecha_min'] : null;
+        $fecha_max = isset($_GET['fecha_max']) ? $_GET['fecha_max'] : null;
+        $solo_caducados = isset($_GET['solo_caducados']) ? boolval($_GET['solo_caducados']) : false;
+
         $query = "SELECT e.id_evento, e.title, e.date, e.time, e.location, e.description, 
                          GROUP_CONCAT(u.nombre) AS participants
                   FROM eventos e
                   LEFT JOIN evento_participantes ep ON e.id_evento = ep.id_evento
-                  LEFT JOIN usuario u ON ep.id_usuario = u.id_usuario
-                  GROUP BY e.id_evento";
+                  LEFT JOIN usuario u ON ep.id_usuario = u.id_usuario";
+
+        $where_clauses = [];
+        if ($fecha_min) {
+            $where_clauses[] = "e.date >= '$fecha_min'";
+        }
+        if ($fecha_max) {
+            $where_clauses[] = "e.date <= '$fecha_max'";
+        }
+        if ($solo_caducados) {
+            $today = date('Y-m-d');
+            $where_clauses[] = "e.date < '$today'";
+        }
+
+        if (!empty($where_clauses)) {
+            $query .= " WHERE " . implode(" AND ", $where_clauses);
+        }
+
+        $query .= " GROUP BY e.id_evento";
+
         $result = mysqli_query($con, $query);
 
-        // Verificar si la consulta fue exitosa
         if ($result) {
             $eventos = mysqli_fetch_all($result, MYSQLI_ASSOC);
-            echo json_encode($eventos); // Devolver los eventos como un array JSON
+            echo json_encode($eventos);
         } else {
-            http_response_code(500); // Código de error interno del servidor
+            http_response_code(500);
             echo json_encode(["error" => "Error al obtener eventos: " . mysqli_error($con)]);
         }
         break;
