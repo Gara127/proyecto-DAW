@@ -1,8 +1,8 @@
 <?php
-    $host = "localhost";
-    $user = "root";
-    $pass = "Cocacola01.";
-    $db_name = "ProyectoDaw";
+    $host = "sql204.infinityfree.com";
+    $user = "if0_38003803";
+    $pass = "5kgXzeZtXD4WZO";
+    $db_name = "if0_38003803_crew_connect_db";
 
     function init(){
         $con = conectar(); // Conectar a la base de datos
