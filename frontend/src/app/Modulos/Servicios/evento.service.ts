@@ -7,7 +7,7 @@ import { Evento } from '../models/evento.model';
   providedIn: 'root'
 })
 export class EventoService {
-  private apiUrl = 'http://crewconnect.rf.gd/eventos.php'; // URL del endpoint PHP
+  private apiUrl = 'https://crewconnect.rf.gd/eventos.php'; // URL del endpoint PHP
   constructor(private http: HttpClient) { }
 
   // Obtener todos los eventos
