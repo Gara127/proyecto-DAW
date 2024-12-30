@@ -1,8 +1,8 @@
 <?php
-    $host = "localhost";
-    $user = "root";
-    $pass = "Cocacola01.";
-    $db_name = "ProyectoDaw";
+    $host = "31.22.4.234";
+    $user = "crewconnect_root";
+    $pass = "5kgXzeZtXD4WZO";
+    $db_name = "crewconnect_db";
 
     function init(){
         $con = conectar(); // Conectar a la base de datos
@@ -10,12 +10,11 @@
         crear_eventos($con);
         evento_participantes($con);
         cerrar_conexion($con); // Cerrar la conexión
-        
     }
 
     function conectar(){
         $con = mysqli_connect($GLOBALS["host"], $GLOBALS["user"], $GLOBALS["pass"]) or die("Error al conectar con la base de datos");
-        crear_bdd($con);
+        // crear_bdd($con);
         mysqli_select_db($con, $GLOBALS["db_name"]);
         return $con;
     }
