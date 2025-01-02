@@ -11,7 +11,7 @@ function comprobarRegistro($con) {
     }
     $nombre = $data['nombre'];
     $password = $data['pass'];
-    $rol = "normal"; // O el rol que prefieras
+    $rol = "user"; // O el rol que prefieras
 
     // Consulta para insertar el usuario
     $query = "INSERT INTO usuario (nombre, pass, rol) VALUES ('$nombre', '$password', '$rol')";
