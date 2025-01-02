@@ -2,12 +2,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Evento } from '../models/evento.model';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EventoService {
   private apiUrl = 'http://localhost/backend/eventos.php'; // URL del endpoint PHP
+  private eventoCreado = new Subject<Evento>(); // Subject para emitir eventos creados
   constructor(private http: HttpClient) { }
 
   // Obtener todos los eventos
@@ -36,4 +38,35 @@ export class EventoService {
   eliminarEvento(id_evento: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}?id_evento=${id_evento}`);
   }
+
+  // Editar un evento
+  editarEvento(evento: Evento): Observable<any> {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.put<any>(`${this.apiUrl}?id_evento=${evento.id_evento}`, evento, { headers });
+  }
+
+  // Notificar sobre un nuevo evento creado
+  notificarEventoCreado(evento: Evento) {
+    console.log('Evento notificado:', evento); // Verifica aquí
+    this.eventoCreado.next(evento);
+  }
+  
+
+  // Escuchar nuevos eventos creados
+  obtenerEventoCreado$(): Observable<Evento> {
+    return this.eventoCreado.asObservable(); // Devolver el observable
+  }
+
+  // Obtener eventos con filtrado opcional
+  obtenerEventosFiltrados(fecha_min?: string, fecha_max?: string, solo_caducados?: boolean): Observable<Evento[]> {
+  let params: any = {};
+  if (fecha_min) params.fecha_min = fecha_min;
+  if (fecha_max) params.fecha_max = fecha_max;
+  if (solo_caducados) params.solo_caducados = solo_caducados;
+
+  return this.http.get<Evento[]>(this.apiUrl, { params });
+  }
+
+
+  
 }

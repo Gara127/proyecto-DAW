@@ -43,7 +43,7 @@ export class RegisterComponent {
     const registerData = {
       nombre: this.email, // Usamos email como nombre
       pass: this.password,
-      rol: "user", // Asumimos rol "normal"
+      rol: "user", // Asumimos rol "user"
       action: 'register'
     };
 
