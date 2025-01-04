@@ -65,6 +65,11 @@
         <p class="card-text"><strong>Fecha:</strong> {{ evento.date }} a las {{ evento.time }}</p>
         <p class="card-text"><strong>Ubicación:</strong> {{ evento.location }}</p>
         <p class="card-text"><strong>Descripción:</strong> {{ evento.description }}</p>
+        <p class="card-text"><strong>Participantes:</strong></p>
+        <ul *ngIf="evento.participants">
+          <li *ngFor="let participante of evento.participants.split(', ')">{{ participante }}</li>
+        </ul>
+
         <div class="d-flex justify-content-between">
           <button class="btn btn-danger" (click)="eliminarEvento(evento.id_evento)">Eliminar</button>
           <button class="btn btn-warning" (click)="editarEvento(evento)">Editar</button>
