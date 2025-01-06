@@ -19,7 +19,7 @@ import { HomeModule } from './Modulos/home/home.module';
     BrowserModule, // Importar el módulo del navegador
     AuthModule, // Importa el módulo de autenticación
     ReactiveFormsModule,
-    FormsModule,
+    FormsModule, 
     HomeModule
   ],
   providers: [
