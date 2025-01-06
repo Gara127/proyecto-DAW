@@ -35,10 +35,14 @@ export class EventoService {
   }
 
   // Actualizar parcialmente un evento
-  actualizarEventoParcial(id_evento: number, data: Partial<Evento>): Observable<any> {
-  const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-  return this.http.patch<any>(`${this.apiUrl}?id_evento=${id_evento}`, data, { headers });
+  actualizarEventoParcial(idEvento: number, data: Partial<Evento>): Observable<any> {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.put(`${this.apiUrl}?id_evento=${idEvento}`, data, { headers });
 }
+
+  
+  
+  
 
 
   // Eliminar un evento

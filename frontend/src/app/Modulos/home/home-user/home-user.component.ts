@@ -40,10 +40,16 @@ export class HomeUserComponent implements OnInit {
   }
 
   cargarEventos(): void {
-    // Cargar eventos desde el servicio
     this.eventoService.obtenerEventos().subscribe((data) => {
       if (data && Array.isArray(data)) {
-        this.eventos = data; // Asignar eventos al array
+        this.eventos = data.map((evento) => ({
+          ...evento,
+          checklist: Array.isArray(evento.checklist)
+            ? evento.checklist
+            : typeof evento.checklist === 'string'
+            ? JSON.parse(evento.checklist)
+            : []
+        }));
       } else {
         console.error('Error: Los datos de eventos no son un array válido.');
         this.eventos = [];
@@ -53,6 +59,10 @@ export class HomeUserComponent implements OnInit {
       this.eventos = [];
     });
   }
+  
+  
+  
+  
 
   eliminarEvento(id_evento: number): void {
     // Elimina un evento seleccionado después de confirmar
@@ -101,7 +111,10 @@ export class HomeUserComponent implements OnInit {
   }
 
   navigateToTasks(eventoId: number): void {
+    console.log('Navegando a tasks con ID:', eventoId); // Log para verificar el ID antes de navegar
     this.router.navigate(['/tasks'], { queryParams: { id_evento: eventoId } });
   }
+  
+  
   
 }

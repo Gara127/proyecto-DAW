@@ -6,5 +6,5 @@ export interface Evento{
     location: string;       
     description: string;
     participants?: number[]; // lista id de usuarios
-    checklist?: string[];    // Lista de elementos de la checklist    
+    checklist?: string | string[]; // Puede ser un array de strings o un string JSON}
 }

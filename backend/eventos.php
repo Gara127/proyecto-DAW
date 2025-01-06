@@ -2,7 +2,7 @@
 // Configurar los encabezados para respuestas JSON y permitir el acceso desde cualquier origen
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
+header("Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE");
 header("Access-Control-Allow-Headers: Content-Type");
 
 // Archivo de conexión a la base de datos
@@ -19,77 +19,110 @@ switch ($method) {
 
     // Obtener todos los eventos
     case 'GET':
-        $fecha_min = isset($_GET['fecha_min']) ? $_GET['fecha_min'] : null;
-        $fecha_max = isset($_GET['fecha_max']) ? $_GET['fecha_max'] : null;
-        $solo_caducados = isset($_GET['solo_caducados']) ? boolval($_GET['solo_caducados']) : false;
+        if (isset($_GET['id_evento'])) {
+            // Si se proporciona un ID de evento, obtén solo ese evento
+            $id_evento = intval($_GET['id_evento']);
+            $query = "SELECT 
+                e.id_evento, 
+                e.title, 
+                e.date, 
+                e.time, 
+                e.location, 
+                e.description, 
+                e.checklist, 
+                (SELECT GROUP_CONCAT(u.nombre) 
+                 FROM evento_participantes ep 
+                 JOIN usuario u ON ep.id_usuario = u.id_usuario 
+                 WHERE ep.id_evento = e.id_evento) AS participants
+            FROM eventos e
+            WHERE e.id_evento = $id_evento";
 
-        $query = "SELECT e.id_evento, e.title, e.date, e.time, e.location, e.description, 
-                         GROUP_CONCAT(u.nombre) AS participants
-                  FROM eventos e
-                  LEFT JOIN evento_participantes ep ON e.id_evento = ep.id_evento
-                  LEFT JOIN usuario u ON ep.id_usuario = u.id_usuario";
+            $result = mysqli_query($con, $query);
 
-        $where_clauses = [];
-        if ($fecha_min) {
-            $where_clauses[] = "e.date >= '$fecha_min'";
-        }
-        if ($fecha_max) {
-            $where_clauses[] = "e.date <= '$fecha_max'";
-        }
-        if ($solo_caducados) {
-            $today = date('Y-m-d');
-            $where_clauses[] = "e.date < '$today'";
-        }
-
-        if (!empty($where_clauses)) {
-            $query .= " WHERE " . implode(" AND ", $where_clauses);
-        }
-
-        $query .= " GROUP BY e.id_evento";
-
-        $result = mysqli_query($con, $query);
-
-        if ($result) {
-            $eventos = mysqli_fetch_all($result, MYSQLI_ASSOC);
-            echo json_encode($eventos);
+            if ($result) {
+                $evento = mysqli_fetch_assoc($result); // Obtén un solo registro
+                echo json_encode($evento);
+            } else {
+                http_response_code(500);
+                echo json_encode(["error" => "Error al obtener evento: " . mysqli_error($con)]);
+            }
         } else {
-            http_response_code(500);
-            echo json_encode(["error" => "Error al obtener eventos: " . mysqli_error($con)]);
+            // Si no se proporciona un ID de evento, obtén todos los eventos
+            $fecha_min = isset($_GET['fecha_min']) ? $_GET['fecha_min'] : null;
+            $fecha_max = isset($_GET['fecha_max']) ? $_GET['fecha_max'] : null;
+            $solo_caducados = isset($_GET['solo_caducados']) ? boolval($_GET['solo_caducados']) : false;
+
+            $query = "SELECT 
+                e.id_evento, 
+                e.title, 
+                e.date, 
+                e.time, 
+                e.location, 
+                e.description, 
+                e.checklist, 
+                (SELECT GROUP_CONCAT(u.nombre) 
+                 FROM evento_participantes ep 
+                 JOIN usuario u ON ep.id_usuario = u.id_usuario 
+                 WHERE ep.id_evento = e.id_evento) AS participants
+            FROM eventos e";
+
+            $where_clauses = [];
+            if ($fecha_min) {
+                $where_clauses[] = "e.date >= '$fecha_min'";
+            }
+            if ($fecha_max) {
+                $where_clauses[] = "e.date <= '$fecha_max'";
+            }
+            if ($solo_caducados) {
+                $today = date('Y-m-d');
+                $where_clauses[] = "e.date < '$today'";
+            }
+
+            if (!empty($where_clauses)) {
+                $query .= " WHERE " . implode(" AND ", $where_clauses);
+            }
+
+            $query .= " GROUP BY e.id_evento";
+
+            $result = mysqli_query($con, $query);
+
+            if ($result) {
+                $eventos = mysqli_fetch_all($result, MYSQLI_ASSOC);
+                echo json_encode($eventos);
+            } else {
+                http_response_code(500);
+                echo json_encode(["error" => "Error al obtener eventos: " . mysqli_error($con)]);
+            }
         }
         break;
 
             // Actualizar parcialmente un evento (PATCH)
-    case 'PATCH':
-        parse_str(file_get_contents("php://input"), $_PATCH); // Obtener datos del cuerpo de la solicitud
-        if (isset($_GET['id_evento'])) {
-            $id_evento = intval($_GET['id_evento']);
-
-            // Construir la consulta SQL dinámicamente para actualizar solo los campos proporcionados
-            $updates = [];
-            if (isset($_PATCH['checklist'])) {
-                $checklist = mysqli_real_escape_string($con, json_encode($_PATCH['checklist']));
-                $updates[] = "checklist = '$checklist'";
-            }
-
-            // Verificar que haya al menos un campo para actualizar
-            if (!empty($updates)) {
-                $update_query = "UPDATE eventos SET " . implode(", ", $updates) . " WHERE id_evento = $id_evento";
-
-                if (mysqli_query($con, $update_query)) {
-                    echo json_encode(["success" => true, "message" => "Evento actualizado parcialmente con éxito."]);
+            case 'PATCH':
+                parse_str(file_get_contents("php://input"), $_PATCH); // Obtener datos del cuerpo de la solicitud
+                if (isset($_GET['id_evento'])) {
+                    $id_evento = intval($_GET['id_evento']);
+                    $checklist = $_PATCH['checklist'] ?? null;
+            
+                    if ($checklist !== null) {
+                        $query = "UPDATE eventos SET checklist = '$checklist' WHERE id_evento = $id_evento";
+                        if (mysqli_query($con, $query)) {
+                            echo json_encode(["success" => true, "message" => "Checklist actualizada con éxito."]);
+                        } else {
+                            http_response_code(500);
+                            echo json_encode(["error" => "Error al actualizar el checklist: " . mysqli_error($con)]);
+                        }
+                    } else {
+                        http_response_code(400);
+                        echo json_encode(["error" => "Datos incompletos para actualizar el evento."]);
+                    }
                 } else {
-                    http_response_code(500); // Error interno del servidor
-                    echo json_encode(["success" => false, "message" => "Error al actualizar el evento: " . mysqli_error($con)]);
+                    http_response_code(400);
+                    echo json_encode(["error" => "ID del evento no especificado."]);
                 }
-            } else {
-                http_response_code(400); // Solicitud incorrecta
-                echo json_encode(["success" => false, "message" => "No se proporcionaron campos para actualizar."]);
-            }
-        } else {
-            http_response_code(400); // Solicitud incorrecta
-            echo json_encode(["success" => false, "message" => "ID del evento no especificado."]);
-        }
-        break;
+                break;
+            
+            
+            
 
 
     // Crear un nuevo evento
@@ -173,30 +206,59 @@ switch ($method) {
     // Actualizar un evento
     case 'PUT':
         $data = json_decode(file_get_contents("php://input"), true); // Obtener datos del cuerpo de la solicitud
-
+    
         // Validar los campos obligatorios
-        if (!empty($data['id_evento']) && !empty($data['title']) && !empty($data['date']) && !empty($data['time'])) {
-            $id_evento = intval($data['id_evento']);
-            $title = mysqli_real_escape_string($con, $data['title']);
-            $date = mysqli_real_escape_string($con, $data['date']);
-            $time = mysqli_real_escape_string($con, $data['time']);
-            $location = mysqli_real_escape_string($con, $data['location'] ?? '');
-            $description = mysqli_real_escape_string($con, $data['description'] ?? '');
-
-            // Actualizar el evento en la base de datos
-            $query = "UPDATE eventos SET title = '$title', date = '$date', time = '$time', location = '$location', description = '$description' WHERE id_evento = $id_evento";
-
-            if (mysqli_query($con, $query)) {
-                echo json_encode(["success" => true, "message" => "Evento actualizado con éxito."]);
+        if (!empty($_GET['id_evento'])) {
+            $id_evento = intval($_GET['id_evento']);
+    
+            $updates = [];
+            
+            // Validar y preparar los campos a actualizar
+            if (isset($data['title'])) {
+                $title = mysqli_real_escape_string($con, $data['title']);
+                $updates[] = "title = '$title'";
+            }
+            if (isset($data['date'])) {
+                $date = mysqli_real_escape_string($con, $data['date']);
+                $updates[] = "date = '$date'";
+            }
+            if (isset($data['time'])) {
+                $time = mysqli_real_escape_string($con, $data['time']);
+                $updates[] = "time = '$time'";
+            }
+            if (isset($data['location'])) {
+                $location = mysqli_real_escape_string($con, $data['location']);
+                $updates[] = "location = '$location'";
+            }
+            if (isset($data['description'])) {
+                $description = mysqli_real_escape_string($con, $data['description']);
+                $updates[] = "description = '$description'";
+            }
+            if (isset($data['checklist'])) {
+                $checklist = mysqli_real_escape_string($con, $data['checklist']);
+                $updates[] = "checklist = '$checklist'";
+            }
+    
+            // Construir y ejecutar la consulta SQL si hay campos para actualizar
+            if (!empty($updates)) {
+                $query = "UPDATE eventos SET " . implode(", ", $updates) . " WHERE id_evento = $id_evento";
+    
+                if (mysqli_query($con, $query)) {
+                    echo json_encode(["success" => true, "message" => "Evento actualizado con éxito."]);
+                } else {
+                    http_response_code(500); // Error interno del servidor
+                    echo json_encode(["success" => false, "message" => "Error al actualizar el evento: " . mysqli_error($con)]);
+                }
             } else {
-                http_response_code(500); // Error interno del servidor
-                echo json_encode(["success" => false, "message" => "Error al actualizar el evento: " . mysqli_error($con)]);
+                http_response_code(400); // Solicitud incorrecta
+                echo json_encode(["success" => false, "message" => "No se proporcionaron campos para actualizar."]);
             }
         } else {
             http_response_code(400); // Solicitud incorrecta
-            echo json_encode(["success" => false, "message" => "Datos incompletos para actualizar el evento."]);
+            echo json_encode(["success" => false, "message" => "ID del evento no especificado."]);
         }
         break;
+    
 }
 
 // Cerrar conexión con la base de datos

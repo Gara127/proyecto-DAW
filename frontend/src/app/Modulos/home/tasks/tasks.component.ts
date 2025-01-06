@@ -19,22 +19,53 @@ export class TasksComponent implements OnInit {
   constructor(private route: ActivatedRoute, private eventoService: EventoService) {}
 
   ngOnInit(): void {
-    // Obtener el ID del evento desde los parámetros de la URL
     this.route.queryParams.subscribe((params) => {
-      const idEvento = +params['id_evento'];
+      console.log('Query params:', params); // Verifica todos los parámetros de la URL
+      const idEvento = +params['id_evento']; // Obtén el ID desde los parámetros
+      console.log('ID del evento desde la URL:', idEvento); // Verifica si el ID es correcto
       if (idEvento) {
-        this.obtenerEvento(idEvento); // Cargar los datos del evento
+        this.obtenerEvento(idEvento);
+      } else {
+        console.error('ID del evento no proporcionado en la URL'); // Si no hay ID
       }
     });
   }
+  
+  
+  
+  
 
   // Cargar los datos del evento seleccionado
   obtenerEvento(idEvento: number): void {
-    this.eventoService.obtenerEventoPorId(idEvento).subscribe((evento) => {
-      this.eventoSeleccionado = evento;
-      this.checklist = evento.checklist || []; // Cargar la checklist existente
-    });
+    console.log('Llamando a obtenerEvento con ID:', idEvento); // Verifica el ID recibido
+    this.eventoService.obtenerEventoPorId(idEvento).subscribe(
+      (evento) => {
+        console.log('Evento obtenido del backend:', evento); // Verifica la respuesta del backend
+        if (evento) {
+          this.eventoSeleccionado = evento; // Asigna directamente el evento
+          console.log('Evento seleccionado:', this.eventoSeleccionado); // Verifica la asignación
+          this.checklist = Array.isArray(this.eventoSeleccionado.checklist)
+            ? this.eventoSeleccionado.checklist
+            : typeof this.eventoSeleccionado.checklist === 'string'
+            ? JSON.parse(this.eventoSeleccionado.checklist)
+            : [];
+          console.log('Checklist inicial:', this.checklist); // Verifica la checklist
+        } else {
+          console.error('Evento no encontrado para el ID proporcionado');
+        }
+      },
+      (error) => {
+        console.error('Error al obtener el evento del backend:', error);
+      }
+    );
   }
+  
+  
+  
+  
+  
+  
+  
 
   // Añadir un elemento a la checklist
   agregarElemento(): void {
@@ -46,13 +77,35 @@ export class TasksComponent implements OnInit {
 
   // Guardar la checklist en el evento seleccionado
   guardarChecklist(): void {
-    if (this.eventoSeleccionado) {
+    console.log('Evento seleccionado antes de guardar:', this.eventoSeleccionado); // Verifica si el evento está definido
+    if (this.eventoSeleccionado && this.eventoSeleccionado.id_evento) {
+      const idEvento = this.eventoSeleccionado.id_evento;
+      console.log('ID del evento para guardar checklist:', idEvento); // Verifica el ID
+      console.log('Checklist a guardar:', this.checklist); // Verifica la checklist
+  
       this.eventoService
-        .actualizarEventoParcial(this.eventoSeleccionado.id_evento, { checklist: this.checklist })
-        .subscribe(() => {
-          alert('Checklist actualizada con éxito');
-        });
+        .actualizarEventoParcial(idEvento, { checklist: JSON.stringify(this.checklist) })
+        .subscribe(
+          () => {
+            alert('Checklist actualizada con éxito');
+          },
+          (error) => {
+            console.error('Error al actualizar la checklist:', error);
+          }
+        );
+    } else {
+      console.error('ID del evento no definido o evento seleccionado no cargado.');
     }
   }
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
   
 }
