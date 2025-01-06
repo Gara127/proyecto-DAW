@@ -1,0 +1,30 @@
+<form (ngSubmit)="guardarChecklist()">
+  <!-- Campo de texto para el título de la tarea -->
+  <div class="mb-3">
+    <label for="checklistItem" class="form-label">Elemento de Checklist</label>
+    <input
+      type="text"
+      id="checklistItem"
+      [(ngModel)]="checklistItem"
+      name="checklistItem"
+      class="form-control"
+      placeholder="Escribe un elemento"
+      required
+    />
+  </div>
+
+  <!-- Botón para agregar elementos a la checklist -->
+  <button type="button" class="btn btn-primary" (click)="agregarElemento()">
+    Añadir a Checklist
+  </button>
+
+  <!-- Lista de elementos añadidos -->
+  <ul class="list-group mt-3">
+    <li class="list-group-item" *ngFor="let item of checklist">
+      {{ item }}
+    </li>
+  </ul>
+
+  <!-- Botón para guardar la checklist -->
+  <button type="submit" class="btn btn-success mt-3">Guardar Checklist</button>
+</form>

@@ -30,10 +30,12 @@
     <h2 class="display-4 mb-4">¡Bienvenido a la Plataforma de Organización de Quedadas!</h2>
     <p class="lead mb-4">Organiza tus quedadas y eventos fácilmente y haz que tus planes con amigos y familiares sean perfectos, sin complicaciones.</p>
     <button class="btn btn-primary btn-lg" (click)="navigateToCreateEvent()">Crear Evento</button>
+
   </div>
 </section>
 
 <br><br><br>
+
 
 <!-- Sección de Eventos Destacados -->
 <div class="section featured-events mb-5">
@@ -73,6 +75,10 @@
         <div class="d-flex justify-content-between">
           <button class="btn btn-danger" (click)="eliminarEvento(evento.id_evento)">Eliminar</button>
           <button class="btn btn-warning" (click)="editarEvento(evento)">Editar</button>
+          <button class="btn btn-primary" (click)="navigateToTasks(evento.id_evento)">
+            Ver Checklist
+          </button>
+          
         </div>
       </div>
     </div>

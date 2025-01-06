@@ -6,20 +6,24 @@ import { RouterModule } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HomeUserComponent } from './home-user/home-user.component';
+import { TasksComponent } from './tasks/tasks.component';
+
 
 
 
 @NgModule({
   declarations: [
     EventCreatorComponent,
-    HomeUserComponent
+    HomeUserComponent,
+    TasksComponent
   ],
   imports: [
     CommonModule,
+    FormsModule,
     HomeRoutingModule,
     RouterModule,
-    ReactiveFormsModule,
-    FormsModule
+    ReactiveFormsModule
+    
   ],
   providers: [
     provideHttpClient(), // Mantén esto

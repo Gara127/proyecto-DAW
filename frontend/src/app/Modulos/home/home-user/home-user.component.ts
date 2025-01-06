@@ -3,11 +3,13 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { EventoService } from '../../Servicios/evento.service';
 import { FormsModule } from '@angular/forms'; // Importar FormsModule para manejo de formularios
+import { PruebaComponent } from '../prueba/prueba.component';
+import { TasksComponent } from '../tasks/tasks.component';
 
 @Component({
   selector: 'app-home-user', // Selector del componente
   standalone: true, // Define que el componente no requiere un módulo externo
-  imports: [CommonModule, FormsModule], // Importa módulos necesarios
+  imports: [CommonModule, FormsModule,TasksComponent], // Importa módulos necesarios
   templateUrl: './home-user.component.html', // Ruta de la plantilla HTML
   styleUrls: ['./home-user.component.css'] // Ruta de la hoja de estilos
 })
@@ -97,4 +99,9 @@ export class HomeUserComponent implements OnInit {
     const today = new Date().toISOString().split('T')[0]; // Fecha actual en formato 'YYYY-MM-DD'
     return evento.date < today; // Devuelve true si la fecha del evento es anterior a hoy
   }
+
+  navigateToTasks(eventoId: number): void {
+    this.router.navigate(['/tasks'], { queryParams: { id_evento: eventoId } });
+  }
+  
 }

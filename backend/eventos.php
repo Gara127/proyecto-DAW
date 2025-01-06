@@ -58,6 +58,40 @@ switch ($method) {
         }
         break;
 
+            // Actualizar parcialmente un evento (PATCH)
+    case 'PATCH':
+        parse_str(file_get_contents("php://input"), $_PATCH); // Obtener datos del cuerpo de la solicitud
+        if (isset($_GET['id_evento'])) {
+            $id_evento = intval($_GET['id_evento']);
+
+            // Construir la consulta SQL dinámicamente para actualizar solo los campos proporcionados
+            $updates = [];
+            if (isset($_PATCH['checklist'])) {
+                $checklist = mysqli_real_escape_string($con, json_encode($_PATCH['checklist']));
+                $updates[] = "checklist = '$checklist'";
+            }
+
+            // Verificar que haya al menos un campo para actualizar
+            if (!empty($updates)) {
+                $update_query = "UPDATE eventos SET " . implode(", ", $updates) . " WHERE id_evento = $id_evento";
+
+                if (mysqli_query($con, $update_query)) {
+                    echo json_encode(["success" => true, "message" => "Evento actualizado parcialmente con éxito."]);
+                } else {
+                    http_response_code(500); // Error interno del servidor
+                    echo json_encode(["success" => false, "message" => "Error al actualizar el evento: " . mysqli_error($con)]);
+                }
+            } else {
+                http_response_code(400); // Solicitud incorrecta
+                echo json_encode(["success" => false, "message" => "No se proporcionaron campos para actualizar."]);
+            }
+        } else {
+            http_response_code(400); // Solicitud incorrecta
+            echo json_encode(["success" => false, "message" => "ID del evento no especificado."]);
+        }
+        break;
+
+
     // Crear un nuevo evento
     case 'POST':
         $data = json_decode(file_get_contents("php://input"), true); // Obtener datos del cuerpo de la solicitud
