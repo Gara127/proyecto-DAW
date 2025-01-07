@@ -1,0 +1,55 @@
+<div id="header">
+  <h1 id="slogan">Let's plan together</h1>
+  <div id="app-name-container">
+    <img id="logo" src="/assets/img/fotoLogo.png" alt="Logo" />
+    <h1 id="app-name">Crew Connect</h1>
+  </div>
+</div>
+
+<div class="container">
+  <h2>Cambiar Contraseña</h2>
+  
+  <form [formGroup]="changePassForm" (ngSubmit)="onSubmit()">
+
+    <!-- Email -->
+    <div class="form-group">
+      <input type="email" id="email" formControlName="email" placeholder="Ingresa tu correo">
+      <div *ngIf="changePassForm.get('email')?.invalid && changePassForm.get('email')?.touched" class="text-danger">
+        Correo electrónico inválido
+      </div>
+    </div>
+    
+    <!-- Contraseña Antigua -->
+    <div class="form-group">
+      <input type="password" id="oldPassword" formControlName="oldPassword" placeholder="Ingresa tu contraseña actual">
+      <div *ngIf="changePassForm.get('oldPassword')?.invalid && changePassForm.get('oldPassword')?.touched" class="text-danger">
+        Contraseña antigua es requerida
+      </div>
+    </div>
+    
+    <!-- Nueva Contraseña -->
+    <div class="form-group">
+      <input type="password" id="newPassword" formControlName="newPassword" placeholder="Ingresa tu nueva contraseña">
+      <div *ngIf="changePassForm.get('newPassword')?.invalid && changePassForm.get('newPassword')?.touched" class="text-danger">
+        Nueva contraseña es requerida
+      </div>
+    </div>
+    
+    <!-- Repetir Nueva Contraseña -->
+    <div class="form-group">
+      <input type="password" id="confirmPassword" formControlName="confirmPassword" placeholder="Repite tu nueva contraseña">
+      <div *ngIf="changePassForm.get('confirmPassword')?.invalid && changePassForm.get('confirmPassword')?.touched" class="text-danger">
+        Repetir la nueva contraseña es requerido
+      </div>
+      <div *ngIf="changePassForm.hasError('passwordsMismatch') && changePassForm.get('confirmPassword')?.touched" class="text-danger">
+        Las contraseñas no coinciden
+      </div>
+    </div>
+    
+    <!-- Botón de Enviar -->
+    <div class="form-group">
+      <input type="submit" value="Cambiar Contraseña" [disabled]="!changePassForm.valid">
+    </div>
+  </form>
+  <button class="back-button" onclick="window.history.back()">Atrás</button>
+</div>

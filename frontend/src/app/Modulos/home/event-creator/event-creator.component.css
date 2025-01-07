@@ -1,62 +1,95 @@
+#header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 50px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#logo {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+#app-name-container {
+  display: flex;
+  align-items: center;
+}
+
+#app-name {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #0056b3;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+#user-info {
+  font-size: 15px;
+  color: #333;
+  font-weight: bold;
+  justify-content: end;
+}
+
 #form {
   display: flex;
   justify-content: center; 
   align-items: flex-start; 
   height: 100vh;
   width: 100%; 
-  padding: 20px; 
+  padding: 10px; 
 }
 
 form {
-  max-width: 500px; 
-  min-height: 400px; 
-  padding: 3%; 
-  border: 3px solid #0a0a0a;
-  border-radius: 20px; 
-  background-color: #8ada9c; 
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); 
+  max-width: 350px; 
+  min-height: 300px; 
+  padding: 2%; 
+  border: 2px solid #0a0a0a; 
+  border-radius: 10px; 
+  background-color:rgb(236, 215, 183);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
   width: 100%; 
   display: flex;
   flex-direction: column;
-  gap: 15px; 
-  margin: 50px auto; 
+  gap: 10px; 
+  margin: 30px auto; 
 }
-
 
 label {
   color: black;
   display: block;
-  margin-bottom: 10px; 
+  margin-bottom: 5px; 
+  font-size: 0.9em; 
 }
 
 input,
 textarea {
   width: 100%; 
-  padding: 10px; 
-  margin-bottom: 15px; 
-  border: 2px solid #0f0f0f;
+  padding: 8px; 
+  margin-bottom: 10px; 
+  border: 1px solid #0f0f0f; 
   border-radius: 4px; 
-  font-size: 16px; 
+  font-size: 14px; 
 }
 
-.etiqueta{
+.etiqueta {
   color: black;
-  font-size:large;
-  font-weight:bold;
-
+  font-size: medium; 
+  font-weight: bold;
 }
 
-/* Estilo para el botón */
 button {
-  padding: 10px; 
-  background-color: #007bff; 
+  padding: 8px; 
+  background-color: #0056b3;  
   color: #fff; 
   border: none; 
   border-radius: 4px; 
-  font-size: 16px; 
+  font-size: 14px; 
   cursor: pointer; 
   transition: background-color 0.3s; 
-  margin-top: 20px; 
+  margin-top: 10px; 
 }
 
 button:hover {
@@ -64,7 +97,7 @@ button:hover {
 }
 
 #btnAddUser {
-  width: 50%; 
+  width: 60%; 
   display: block; 
   margin-left: auto; 
   margin-right: auto; 
@@ -74,5 +107,23 @@ button:hover {
 /* Estilo para los mensajes de error */
 small {
   color: red;
-  font-size: 0.8em; /* Tamaño más pequeño */
+  font-size: 0.75em; 
 }
+
+.back-button {
+  padding: 10px 20px; 
+  background-color: #b3b3b3; 
+  color: white; 
+  border: none; 
+  border-radius: 4px; 
+  font-size: 16px; 
+  cursor: pointer; 
+  transition: background-color 0.3s;
+  display: inline-block;
+   
+}
+
+.back-button:hover {
+  background-color: #0056b3; 
+}
+

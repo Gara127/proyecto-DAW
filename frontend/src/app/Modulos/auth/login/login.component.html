@@ -1,4 +1,10 @@
-<h1>Let's plan together</h1>
+<div id="header">
+    <h1 id="slogan">Let's plan together</h1>
+    <div id="app-name-container">
+      <img id="logo" src="/assets/img/fotoLogo.png" alt="Logo" />
+      <h1 id="app-name">Crew Connect</h1>
+    </div>
+  </div>  
 <div id="contenedor">
     <div id="form">
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
@@ -11,10 +17,11 @@
             <div id="campos">
                 <div id="registro">
                     <span>¿No tienes cuenta? </span>
+                    <br>
                     <a id="registro-enlace" (click)="irARegistro()">Registrate aquí</a>
                 </div>
                 <div id="forgetpassword">
-                    <a id="pass-forgot" href=""> Contraseña olvidada</a>
+                    <a id="pass-forgot" (click)="irAChangePass()"> Contraseña olvidada</a>
                 </div>
             </div>
         </form>    

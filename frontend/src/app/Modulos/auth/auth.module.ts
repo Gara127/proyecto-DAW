@@ -9,8 +9,7 @@ import { EditUserComponent } from './edit-user/edit-user.component';
 import { RegisterComponent } from './register/register.component';
 import { RouterModule } from '@angular/router';
 import { HomeRoutingModule } from '../home/home-routing.module';
-
-
+import { ChangePassComponent } from './changePass/changePass.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +18,7 @@ import { HomeRoutingModule } from '../home/home-routing.module';
     EditUserComponent,
     RegisterComponent,
     CommonModule,
+    ChangePassComponent
   ],
   imports: [
     CommonModule,

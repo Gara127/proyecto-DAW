@@ -1,7 +1,7 @@
 <?php
     $host = "localhost";
     $user = "root";
-    $pass = "Sander123";
+    $pass = "";
     $db_name = "ProyectoDaw";
 
     function init(){
@@ -50,7 +50,7 @@
             mysqli_query($con, "insert into usuario (nombre, pass, rol) values ('$nombre', '$password', '$rol')");
         }
     }
-    
+
     function crear_eventos($con){
         mysqli_query($con,"create table if not exists eventos(
                     id_evento INT AUTO_INCREMENT PRIMARY KEY,
@@ -60,9 +60,6 @@
                     location VARCHAR(255),
                     description TEXT
                     )") or die("Error al crear la tabla evento: " . mysqli_error($con));
-             
-
-
     }
 
     function evento_participantes($con){
@@ -127,7 +124,7 @@
                     UNIQUE(id_usuario, id_voting) -- Asegura que un usuario solo pueda votar una vez por evento
                     )") or die("Error al crear la tabla event_votes: " . mysqli_error($con));
     }
-   
+
     // AUX
 
     function cerrar_conexion($con){

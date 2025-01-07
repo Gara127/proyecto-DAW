@@ -40,6 +40,10 @@ export class LoginComponent implements OnInit {
     this.router.navigate(['/register']);
   }
 
+  irAChangePass(){
+    this.router.navigate(['change-password']);
+  }
+
   onSubmit() {
     
     if (this.loginForm.valid) {
@@ -51,19 +55,33 @@ export class LoginComponent implements OnInit {
       
       // Llama al método iniciarSesion del servicio
       this.usuarioService.iniciarSesion(loginData).subscribe(
-        response => {
+        (response: any) => { // Asegúrate de que el backend devuelva un objeto con el rol
           console.log('Inicio de sesión exitoso!', response);
-          // Aquí puedes redirigir al usuario a otra página
-          this.router.navigate(['./home']); // Cambia '/home' a la ruta que desees
+          localStorage.setItem('username', response.nombre); // guardamos el nombre en localstorage
+          
+          if (response && response.rol) {
+            // Verifica el rol y redirige
+            if (response.rol === 'admin') {
+              this.router.navigate(['/home']);
+            } else if (response.rol === 'user') {
+              this.router.navigate(['/home-user']);
+            } else {
+              console.error('Rol desconocido:', response.rol);
+              alert('Rol desconocido, contacte al administrador.');
+            }
+          } else {
+            console.error('Respuesta sin rol:', response);
+            alert('Error al procesar el inicio de sesión.');
+          }
         },
         error => {
           console.error('Error en el inicio de sesión', error);
-          alert("Usuario o contraseña no encontradas");
+          alert('Usuario o contraseña no encontrados.');
         }
       );
     } else {
       console.log('Formulario inválido');
-      alert("Formulario inválido");
+      alert('Formulario inválido.');
     }
   }
-}
+}  

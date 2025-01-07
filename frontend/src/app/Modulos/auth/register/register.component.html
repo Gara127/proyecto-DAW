@@ -1,4 +1,12 @@
-<div class="container">
+<div id="header">
+    <h1 id="slogan">Let's plan together</h1>
+    <div id="app-name-container">
+      <img id="logo" src="/assets/img/fotoLogo.png" alt="Logo" />
+      <h1 id="app-name">Crew Connect</h1>
+    </div>
+  </div>
+  
+  <div class="container">
     <h2>Regístrate</h2>
     <form (submit)="onSubmit($event)">
         <div>
@@ -22,10 +30,12 @@
             </div>
         </div>
     </form>
-<!-- 
-    <div>
+    <button class="back-button" onclick="window.history.back()">Atrás</button>
+    
+    <!--<div>
         <p>Login with:</p>
         <button class="button-gmail" (click)="signInWithGoogle()">Google</button>
         <button class="button-facebook" (click)="signInWithFacebook()">Facebook</button>
-    </div> -->
+    </div>-->
+    
 </div>

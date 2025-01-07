@@ -14,7 +14,7 @@ function comprobarRegistro($con, $data) {
 
     $nombre = $data['nombre'];
     $password = $data['pass'];
-    $rol = "normal";  // Asumiendo rol "normal" como predeterminado
+    $rol = "user"; // O el rol que prefieras
 
     // Verificación de si el usuario ya existe
     $query_check = "SELECT * FROM usuario WHERE nombre = ?";

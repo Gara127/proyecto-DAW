@@ -1,18 +1,113 @@
+
+#header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 50px;
+  background-color: rgb(236, 215, 183);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#logo {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+#app-name-container {
+  display: flex;
+  align-items: center;
+}
+
+#app-name {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #0056b3;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+#user-info {
+  font-size: 15px;
+  color: #333;
+  font-weight: bold;
+}
+
+/* Estilo para el título de bienvenida */
+#admin-welcome {
+  font-family: 'Poppins', sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  margin-top: 50px;
+}
+
+
+#user-table-container {
+  width: 80%; 
+  margin: 20px auto;
+  overflow-x: auto; 
+}  
+
 table {
-    width: 30%; /* O el ancho que prefieras */
-    border-collapse: collapse; /* Hace que los bordes de las celdas se combinen */
-  }
-  
-  th, td {
-    border: 1px solid #000; /* Bordes sólidos de 1px, puedes cambiar el color */
-    padding: 8px; /* Espaciado interno para las celdas */
-    text-align: left; /* Alineación del texto a la izquierda */
-  }
-  
-  th {
-    background-color: #f2f2f2; /* Color de fondo para los encabezados */
-  }
-  
-  tr:nth-child(even) {
-    background-color: #f9f9f9; /* Color de fondo alternativo para las filas */
-  }
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden; 
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+  font-family: 'Arial', sans-serif;
+}
+
+th {
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+td {
+  background-color: #fff;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+input[type="button"] {
+  padding: 8px 15px;
+  background-color: #0056b3;  
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+input[type="button"]:hover {
+  background-color: #0056b3;
+}
+
+/* Estilos para el botón "Atrás" */
+.back-button {
+  padding: 10px 20px;
+  background-color: #0056b3;  
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+  display: block;
+  margin: 20px auto;
+}
+
+.back-button:hover {
+  background-color: #357bc7;
+}
