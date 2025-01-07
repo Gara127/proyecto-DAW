@@ -2,73 +2,66 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { EventoService } from '../../Servicios/evento.service';
-import { FormsModule } from '@angular/forms'; // Importar FormsModule para manejo de formularios
-import { PruebaComponent } from '../prueba/prueba.component';
-import { TasksComponent } from '../tasks/tasks.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-home-user', // Selector del componente
-  standalone: true, // Define que el componente no requiere un módulo externo
-  imports: [CommonModule, FormsModule,TasksComponent], // Importa módulos necesarios
-  templateUrl: './home-user.component.html', // Ruta de la plantilla HTML
-  styleUrls: ['./home-user.component.css'] // Ruta de la hoja de estilos
+  selector: 'app-home-user',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './home-user.component.html',
+  styleUrls: ['./home-user.component.css']
 })
 export class HomeUserComponent implements OnInit {
-  eventos: any[] = []; // Lista de eventos cargados
-  username: string | null = null; // Nombre del usuario para mostrar en el encabezado
-  fechaMin: string | null = null; // Filtro: Fecha mínima
-  fechaMax: string | null = null; // Filtro: Fecha máxima
-  mostrarSoloCaducados: boolean = false; // Filtro: Mostrar eventos caducados
+  eventos: any[] = [];
+  username: string | null = null;
+  fechaMin: string | null = null;
+  fechaMax: string | null = null;
+  mostrarSoloCaducados: boolean = false;
 
   constructor(private router: Router, private eventoService: EventoService) {}
 
   ngOnInit(): void {
-    this.username = localStorage.getItem('username'); // Recuperar el nombre del usuario almacenado
-    this.cargarEventos(); // Cargar eventos al inicializar el componente
+    this.username = localStorage.getItem('username');
+    this.cargarEventos();
 
-    // Escuchar nuevos eventos creados y agregar dinámicamente a la lista
-    this.eventoService.obtenerEventoCreado$().subscribe((nuevoEvento) => {
-      if (nuevoEvento) {
-        this.eventos.unshift(nuevoEvento); // Agregar el nuevo evento al inicio de la lista
-      }
+    // Escucha actualizaciones de eventos (por ejemplo, checklist actualizada)
+    this.eventoService.obtenerEventoCreado$().subscribe(() => {
+      this.cargarEventos();
     });
-  }
-
-  navigateToCreateEvent(): void {
-    // Redirige al formulario para crear un nuevo evento
-    this.router.navigate(['/event-creator']);
   }
 
   cargarEventos(): void {
-    this.eventoService.obtenerEventos().subscribe((data) => {
-      if (data && Array.isArray(data)) {
-        this.eventos = data.map((evento) => ({
-          ...evento,
-          checklist: Array.isArray(evento.checklist)
-            ? evento.checklist
-            : typeof evento.checklist === 'string'
-            ? JSON.parse(evento.checklist)
-            : []
-        }));
-      } else {
-        console.error('Error: Los datos de eventos no son un array válido.');
+    this.eventoService.obtenerEventos().subscribe(
+      (data) => {
+        if (Array.isArray(data)) {
+          this.eventos = data.map((evento) => ({
+            ...evento,
+            checklist: Array.isArray(evento.checklist)
+              ? evento.checklist
+              : typeof evento.checklist === 'string'
+              ? JSON.parse(evento.checklist)
+              : [],
+            participants: Array.isArray(evento.participants)
+              ? evento.participants
+              : [], // No usamos split porque viene directamente como array
+          }));
+        } else {
+          console.error('Datos de eventos inválidos:', data);
+          this.eventos = [];
+        }
+      },
+      (error) => {
+        console.error('Error al cargar eventos:', error);
         this.eventos = [];
       }
-    }, (error) => {
-      console.error('Error al cargar eventos:', error);
-      this.eventos = [];
-    });
+    );
   }
-  
-  
-  
   
 
   eliminarEvento(id_evento: number): void {
-    // Elimina un evento seleccionado después de confirmar
     if (confirm('¿Estás seguro de que deseas eliminar este evento?')) {
       this.eventoService.eliminarEvento(id_evento).subscribe(() => {
-        this.eventos = this.eventos.filter(evento => evento.id_evento !== id_evento); // Filtra el evento eliminado
+        this.eventos = this.eventos.filter(evento => evento.id_evento !== id_evento);
         alert('Evento eliminado con éxito.');
       }, error => {
         console.error('Error al eliminar el evento:', error);
@@ -78,20 +71,18 @@ export class HomeUserComponent implements OnInit {
   }
 
   editarEvento(evento: any): void {
-    // Redirige al formulario de edición pasando el id del evento como parámetro
     this.router.navigate(['/event-creator'], { queryParams: { id_evento: evento.id_evento } });
   }
 
   aplicarFiltros(): void {
-    // Aplica filtros de fecha y caducidad en la lista de eventos
     this.eventoService.obtenerEventosFiltrados(
       this.fechaMin || undefined, 
       this.fechaMax || undefined, 
       this.mostrarSoloCaducados
     ).subscribe(
       (data) => {
-        if (data && Array.isArray(data)) {
-          this.eventos = data; // Actualiza la lista de eventos con los datos filtrados
+        if (Array.isArray(data)) {
+          this.eventos = data;
         } else {
           console.error('Error: Los datos de eventos no son válidos.');
           this.eventos = [];
@@ -105,16 +96,15 @@ export class HomeUserComponent implements OnInit {
   }
 
   esEventoCaducado(evento: any): boolean {
-    // Verifica si un evento ya ocurrió comparando su fecha con la actual
-    const today = new Date().toISOString().split('T')[0]; // Fecha actual en formato 'YYYY-MM-DD'
-    return evento.date < today; // Devuelve true si la fecha del evento es anterior a hoy
+    const today = new Date().toISOString().split('T')[0];
+    return evento.date < today;
+  }
+
+  navigateToCreateEvent(): void {
+    this.router.navigate(['/event-creator']);
   }
 
   navigateToTasks(eventoId: number): void {
-    console.log('Navegando a tasks con ID:', eventoId); // Log para verificar el ID antes de navegar
     this.router.navigate(['/tasks'], { queryParams: { id_evento: eventoId } });
   }
-  
-  
-  
 }

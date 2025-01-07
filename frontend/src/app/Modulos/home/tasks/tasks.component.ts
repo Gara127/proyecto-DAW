@@ -37,19 +37,13 @@ export class TasksComponent implements OnInit {
 
   // Cargar los datos del evento seleccionado
   obtenerEvento(idEvento: number): void {
-    console.log('Llamando a obtenerEvento con ID:', idEvento); // Verifica el ID recibido
     this.eventoService.obtenerEventoPorId(idEvento).subscribe(
       (evento) => {
-        console.log('Evento obtenido del backend:', evento); // Verifica la respuesta del backend
         if (evento) {
-          this.eventoSeleccionado = evento; // Asigna directamente el evento
-          console.log('Evento seleccionado:', this.eventoSeleccionado); // Verifica la asignación
-          this.checklist = Array.isArray(this.eventoSeleccionado.checklist)
-            ? this.eventoSeleccionado.checklist
-            : typeof this.eventoSeleccionado.checklist === 'string'
-            ? JSON.parse(this.eventoSeleccionado.checklist)
+          this.eventoSeleccionado = evento;
+          this.checklist = Array.isArray(evento.checklist)
+            ? evento.checklist
             : [];
-          console.log('Checklist inicial:', this.checklist); // Verifica la checklist
         } else {
           console.error('Evento no encontrado para el ID proporcionado');
         }
@@ -59,6 +53,7 @@ export class TasksComponent implements OnInit {
       }
     );
   }
+  
   
   
   
@@ -77,26 +72,22 @@ export class TasksComponent implements OnInit {
 
   // Guardar la checklist en el evento seleccionado
   guardarChecklist(): void {
-    console.log('Evento seleccionado antes de guardar:', this.eventoSeleccionado); // Verifica si el evento está definido
     if (this.eventoSeleccionado && this.eventoSeleccionado.id_evento) {
-      const idEvento = this.eventoSeleccionado.id_evento;
-      console.log('ID del evento para guardar checklist:', idEvento); // Verifica el ID
-      console.log('Checklist a guardar:', this.checklist); // Verifica la checklist
-  
       this.eventoService
-        .actualizarEventoParcial(idEvento, { checklist: JSON.stringify(this.checklist) })
+        .actualizarEventoParcial(this.eventoSeleccionado.id_evento, { checklist: this.checklist })
         .subscribe(
           () => {
-            alert('Checklist actualizada con éxito');
+            alert('Checklist actualizada con éxito.');
           },
           (error) => {
             console.error('Error al actualizar la checklist:', error);
           }
         );
-    } else {
-      console.error('ID del evento no definido o evento seleccionado no cargado.');
     }
   }
+  
+  
+  
   
   
 

@@ -61,34 +61,44 @@
 
   <!-- Lista de eventos destacados -->
   <div *ngFor="let evento of eventos" class="col-md-6 mb-4">
-    <div class="card h-100" [ngClass]="{'caducado-card': esEventoCaducado(evento)}">
+    <div class="card h-100">
       <div class="card-body">
         <h3 class="card-title">{{ evento.title }}</h3>
         <p class="card-text"><strong>Fecha:</strong> {{ evento.date }} a las {{ evento.time }}</p>
-        <p class="card-text"><strong>Ubicación:</strong> {{ evento.location }}</p>
-        <p class="card-text"><strong>Descripción:</strong> {{ evento.description }}</p>
-        <p class="card-text"><strong>Participantes:</strong></p>
-        <ul *ngIf="evento.participants">
-          <li *ngFor="let participante of evento.participants.split(', ')">{{ participante }}</li>
-        </ul>
-        <p class="card-text"><strong>Checklist:</strong></p>
-        <ul *ngIf="evento.checklist">
-          <li *ngFor="let item of evento.checklist">{{ item }}</li>
-        </ul>
+        <p class="card-text"><strong>Ubicación:</strong> {{ evento.location || 'No especificada' }}</p>
+        <p class="card-text"><strong>Descripción:</strong> {{ evento.description || 'Sin descripción' }}</p>
+  
+        <!-- Participantes -->
+<p class="card-text"><strong>Participantes:</strong></p>
+<ul *ngIf="evento.participants?.length > 0; else noParticipants">
+  <li *ngFor="let participante of evento.participants">{{ participante }}</li>
+</ul>
+<ng-template #noParticipants>
+  <p class="text-muted">No hay participantes</p>
+</ng-template>
 
+<!-- Checklist -->
+<p class="card-text"><strong>Checklist:</strong></p>
+<ul *ngIf="evento.checklist?.length > 0; else noChecklist">
+  <li *ngFor="let item of evento.checklist">{{ item }}</li>
+</ul>
+<ng-template #noChecklist>
+  <p class="text-muted">No hay elementos en la checklist</p>
+</ng-template>
 
-        <div class="d-flex justify-content-between">
+  
+        <!-- Botones -->
+        <div class="d-flex justify-content-between mt-3">
           <button class="btn btn-danger" (click)="eliminarEvento(evento.id_evento)">Eliminar</button>
           <button class="btn btn-warning" (click)="editarEvento(evento)">Editar</button>
-          <button class="btn btn-primary" (click)="navigateToTasks(evento.id_evento)">
-            Ver Checklist
-          </button>
-          
+          <button class="btn btn-primary" (click)="navigateToTasks(evento.id_evento)">Ver Checklist</button>
         </div>
       </div>
     </div>
   </div>
-</div>
+  
+  
+      </div>
 
 <!-- Sección de Encuestas de Planificación -->
 <div class="section polls mb-5">

@@ -20,7 +20,6 @@ switch ($method) {
     // Obtener todos los eventos
     case 'GET':
         if (isset($_GET['id_evento'])) {
-            // Si se proporciona un ID de evento, obtén solo ese evento
             $id_evento = intval($_GET['id_evento']);
             $query = "SELECT 
                 e.id_evento, 
@@ -29,29 +28,29 @@ switch ($method) {
                 e.time, 
                 e.location, 
                 e.description, 
-                e.checklist, 
-                (SELECT GROUP_CONCAT(u.nombre) 
+                COALESCE(e.checklist, '[]') AS checklist, 
+                (SELECT JSON_ARRAYAGG(u.nombre) 
                  FROM evento_participantes ep 
                  JOIN usuario u ON ep.id_usuario = u.id_usuario 
                  WHERE ep.id_evento = e.id_evento) AS participants
             FROM eventos e
             WHERE e.id_evento = $id_evento";
-
+    
             $result = mysqli_query($con, $query);
-
+    
             if ($result) {
-                $evento = mysqli_fetch_assoc($result); // Obtén un solo registro
+                $evento = mysqli_fetch_assoc($result);
+                // Decodificar checklist si no está vacío
+                $evento['checklist'] = json_decode($evento['checklist']) ?: [];
+                // Asegurar que participants sea un array válido
+                $evento['participants'] = $evento['participants'] ? json_decode($evento['participants']) : [];
                 echo json_encode($evento);
             } else {
                 http_response_code(500);
                 echo json_encode(["error" => "Error al obtener evento: " . mysqli_error($con)]);
             }
         } else {
-            // Si no se proporciona un ID de evento, obtén todos los eventos
-            $fecha_min = isset($_GET['fecha_min']) ? $_GET['fecha_min'] : null;
-            $fecha_max = isset($_GET['fecha_max']) ? $_GET['fecha_max'] : null;
-            $solo_caducados = isset($_GET['solo_caducados']) ? boolval($_GET['solo_caducados']) : false;
-
+            // Consultar todos los eventos
             $query = "SELECT 
                 e.id_evento, 
                 e.title, 
@@ -59,35 +58,23 @@ switch ($method) {
                 e.time, 
                 e.location, 
                 e.description, 
-                e.checklist, 
-                (SELECT GROUP_CONCAT(u.nombre) 
+                COALESCE(e.checklist, '[]') AS checklist, 
+                (SELECT JSON_ARRAYAGG(u.nombre) 
                  FROM evento_participantes ep 
                  JOIN usuario u ON ep.id_usuario = u.id_usuario 
                  WHERE ep.id_evento = e.id_evento) AS participants
             FROM eventos e";
-
-            $where_clauses = [];
-            if ($fecha_min) {
-                $where_clauses[] = "e.date >= '$fecha_min'";
-            }
-            if ($fecha_max) {
-                $where_clauses[] = "e.date <= '$fecha_max'";
-            }
-            if ($solo_caducados) {
-                $today = date('Y-m-d');
-                $where_clauses[] = "e.date < '$today'";
-            }
-
-            if (!empty($where_clauses)) {
-                $query .= " WHERE " . implode(" AND ", $where_clauses);
-            }
-
-            $query .= " GROUP BY e.id_evento";
-
+    
             $result = mysqli_query($con, $query);
-
+    
             if ($result) {
-                $eventos = mysqli_fetch_all($result, MYSQLI_ASSOC);
+                $eventos = [];
+                while ($evento = mysqli_fetch_assoc($result)) {
+                    // Decodificar checklist y participants para cada evento
+                    $evento['checklist'] = json_decode($evento['checklist']) ?: [];
+                    $evento['participants'] = $evento['participants'] ? json_decode($evento['participants']) : [];
+                    $eventos[] = $evento;
+                }
                 echo json_encode($eventos);
             } else {
                 http_response_code(500);
@@ -95,6 +82,8 @@ switch ($method) {
             }
         }
         break;
+    
+    
 
             // Actualizar parcialmente un evento (PATCH)
             case 'PATCH':
