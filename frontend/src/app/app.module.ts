@@ -20,7 +20,7 @@ import { ChangePassComponent } from './Modulos/auth/changePass/changePass.compon
     BrowserModule, // Importar el módulo del navegador
     AuthModule, // Importa el módulo de autenticación
     ReactiveFormsModule,
-    FormsModule,
+    FormsModule, 
     HomeModule
   ],
   providers: [

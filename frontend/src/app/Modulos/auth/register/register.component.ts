@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UsuarioService } from '../../Servicios/usuario.service';
 import { Router } from '@angular/router';
+ 
 
 @Component({
   standalone: true,

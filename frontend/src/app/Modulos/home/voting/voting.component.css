@@ -1,0 +1,100 @@
+.voting-system {
+    max-width: 600px;
+    margin: 20px auto;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .voting-system h2 {
+    text-align: center;
+    color: #333;
+  }
+  
+  .suggestion-form {
+    margin-bottom: 20px;
+  }
+  
+  .suggestion-form input[type="text"],
+  .suggestion-form input[type="date"],
+  .suggestion-form input[type="time"],
+  .suggestion-form input[type="text"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .suggestion-form input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.4);
+  }
+  
+  .suggestion-form button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .suggestion-form button:hover {
+    background-color: #0056b3;
+  }
+  
+  .suggestions-list {
+    margin-top: 20px;
+  }
+  
+  .suggestions-list h3 {
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+  }
+  
+  .suggestion-item {
+    padding: 15px;
+    margin: 10px 0;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .suggestion-item strong {
+    font-size: 18px;
+    color: #007bff;
+  }
+  
+  .suggestion-item button {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .suggestion-item button:hover {
+    background-color: #218838;
+  }
+  
+  /* Errores visuales */
+  input.ng-invalid.ng-touched {
+    border-color: #dc3545;
+  }
+  
+  input.ng-valid.ng-touched {
+    border-color: #28a745;
+  }
+  

@@ -8,10 +8,8 @@ import { AdmiHomeComponent } from './home-admi/home-admi.component';
 import { EditUserComponent } from './edit-user/edit-user.component';
 import { RegisterComponent } from './register/register.component';
 import { RouterModule } from '@angular/router';
+import { HomeRoutingModule } from '../home/home-routing.module';
 import { ChangePassComponent } from './changePass/changePass.component';
-
-
-
 
 @NgModule({
   declarations: [
@@ -19,6 +17,7 @@ import { ChangePassComponent } from './changePass/changePass.component';
     AdmiHomeComponent,
     EditUserComponent,
     RegisterComponent,
+    CommonModule,
     ChangePassComponent
   ],
   imports: [
@@ -26,7 +25,8 @@ import { ChangePassComponent } from './changePass/changePass.component';
     AuthRoutingModule,
     ReactiveFormsModule,
     FormsModule,
-    RouterModule
+    RouterModule,
+    HomeRoutingModule
   ],
   providers: [
     provideHttpClient(), // Mantén esto
