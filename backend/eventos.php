@@ -87,20 +87,22 @@ switch ($method) {
 
             // Actualizar parcialmente un evento (PATCH)
             case 'PATCH':
-                parse_str(file_get_contents("php://input"), $_PATCH); // Obtener datos del cuerpo de la solicitud
+                $_PATCH = json_decode(file_get_contents("php://input"), true);
                 if (isset($_GET['id_evento'])) {
                     $id_evento = intval($_GET['id_evento']);
                     $checklist = $_PATCH['checklist'] ?? null;
             
                     if ($checklist !== null) {
-                        $query = "UPDATE eventos SET checklist = '$checklist' WHERE id_evento = $id_evento";
+                        $checklistEscaped = mysqli_real_escape_string($con, json_encode($checklist));
+                        $query = "UPDATE eventos SET checklist = '$checklistEscaped' WHERE id_evento = $id_evento";
                         if (mysqli_query($con, $query)) {
                             echo json_encode(["success" => true, "message" => "Checklist actualizada con éxito."]);
                         } else {
                             http_response_code(500);
                             echo json_encode(["error" => "Error al actualizar el checklist: " . mysqli_error($con)]);
                         }
-                    } else {
+                    }
+                     else {
                         http_response_code(400);
                         echo json_encode(["error" => "Datos incompletos para actualizar el evento."]);
                     }
@@ -109,6 +111,8 @@ switch ($method) {
                     echo json_encode(["error" => "ID del evento no especificado."]);
                 }
                 break;
+            
+            
             
             
             

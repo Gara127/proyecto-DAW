@@ -34,11 +34,19 @@ export class EventoService {
     return this.http.put<any>(`${this.apiUrl}?id_evento=${evento.id_evento}`, evento, { headers });
   }
 
+
   // Actualizar parcialmente un evento
-  actualizarEventoParcial(idEvento: number, data: Partial<Evento>): Observable<any> {
+  actualizarEventoParcial(id_evento: number, cambios: any): Observable<any> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.put(`${this.apiUrl}?id_evento=${idEvento}`, data, { headers });
-}
+    return this.http.patch<any>(`${this.apiUrl}?id_evento=${id_evento}`, cambios, { headers });
+  }
+  
+  
+  
+  
+  
+
+
 
   
   

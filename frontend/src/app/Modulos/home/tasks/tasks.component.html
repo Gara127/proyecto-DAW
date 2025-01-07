@@ -1,5 +1,6 @@
+<!-- Formulario para la checklist -->
 <form (ngSubmit)="guardarChecklist()">
-  <!-- Campo de texto para el título de la tarea -->
+  <!-- Campo de texto para añadir un nuevo elemento a la checklist -->
   <div class="mb-3">
     <label for="checklistItem" class="form-label">Elemento de Checklist</label>
     <input
@@ -18,12 +19,16 @@
     Añadir a Checklist
   </button>
 
-  <!-- Lista de elementos añadidos -->
-  <ul class="list-group mt-3">
-    <li class="list-group-item" *ngFor="let item of checklist">
-      {{ item }}
-    </li>
-  </ul>
+ <!-- Lista de elementos añadidos -->
+<ul class="list-group mt-3">
+  <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let item of checklist; let i = index">
+    <!-- Mostrar cada elemento -->
+    {{ item }}
+    <!-- Botón para eliminar -->
+    <button type="button" class="btn btn-danger btn-sm" (click)="eliminarElemento(i)">Eliminar</button>
+  </li>
+</ul>
+
 
   <!-- Botón para guardar la checklist -->
   <button type="submit" class="btn btn-success mt-3">Guardar Checklist</button>

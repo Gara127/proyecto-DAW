@@ -23,12 +23,13 @@ export class HomeUserComponent implements OnInit {
   ngOnInit(): void {
     this.username = localStorage.getItem('username');
     this.cargarEventos();
-
-    // Escucha actualizaciones de eventos (por ejemplo, checklist actualizada)
+  
+    // Escuchar actualizaciones en los eventos (checklist actualizada)
     this.eventoService.obtenerEventoCreado$().subscribe(() => {
-      this.cargarEventos();
+      this.cargarEventos(); // Recargar eventos al recibir notificación
     });
   }
+  
 
   cargarEventos(): void {
     this.eventoService.obtenerEventos().subscribe(
@@ -43,7 +44,7 @@ export class HomeUserComponent implements OnInit {
               : [],
             participants: Array.isArray(evento.participants)
               ? evento.participants
-              : [], // No usamos split porque viene directamente como array
+              : [],
           }));
         } else {
           console.error('Datos de eventos inválidos:', data);
@@ -56,6 +57,8 @@ export class HomeUserComponent implements OnInit {
       }
     );
   }
+  
+  
   
 
   eliminarEvento(id_evento: number): void {
