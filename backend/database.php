@@ -22,7 +22,6 @@
         mysqli_select_db($con, $GLOBALS["db_name"]);
         return $con;
     }
-    
 
     function crear_bdd($con){
         mysqli_query($con, "create database if not exists ProyectoDaw;");
@@ -89,10 +88,7 @@
                     FOREIGN KEY (id_grupo) REFERENCES grupos(id_grupo),
                     UNIQUE(id_usuario, id_grupo) -- Un usuario solo puede pertenecer una vez a un grupo
                     )") or die("Error al crear la tabla usuario_grupo: " . mysqli_error($con));
-
-        
     }
-
 
     // Tabla de eventos provisionales
     function crear_tabla_voting($con){
@@ -108,8 +104,6 @@
                     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario),
                     FOREIGN KEY (id_grupo) REFERENCES grupos(id_grupo) 
                     )") or die("Error al crear la tabla upcoming_events: " . mysqli_error($con));
-
-            
     }
 
      // Tabla de votos de eventos

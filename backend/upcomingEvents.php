@@ -6,7 +6,6 @@ header("Access-Control-Allow-Headers: Content-Type");
 
 
 require_once("database.php");
-require_once("comprobacionDatos.php");
 
 $con = conectar();
 if (!$con) {
