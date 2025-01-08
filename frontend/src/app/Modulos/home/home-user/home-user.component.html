@@ -54,46 +54,45 @@
     </div>
 
     <!-- Lista de eventos -->
-    <div class="row g-4">
-      <div *ngFor="let evento of eventos" class="col-lg-4 col-md-6">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <h3 class="card-title text-primary">{{ evento.title }}</h3>
-            <p class="card-text"><strong>Fecha:</strong> {{ evento.date }} a las {{ evento.time }}</p>
-            <p class="card-text"><strong>Ubicación:</strong> {{ evento.location || 'No especificada' }}</p>
-            <p class="card-text"><strong>Descripción:</strong> {{ evento.description || 'Sin descripción' }}</p>
-            <!-- Participantes -->
-            <div>
-              <p class="card-text"><strong>Participantes:</strong></p>
-              <ul *ngIf="evento.participants?.length > 0; else noParticipants">
-                <li *ngFor="let participante of evento.participants">{{ participante }}</li>
-              </ul>
-              <ng-template #noParticipants>
-                <p class="text-muted">No hay participantes</p>
-              </ng-template>
-            </div>
-            <!-- Checklist -->
-            <div>
-              <p class="card-text"><strong>Checklist:</strong></p>
-              <ul *ngIf="evento.checklist?.length > 0; else noChecklist">
-                <li *ngFor="let item of evento.checklist">{{ item }}</li>
-              </ul>
-              <ng-template #noChecklist>
-                <p class="text-muted">No hay elementos en la checklist</p>
-              </ng-template>
-            </div>
-            <!-- Botones -->
-            <div class="d-flex justify-content-between mt-3">
-              <button class="btn btn-danger btn-sm" (click)="eliminarEvento(evento.id_evento)">Eliminar</button>
-              <button class="btn btn-warning btn-sm" (click)="editarEvento(evento)">Editar</button>
-              <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#taskModal" (click)="abrirChecklist(evento.id_evento)">Ver Checklist</button>
-            </div>
-          </div>
+<div class="row g-4">
+  <div *ngFor="let evento of eventosFiltrados" class="col-lg-4 col-md-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h3 class="card-title text-primary">{{ evento.title }}</h3>
+        <p class="card-text"><strong>Fecha:</strong> {{ evento.date }} a las {{ evento.time }}</p>
+        <p class="card-text"><strong>Ubicación:</strong> {{ evento.location || 'No especificada' }}</p>
+        <p class="card-text"><strong>Descripción:</strong> {{ evento.description || 'Sin descripción' }}</p>
+        <!-- Participantes -->
+        <div>
+          <p class="card-text"><strong>Participantes:</strong></p>
+          <ul *ngIf="evento.participants?.length > 0; else noParticipants">
+            <li *ngFor="let participante of evento.participants">{{ participante }}</li>
+          </ul>
+          <ng-template #noParticipants>
+            <p class="text-muted">No hay participantes</p>
+          </ng-template>
+        </div>
+        <!-- Checklist -->
+        <div>
+          <p class="card-text"><strong>Checklist:</strong></p>
+          <ul *ngIf="evento.checklist?.length > 0; else noChecklist">
+            <li *ngFor="let item of evento.checklist">{{ item }}</li>
+          </ul>
+          <ng-template #noChecklist>
+            <p class="text-muted">No hay elementos en la checklist</p>
+          </ng-template>
+        </div>
+        <!-- Botones -->
+        <div class="d-flex justify-content-between mt-3">
+          <button class="btn btn-danger btn-sm" (click)="eliminarEvento(evento.id_evento)">Eliminar</button>
+          <button class="btn btn-warning btn-sm" (click)="editarEvento(evento)">Editar</button>
+          <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#taskModal" (click)="abrirChecklist(evento.id_evento)">Ver Checklist</button>
         </div>
       </div>
     </div>
   </div>
 </div>
+
 
 <!-- Modal para Checklist -->
 <div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">

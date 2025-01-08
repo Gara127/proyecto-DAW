@@ -13,6 +13,8 @@ import { FormsModule } from '@angular/forms';
 })
 export class HomeUserComponent implements OnInit {
   eventos: any[] = [];
+  eventosFiltrados: any[] = []; // Array para almacenar los eventos después de aplicar filtros
+
   username: string | null = null;
   fechaMin: string | null = null;
   fechaMax: string | null = null;
@@ -49,17 +51,22 @@ export class HomeUserComponent implements OnInit {
               ? evento.participants
               : [],
           }));
+          this.eventosFiltrados = [...this.eventos]; // Inicializar eventos filtrados
         } else {
           console.error('Datos de eventos inválidos:', data);
           this.eventos = [];
+          this.eventosFiltrados = [];
         }
       },
       (error) => {
         console.error('Error al cargar eventos:', error);
         this.eventos = [];
+        this.eventosFiltrados = [];
       }
     );
   }
+  
+  
 
   eliminarEvento(id_evento: number): void {
     if (confirm('¿Estás seguro de que deseas eliminar este evento?')) {
@@ -78,25 +85,26 @@ export class HomeUserComponent implements OnInit {
   }
 
   aplicarFiltros(): void {
-    this.eventoService.obtenerEventosFiltrados(
-      this.fechaMin || undefined, 
-      this.fechaMax || undefined, 
-      this.mostrarSoloCaducados
-    ).subscribe(
-      (data) => {
-        if (Array.isArray(data)) {
-          this.eventos = data;
-        } else {
-          console.error('Error: Los datos de eventos no son válidos.');
-          this.eventos = [];
-        }
-      },
-      (error) => {
-        console.error('Error al aplicar filtros:', error);
-        this.eventos = [];
-      }
-    );
+    const fechaMinDate = this.fechaMin ? new Date(this.fechaMin) : null;
+    const fechaMaxDate = this.fechaMax ? new Date(this.fechaMax) : null;
+    const ahora = new Date();
+  
+    this.eventosFiltrados = this.eventos.filter((evento) => {
+      const fechaEvento = new Date(evento.date);
+  
+      // Verifica si cumple con la fecha mínima
+      const cumpleMinimo = fechaMinDate ? fechaEvento >= fechaMinDate : true;
+  
+      // Verifica si cumple con la fecha máxima
+      const cumpleMaximo = fechaMaxDate ? fechaEvento <= fechaMaxDate : true;
+  
+      // Verifica si está caducado (si mostrarSoloCaducados está activado)
+      const cumpleCaducidad = this.mostrarSoloCaducados ? fechaEvento < ahora : true;
+  
+      return cumpleMinimo && cumpleMaximo && cumpleCaducidad;
+    });
   }
+  
 
   abrirChecklist(idEvento: number): void {
     this.eventoSeleccionado = this.eventos.find(evento => evento.id_evento === idEvento);
@@ -145,4 +153,5 @@ export class HomeUserComponent implements OnInit {
   navigateToCreateEvent(): void {
     this.router.navigate(['/event-creator']);
   }
+  
 }
