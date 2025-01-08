@@ -1,35 +1,44 @@
 <!-- Formulario para la checklist -->
-<form (ngSubmit)="guardarChecklist()">
+<form (ngSubmit)="guardarChecklist()" class="checklist-form">
   <!-- Campo de texto para añadir un nuevo elemento a la checklist -->
-  <div class="mb-3">
-    <label for="checklistItem" class="form-label">Elemento de Checklist</label>
-    <input
-      type="text"
-      id="checklistItem"
-      [(ngModel)]="checklistItem"
-      name="checklistItem"
-      class="form-control"
-      placeholder="Escribe un elemento"
-      required
-    />
+  <div class="form-group">
+    <label for="checklistItem" class="form-label">Añadir Elemento</label>
+    <div class="input-group">
+      <input
+        type="text"
+        id="checklistItem"
+        [(ngModel)]="checklistItem"
+        name="checklistItem"
+        class="form-control"
+        placeholder="Escribe un elemento"
+        required
+      />
+      <button type="button" class="btn btn-primary" (click)="agregarElemento()">Añadir</button>
+    </div>
   </div>
 
-  <!-- Botón para agregar elementos a la checklist -->
-  <button type="button" class="btn btn-primary" (click)="agregarElemento()">
-    Añadir a Checklist
-  </button>
-
- <!-- Lista de elementos añadidos -->
-<ul class="list-group mt-3">
-  <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let item of checklist; let i = index">
-    <!-- Mostrar cada elemento -->
-    {{ item }}
-    <!-- Botón para eliminar -->
-    <button type="button" class="btn btn-danger btn-sm" (click)="eliminarElemento(i)">Eliminar</button>
-  </li>
-</ul>
-
+  <!-- Lista de elementos añadidos -->
+  <ul class="list-group mt-3">
+    <li
+      class="list-group-item d-flex justify-content-between align-items-center"
+      *ngFor="let item of checklist; let i = index"
+    >
+      <!-- Mostrar cada elemento -->
+      <span>{{ item }}</span>
+      <!-- Botón para eliminar -->
+      <button
+        type="button"
+        class="btn btn-danger btn-sm"
+        (click)="eliminarElemento(i)"
+        aria-label="Eliminar elemento"
+      >
+        <i class="bi bi-trash"></i> <!-- Ícono de eliminar -->
+      </button>
+    </li>
+  </ul>
 
   <!-- Botón para guardar la checklist -->
-  <button type="submit" class="btn btn-success mt-3">Guardar Checklist</button>
+  <div class="text-end mt-3">
+    <button type="submit" class="btn btn-success">Guardar Checklist</button>
+  </div>
 </form>
