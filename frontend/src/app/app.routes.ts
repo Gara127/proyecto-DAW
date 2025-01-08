@@ -6,7 +6,6 @@ import { RegisterComponent } from './Modulos/auth/register/register.component';
 import { EventCreatorComponent } from './Modulos/home/event-creator/event-creator.component';
 import { ChangePassComponent } from './Modulos/auth/changePass/changePass.component';
 import { HomeUserComponent } from './Modulos/home/home-user/home-user.component';
-import { TasksComponent } from './Modulos/home/tasks/tasks.component';
 
 
 
@@ -19,6 +18,5 @@ export const routes: Routes = [
     { path: 'event-creator', component: EventCreatorComponent},
     { path: 'home-user', component: HomeUserComponent }, 
     { path: 'change-password', component: ChangePassComponent},
-    { path: 'tasks', component: TasksComponent}
 ];
 

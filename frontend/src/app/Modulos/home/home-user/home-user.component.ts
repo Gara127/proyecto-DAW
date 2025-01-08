@@ -18,18 +18,21 @@ export class HomeUserComponent implements OnInit {
   fechaMax: string | null = null;
   mostrarSoloCaducados: boolean = false;
 
+  checklist: string[] = []; // Checklist actual
+  checklistItem: string = ''; // Nuevo ítem de la checklist
+  eventoSeleccionado: any = null; // Evento actualmente seleccionado para el modal
+
   constructor(private router: Router, private eventoService: EventoService) {}
 
   ngOnInit(): void {
     this.username = localStorage.getItem('username');
     this.cargarEventos();
-  
+
     // Escuchar actualizaciones en los eventos (checklist actualizada)
     this.eventoService.obtenerEventoCreado$().subscribe(() => {
       this.cargarEventos(); // Recargar eventos al recibir notificación
     });
   }
-  
 
   cargarEventos(): void {
     this.eventoService.obtenerEventos().subscribe(
@@ -57,9 +60,6 @@ export class HomeUserComponent implements OnInit {
       }
     );
   }
-  
-  
-  
 
   eliminarEvento(id_evento: number): void {
     if (confirm('¿Estás seguro de que deseas eliminar este evento?')) {
@@ -98,16 +98,51 @@ export class HomeUserComponent implements OnInit {
     );
   }
 
-  esEventoCaducado(evento: any): boolean {
-    const today = new Date().toISOString().split('T')[0];
-    return evento.date < today;
+  abrirChecklist(idEvento: number): void {
+    this.eventoSeleccionado = this.eventos.find(evento => evento.id_evento === idEvento);
+    if (this.eventoSeleccionado) {
+      this.checklist = Array.isArray(this.eventoSeleccionado.checklist)
+        ? this.eventoSeleccionado.checklist
+        : typeof this.eventoSeleccionado.checklist === 'string'
+        ? JSON.parse(this.eventoSeleccionado.checklist)
+        : [];
+    }
+  }
+
+  agregarElemento(): void {
+    if (this.checklistItem.trim()) {
+      if (!this.checklist.includes(this.checklistItem.trim())) {
+        this.checklist.push(this.checklistItem.trim());
+      }
+      this.checklistItem = '';
+    }
+  }
+
+  eliminarElemento(index: number): void {
+    this.checklist.splice(index, 1);
+  }
+
+  guardarChecklist(): void {
+    if (this.eventoSeleccionado && this.eventoSeleccionado.id_evento) {
+      const datosActualizar = {
+        checklist: JSON.stringify(this.checklist)
+      };
+
+      this.eventoService.actualizarEventoParcial(this.eventoSeleccionado.id_evento, datosActualizar)
+        .subscribe(
+          () => {
+            alert('Checklist actualizada con éxito.');
+            this.eventoSeleccionado.checklist = [...this.checklist];
+          },
+          (error) => {
+            console.error('Error al actualizar la checklist:', error);
+            alert('No se pudo actualizar la checklist. Revisa la consola.');
+          }
+        );
+    }
   }
 
   navigateToCreateEvent(): void {
     this.router.navigate(['/event-creator']);
-  }
-
-  navigateToTasks(eventoId: number): void {
-    this.router.navigate(['/tasks'], { queryParams: { id_evento: eventoId } });
   }
 }
