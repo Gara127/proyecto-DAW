@@ -2,7 +2,7 @@
 // Configurar los encabezados para respuestas JSON y permitir el acceso desde cualquier origen
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
+header("Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE");
 header("Access-Control-Allow-Headers: Content-Type");
 
 // Archivo de conexión a la base de datos
@@ -19,44 +19,130 @@ switch ($method) {
 
     // Obtener todos los eventos
     case 'GET':
-        $fecha_min = isset($_GET['fecha_min']) ? $_GET['fecha_min'] : null;
-        $fecha_max = isset($_GET['fecha_max']) ? $_GET['fecha_max'] : null;
-        $solo_caducados = isset($_GET['solo_caducados']) ? boolval($_GET['solo_caducados']) : false;
-
-        $query = "SELECT e.id_evento, e.title, e.date, e.time, e.location, e.description, 
-                         GROUP_CONCAT(u.nombre) AS participants
-                  FROM eventos e
-                  LEFT JOIN evento_participantes ep ON e.id_evento = ep.id_evento
-                  LEFT JOIN usuario u ON ep.id_usuario = u.id_usuario";
-
-        $where_clauses = [];
-        if ($fecha_min) {
-            $where_clauses[] = "e.date >= '$fecha_min'";
-        }
-        if ($fecha_max) {
-            $where_clauses[] = "e.date <= '$fecha_max'";
-        }
-        if ($solo_caducados) {
-            $today = date('Y-m-d');
-            $where_clauses[] = "e.date < '$today'";
-        }
-
-        if (!empty($where_clauses)) {
-            $query .= " WHERE " . implode(" AND ", $where_clauses);
-        }
-
-        $query .= " GROUP BY e.id_evento";
-
-        $result = mysqli_query($con, $query);
-
-        if ($result) {
-            $eventos = mysqli_fetch_all($result, MYSQLI_ASSOC);
-            echo json_encode($eventos);
+        if (isset($_GET['id_evento'])) {
+            $id_evento = intval($_GET['id_evento']);
+            $query = "SELECT 
+                e.id_evento, 
+                e.title, 
+                e.date, 
+                e.time, 
+                e.location, 
+                e.description, 
+                COALESCE(e.checklist, '[]') AS checklist, 
+                (SELECT JSON_ARRAYAGG(u.nombre) 
+                 FROM evento_participantes ep 
+                 JOIN usuario u ON ep.id_usuario = u.id_usuario 
+                 WHERE ep.id_evento = e.id_evento) AS participants
+            FROM eventos e
+            WHERE e.id_evento = $id_evento";
+    
+            $result = mysqli_query($con, $query);
+    
+            if ($result) {
+                $evento = mysqli_fetch_assoc($result);
+                // Decodificar checklist si no está vacío
+                $evento['checklist'] = json_decode($evento['checklist']) ?: [];
+                // Asegurar que participants sea un array válido
+                $evento['participants'] = $evento['participants'] ? json_decode($evento['participants']) : [];
+                echo json_encode($evento);
+            } else {
+                http_response_code(500);
+                echo json_encode(["error" => "Error al obtener evento: " . mysqli_error($con)]);
+            }
         } else {
-            http_response_code(500);
-            echo json_encode(["error" => "Error al obtener eventos: " . mysqli_error($con)]);
+            // Consultar todos los eventos
+            $query = "SELECT 
+                e.id_evento, 
+                e.title, 
+                e.date, 
+                e.time, 
+                e.location, 
+                e.description, 
+                COALESCE(e.checklist, '[]') AS checklist, 
+                (SELECT JSON_ARRAYAGG(u.nombre) 
+                 FROM evento_participantes ep 
+                 JOIN usuario u ON ep.id_usuario = u.id_usuario 
+                 WHERE ep.id_evento = e.id_evento) AS participants
+            FROM eventos e";
+    
+            $result = mysqli_query($con, $query);
+    
+            if ($result) {
+                $eventos = [];
+                while ($evento = mysqli_fetch_assoc($result)) {
+                    // Decodificar checklist y participants para cada evento
+                    $evento['checklist'] = json_decode($evento['checklist']) ?: [];
+                    $evento['participants'] = $evento['participants'] ? json_decode($evento['participants']) : [];
+                    $eventos[] = $evento;
+                }
+                echo json_encode($eventos);
+            } else {
+                http_response_code(500);
+                echo json_encode(["error" => "Error al obtener eventos: " . mysqli_error($con)]);
+            }
         }
         break;
+    
+    
+
+            // Actualizar parcialmente un evento (PATCH)
+            case 'PATCH':
+                $_PATCH = json_decode(file_get_contents("php://input"), true);
+                if (isset($_GET['id_evento'])) {
+                    $id_evento = intval($_GET['id_evento']);
+                    $checklist = $_PATCH['checklist'] ?? null;
+                    $participants = $_PATCH['participants'] ?? null;
+            
+                    // Actualizar el checklist
+                    if ($checklist !== null) {
+                        $checklistEscaped = mysqli_real_escape_string($con, json_encode($checklist));
+                        $query = "UPDATE eventos SET checklist = '$checklistEscaped' WHERE id_evento = $id_evento";
+                        if (!mysqli_query($con, $query)) {
+                            http_response_code(500);
+                            echo json_encode(["error" => "Error al actualizar el checklist: " . mysqli_error($con)]);
+                            exit;
+                        }
+                    }
+            
+                    // Actualizar participantes
+                    if ($participants !== null) {
+                        $deleteQuery = "DELETE FROM evento_participantes WHERE id_evento = $id_evento";
+                        if (!mysqli_query($con, $deleteQuery)) {
+                            http_response_code(500);
+                            echo json_encode(["error" => "Error al eliminar participantes existentes: " . mysqli_error($con)]);
+                            exit;
+                        }
+            
+                        foreach ($participants as $id_usuario) {
+                            $id_usuario = intval($id_usuario);
+                            $insertQuery = "INSERT INTO evento_participantes (id_evento, id_usuario) VALUES ($id_evento, $id_usuario)";
+                            if (!mysqli_query($con, $insertQuery)) {
+                                http_response_code(500);
+                                echo json_encode([
+                                    "error" => "Error al agregar participante: " . mysqli_error($con),
+                                    "query" => $insertQuery // Log de la consulta para depuración
+                                ]);
+                                exit;
+                            }
+                        }
+                    }
+            
+                    // Retornar una respuesta JSON válida
+                    echo json_encode(["success" => true, "message" => "Evento actualizado con éxito."]);
+                } else {
+                    http_response_code(400);
+                    echo json_encode(["error" => "ID del evento no especificado."]);
+                }
+                break;
+            
+            
+            
+            
+            
+            
+            
+            
+
 
     // Crear un nuevo evento
     case 'POST':
@@ -138,31 +224,75 @@ switch ($method) {
 
     // Actualizar un evento
     case 'PUT':
-        $data = json_decode(file_get_contents("php://input"), true); // Obtener datos del cuerpo de la solicitud
-
-        // Validar los campos obligatorios
-        if (!empty($data['id_evento']) && !empty($data['title']) && !empty($data['date']) && !empty($data['time'])) {
-            $id_evento = intval($data['id_evento']);
-            $title = mysqli_real_escape_string($con, $data['title']);
-            $date = mysqli_real_escape_string($con, $data['date']);
-            $time = mysqli_real_escape_string($con, $data['time']);
-            $location = mysqli_real_escape_string($con, $data['location'] ?? '');
-            $description = mysqli_real_escape_string($con, $data['description'] ?? '');
-
-            // Actualizar el evento en la base de datos
-            $query = "UPDATE eventos SET title = '$title', date = '$date', time = '$time', location = '$location', description = '$description' WHERE id_evento = $id_evento";
-
-            if (mysqli_query($con, $query)) {
-                echo json_encode(["success" => true, "message" => "Evento actualizado con éxito."]);
-            } else {
-                http_response_code(500); // Error interno del servidor
-                echo json_encode(["success" => false, "message" => "Error al actualizar el evento: " . mysqli_error($con)]);
+        $data = json_decode(file_get_contents("php://input"), true);
+    
+        if (!empty($_GET['id_evento'])) {
+            $id_evento = intval($_GET['id_evento']);
+            $updates = [];
+    
+            // Actualizar campos básicos
+            if (isset($data['title'])) {
+                $title = mysqli_real_escape_string($con, $data['title']);
+                $updates[] = "title = '$title'";
             }
+            if (isset($data['date'])) {
+                $date = mysqli_real_escape_string($con, $data['date']);
+                $updates[] = "date = '$date'";
+            }
+            if (isset($data['time'])) {
+                $time = mysqli_real_escape_string($con, $data['time']);
+                $updates[] = "time = '$time'";
+            }
+            if (isset($data['location'])) {
+                $location = mysqli_real_escape_string($con, $data['location']);
+                $updates[] = "location = '$location'";
+            }
+            if (isset($data['description'])) {
+                $description = mysqli_real_escape_string($con, $data['description']);
+                $updates[] = "description = '$description'";
+            }
+    
+            // Actualizar evento
+            if (!empty($updates)) {
+                $query = "UPDATE eventos SET " . implode(", ", $updates) . " WHERE id_evento = $id_evento";
+    
+                if (!mysqli_query($con, $query)) {
+                    http_response_code(500);
+                    echo json_encode(["error" => "Error al actualizar el evento: " . mysqli_error($con)]);
+                    exit;
+                }
+            }
+    
+            // Actualizar participantes
+            if (isset($data['participants'])) {
+                // Eliminar participantes existentes
+                $delete_query = "DELETE FROM evento_participantes WHERE id_evento = $id_evento";
+                if (!mysqli_query($con, $delete_query)) {
+                    http_response_code(500);
+                    echo json_encode(["error" => "Error al eliminar participantes existentes: " . mysqli_error($con)]);
+                    exit;
+                }
+    
+                // Insertar nuevos participantes
+                foreach ($data['participants'] as $id_usuario) {
+                    $id_usuario = intval($id_usuario);
+                    $insert_query = "INSERT INTO evento_participantes (id_evento, id_usuario) VALUES ($id_evento, $id_usuario)";
+                    if (!mysqli_query($con, $insert_query)) {
+                        http_response_code(500);
+                        echo json_encode(["error" => "Error al agregar participante: " . mysqli_error($con)]);
+                        exit;
+                    }
+                }
+            }
+    
+            echo json_encode(["success" => true, "message" => "Evento actualizado con éxito."]);
         } else {
-            http_response_code(400); // Solicitud incorrecta
-            echo json_encode(["success" => false, "message" => "Datos incompletos para actualizar el evento."]);
+            http_response_code(400);
+            echo json_encode(["error" => "ID del evento no especificado."]);
         }
         break;
+    
+    
 }
 
 // Cerrar conexión con la base de datos

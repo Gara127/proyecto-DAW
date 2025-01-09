@@ -16,10 +16,11 @@ import { HomeUserComponent } from './home-user/home-user.component';
   ],
   imports: [
     CommonModule,
+    FormsModule,
     HomeRoutingModule,
     RouterModule,
-    ReactiveFormsModule,
-    FormsModule
+    ReactiveFormsModule
+    
   ],
   providers: [
     provideHttpClient(), // Mantén esto

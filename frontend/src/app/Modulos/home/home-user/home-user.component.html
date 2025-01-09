@@ -1,20 +1,18 @@
-<!-- Encabezado principal de la página -->
+<!-- Encabezado principal -->
 <header class="bg-primary text-white py-3">
-  <div class="container d-flex justify-content-between align-items-center">
+  <div class="container d-flex justify-content-between align-items-center gap-3">
     <!-- Logo y nombre de la aplicación -->
-    <div id="app-name-container">
-      <img id="logo" src="assets/img/fotoLogo.png" alt="Logo" />
-      <h1 id="app-name">Crew Connect</h1>
+    <div id="app-name-container" class="d-flex align-items-center gap-2">
+      <img id="logo" src="assets/img/fotoLogo.png" alt="Logo" class="img-fluid rounded" style="width: 50px; height: 50px;">
+      <h1 id="app-name" class="h4 mb-0">Crew Connect</h1>
     </div>
 
-    <!-- Navegación de usuario con opciones de perfil -->
+    <!-- Navegación de usuario -->
     <nav class="d-flex align-items-center">
       <div class="dropdown">
-        <button class="btn btn-outline-light dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="btn btn-outline-light dropdown-toggle d-flex align-items-center gap-2" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
           <img src="assets/img/fotodeperfil.webp" alt="Foto de perfil" class="rounded-circle" width="30" height="30">
-          <div id="user-info" *ngIf="username">
-            Hola, {{username}}
-          </div>
+          <span *ngIf="username">Hola, {{username}}</span>
         </button>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
           <li><a class="dropdown-item" href="#">Cerrar Sesión</a></li>
@@ -24,193 +22,138 @@
   </div>
 </header>
 
-<!-- Sección introductoria o Hero -->
-<section class="hero bg-light py-5">
+<!-- Hero -->
+<section class="hero bg py-5">
   <div class="container text-center">
-    <h2 class="display-4 mb-4">¡Bienvenido a la Plataforma de Organización de Quedadas!</h2>
-    <p class="lead mb-4">Organiza tus quedadas y eventos fácilmente y haz que tus planes con amigos y familiares sean perfectos, sin complicaciones.</p>
-    <button class="btn btn-primary btn-lg" (click)="navigateToCreateEvent()">Crear Evento</button>
+    <h2 class="display-4 fw-bold mb-4">¡Bienvenido a Crew Connect!</h2>
+    <p class="lead text mb-4">Organiza tus planes con amigos y familiares fácilmente.</p>
+    <button class="btn btn-primary btn-lg shadow-sm" (click)="navigateToCreateEvent()">Crear Evento</button>
   </div>
 </section>
 
-<br><br><br>
-
-<!-- Sección de Eventos Destacados -->
+<!-- Eventos Destacados -->
 <div class="section featured-events mb-5">
-  <!-- Controles de Filtro -->
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">Eventos Destacados</h2>
-    <div class="filter-container d-flex align-items-center">
-      <div class="me-3">
-        <label for="fechaMin">Fecha mínima:</label>
-        <input type="date" id="fechaMin" [(ngModel)]="fechaMin" class="form-control">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="h4 text-primary fw-bold">Eventos Destacados</h2>
+      <div class="filter-container d-flex flex-wrap align-items-center gap-3">
+        <div>
+          <label for="fechaMin" class="form-label">Fecha mínima:</label>
+          <input type="date" id="fechaMin" [(ngModel)]="fechaMin" class="form-control">
+        </div>
+        <div>
+          <label for="fechaMax" class="form-label">Fecha máxima:</label>
+          <input type="date" id="fechaMax" [(ngModel)]="fechaMax" class="form-control">
+        </div>
+        <div class="form-check">
+          <input type="checkbox" id="mostrarSoloCaducados" [(ngModel)]="mostrarSoloCaducados" class="form-check-input">
+          <label for="mostrarSoloCaducados" class="form-check-label">Mostrar solo eventos caducados</label>
+        </div>
+        <button class="btn btn-outline-primary" (click)="aplicarFiltros()">Aplicar Filtros</button>
       </div>
-      <div class="me-3">
-        <label for="fechaMax">Fecha máxima:</label>
-        <input type="date" id="fechaMax" [(ngModel)]="fechaMax" class="form-control">
-      </div>
-      <div class="me-3 d-flex align-items-center">
-        <input type="checkbox" id="mostrarSoloCaducados" [(ngModel)]="mostrarSoloCaducados" class="me-2">
-        <label for="mostrarSoloCaducados" class="mb-0">Mostrar solo eventos caducados</label>
-      </div>
-      <button class="btn btn-primary" (click)="aplicarFiltros()">Aplicar Filtros</button>
     </div>
-  </div>
 
-  <!-- Lista de eventos destacados -->
-  <div *ngFor="let evento of eventos" class="col-md-6 mb-4">
-    <div class="card h-100" [ngClass]="{'caducado-card': esEventoCaducado(evento)}">
+    <!-- Lista de eventos -->
+<div class="row g-4">
+  <div *ngFor="let evento of eventosFiltrados" class="col-lg-4 col-md-6">
+    <div class="card shadow-sm h-100">
       <div class="card-body">
-        <h3 class="card-title">{{ evento.title }}</h3>
+        <h3 class="card-title text-primary">{{ evento.title }}</h3>
         <p class="card-text"><strong>Fecha:</strong> {{ evento.date }} a las {{ evento.time }}</p>
-        <p class="card-text"><strong>Ubicación:</strong> {{ evento.location }}</p>
-        <p class="card-text"><strong>Descripción:</strong> {{ evento.description }}</p>
-        <div class="d-flex justify-content-between">
-          <button class="btn btn-danger" (click)="eliminarEvento(evento.id_evento)">Eliminar</button>
-          <button class="btn btn-warning" (click)="editarEvento(evento)">Editar</button>
+        <p class="card-text"><strong>Ubicación:</strong> {{ evento.location || 'No especificada' }}</p>
+        <p class="card-text"><strong>Descripción:</strong> {{ evento.description || 'Sin descripción' }}</p>
+        <!-- Participantes -->
+        <div>
+          <p class="card-text"><strong>Participantes:</strong></p>
+          <ul *ngIf="evento.participants?.length > 0; else noParticipants">
+            <li *ngFor="let participante of evento.participants">{{ participante }}</li>
+          </ul>
+          <ng-template #noParticipants>
+            <p class="text-muted">No hay participantes</p>
+          </ng-template>
+        </div>
+        <!-- Checklist -->
+        <div>
+          <p class="card-text"><strong>Checklist:</strong></p>
+          <ul *ngIf="evento.checklist?.length > 0; else noChecklist">
+            <li *ngFor="let item of evento.checklist">{{ item }}</li>
+          </ul>
+          <ng-template #noChecklist>
+            <p class="text-muted">No hay elementos en la checklist</p>
+          </ng-template>
+        </div>
+        <!-- Botones -->
+        <div class="d-flex justify-content-between mt-3">
+          <button class="btn btn-danger btn-sm" (click)="eliminarEvento(evento.id_evento)">Eliminar</button>
+          <button class="btn btn-warning btn-sm" (click)="editarEvento(evento)">Editar</button>
+          <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#taskModal" (click)="abrirChecklist(evento.id_evento)">Ver Checklist</button>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Sección de Encuestas de Planificación -->
-<div class="section polls mb-5">
-  <h2 class="mb-4">Encuestas de Planificación</h2>
-  <div class="row">
-    <div class="col-md-6 mb-4">
-      <div class="card h-100">
-        <div class="card-body">
-          <h3 class="card-title">Fecha de Barbacoa</h3>
-          <p class="card-text">Vota por la fecha que prefieras para nuestra próxima barbacoa.</p>
-          <button class="btn btn-success">Votar</button>
-        </div>
+
+<!-- Modal para Checklist -->
+<div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="taskModalLabel">Checklist</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-    </div>
-    <div class="col-md-6 mb-4">
-      <div class="card h-100">
-        <div class="card-body">
-          <h3 class="card-title">Destino de Viaje</h3>
-          <p class="card-text">Ayúdanos a elegir el destino para el viaje de primavera.</p>
-          <button class="btn btn-success">Votar</button>
-        </div>
+      <div class="modal-body">
+        <!-- Formulario de Tasks -->
+        <form (ngSubmit)="guardarChecklist()">
+          <div class="mb-3">
+            <label for="checklistItem" class="form-label">Añadir Elemento</label>
+            <div class="input-group">
+              <input
+                type="text"
+                id="checklistItem"
+                [(ngModel)]="checklistItem"
+                name="checklistItem"
+                class="form-control"
+                placeholder="Escribe un elemento"
+                required
+              />
+              <button type="button" class="btn btn-primary" (click)="agregarElemento()">Añadir</button>
+            </div>
+          </div>
+
+          <!-- Lista de elementos añadidos -->
+          <ul class="list-group mt-3">
+            <li
+              class="list-group-item d-flex justify-content-between align-items-center"
+              *ngFor="let item of checklist; let i = index"
+            >
+              <!-- Mostrar cada elemento -->
+              <span>{{ item }}</span>
+              <!-- Botón para eliminar -->
+              <button
+                type="button"
+                class="btn btn-danger btn-sm"
+                (click)="eliminarElemento(i)"
+                aria-label="Eliminar elemento"
+              >
+                <i class="bi bi-trash"></i>
+              </button>
+            </li>
+          </ul>
+
+          <!-- Botón para guardar la checklist -->
+          <div class="text-end mt-3">
+            <button type="submit" class="btn btn-success">Guardar Checklist</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Sección de Recordatorios y Tareas -->
-<div class="section reminders mb-5">
-  <h2 class="mb-4">Recordatorios y Tareas</h2>
-  <div class="row">
-    <div class="col-md-6 mb-4">
-      <div class="card h-100">
-        <div class="card-body">
-          <h3 class="card-title">Evento: Cena Familiar</h3>
-          <form>
-            <div class="form-check mb-2">
-              <input type="checkbox" class="form-check-input" id="tarea1">
-              <label class="form-check-label" for="tarea1">Comprar Bebidas</label>
-            </div>
-            <div class="form-check mb-2">
-              <input type="checkbox" class="form-check-input" id="tarea2">
-              <label class="form-check-label" for="tarea2">Preparar Decoración</label>
-            </div>
-            <div class="form-check mb-2">
-              <input type="checkbox" class="form-check-input" id="tarea3">
-              <label class="form-check-label" for="tarea3">Confirmar Catering</label>
-            </div>
-            <button type="submit" class="btn btn-primary mt-3">Guardar Cambios</button>
-          </form>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6 mb-4">
-      <div class="card h-100">
-        <div class="card-body">
-          <h3 class="card-title">Evento: Viaje de Primavera</h3>
-          <form>
-            <div class="form-check mb-2">
-              <input type="checkbox" class="form-check-input" id="tarea4">
-              <label class="form-check-label" for="tarea4">Reservar Hotel</label>
-            </div>
-            <div class="form-check mb-2">
-              <input type="checkbox" class="form-check-input" id="tarea5">
-              <label class="form-check-label" for="tarea5">Comprar Billetes de Tren</label>
-            </div>
-            <div class="form-check mb-2">
-              <input type="checkbox" class="form-check-input" id="tarea6">
-              <label class="form-check-label" for="tarea6">Preparar Itinerario</label>
-            </div>
-            <button type="submit" class="btn btn-primary mt-3">Guardar Cambios</button>
-          </form>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6 mb-4">
-      <div class="card h-100">
-        <div class="card-body">
-          <h3 class="card-title">Confirmar Asistencia</h3>
-          <p class="card-text">Evento: Viaje de Primavera</p>
-          <button class="btn btn-warning">Confirmar Ahora</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Sección de Preguntas Frecuentes -->
-<div class="section faq mb-5">
-  <h2 class="mb-4">Preguntas Frecuentes</h2>
-  <div class="accordion" id="faqAccordion">
-    <div class="card">
-      <div class="card-header" id="faqHeading1">
-        <h2 class="mb-0">
-          <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#faq1" aria-expanded="true" aria-controls="faq1">
-            ¿Cómo crear un evento?
-          </button>
-        </h2>
-      </div>
-      <div id="faq1" class="collapse" aria-labelledby="faqHeading1" data-parent="#faqAccordion">
-        <div class="card-body">
-          Para crear un evento, simplemente haz clic en el botón de "Crear Evento" y llena los detalles.
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-header" id="faqHeading2">
-        <h2 class="mb-0">
-          <button class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2" aria-expanded="false" aria-controls="faq2">
-            ¿Cómo invitar a amigos?
-          </button>
-        </h2>
-      </div>
-      <div id="faq2" class="collapse" aria-labelledby="faqHeading2" data-parent="#faqAccordion">
-        <div class="card-body">
-          Ve al evento creado y selecciona la opción de "Invitar Amigos". Introduce sus correos electrónicos para enviar la invitación.
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-header" id="faqHeading3">
-        <h2 class="mb-0">
-          <button class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3" aria-expanded="false" aria-controls="faq3">
-            ¿Cómo editar o cancelar un evento?
-          </button>
-        </h2>
-      </div>
-      <div id="faq3" class="collapse" aria-labelledby="faqHeading3" data-parent="#faqAccordion">
-        <div class="card-body">
-          Para editar o cancelar un evento, ve a la página del evento y selecciona la opción de "Editar" o "Cancelar" según sea necesario. Podrás realizar cambios en los detalles del evento o eliminarlo por completo.
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Footer de la página -->
-<footer class="bg-dark text-white py-3">
+<!-- Footer -->
+<footer class="bg-dark text-white py-4">
   <div class="container text-center">
-    <p class="mb-0">&copy; 2024 Organizador de Quedadas. Todos los derechos reservados.</p>
+    <p class="mb-0">&copy; 2024 Crew Connect. Todos los derechos reservados.</p>
   </div>
 </footer>

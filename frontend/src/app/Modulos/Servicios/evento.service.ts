@@ -8,7 +8,7 @@ import { Subject } from 'rxjs';
   providedIn: 'root'
 })
 export class EventoService {
-  private apiUrl = 'http://localhost/backend/eventos.php'; // URL del endpoint PHP
+  private apiUrl = 'http://localhost/proyecto-daw/backend/eventos.php'; // URL del endpoint PHP
   private eventoCreado = new Subject<Evento>(); // Subject para emitir eventos creados
   constructor(private http: HttpClient) { }
 
@@ -33,6 +33,25 @@ export class EventoService {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     return this.http.put<any>(`${this.apiUrl}?id_evento=${evento.id_evento}`, evento, { headers });
   }
+
+
+  // Actualizar parcialmente un evento
+  actualizarEventoParcial(id_evento: number, cambios: any): Observable<any> {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.patch<any>(`${this.apiUrl}?id_evento=${id_evento}`, cambios, { headers });
+  }
+  
+  
+  
+  
+  
+
+
+
+  
+  
+  
+
 
   // Eliminar un evento
   eliminarEvento(id_evento: number): Observable<any> {

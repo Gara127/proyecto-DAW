@@ -17,6 +17,6 @@ export const routes: Routes = [
     { path: 'event-creator', component: EventCreatorComponent },
     { path: 'voting', component: VotingComponent },
     { path: 'home-user', component: HomeUserComponent }, 
-    { path: 'change-password', component: ChangePassComponent }
+    { path: 'change-password', component: ChangePassComponent},
 ];
 
