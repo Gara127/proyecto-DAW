@@ -12,9 +12,7 @@ require_once("comprobacionRegistro.php");
 $con = conectar();
 $method = $_SERVER['REQUEST_METHOD'];
 
-
 switch ($method) {
-
     case 'GET':
         // Verificar si se proporciona el parámetro id_usuario en la URL
         if (isset($_GET['id_usuario'])) {
@@ -31,6 +29,7 @@ switch ($method) {
         // Verificar si se proporciona el parámetro 'init'
         elseif (isset($_GET['init']) && boolval($_GET['init'])) {
             init();
+            echo json_encode(["mensaje" => "Backend: BBDD iniciada..."]);
         }
         // Verificar si se proporciona el parámetro 'nombre' para buscar por nombre de usuario
         elseif (isset($_GET['nombre'])) {
@@ -68,7 +67,7 @@ switch ($method) {
                 if (mysqli_num_rows($resultado) > 0) {
                     echo json_encode(["error" => "El nombre de usuario ya existe"]);
                 } else {
-                    comprobarRegistro($con);
+                    comprobarRegistro($con, $data);
                 }
             } else {
             echo json_encode(["error" => "Falta el nombre de usuario en los datos."]);
@@ -174,8 +173,8 @@ switch ($method) {
             echo json_encode(["error" => "No se pudo determinar la acción a realizar"]);
         }
         break;
-}            
-        
+}
+
 // Cerrar conexión
 cerrar_conexion($con);
 ?>
