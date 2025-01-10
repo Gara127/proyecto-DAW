@@ -35,11 +35,11 @@ export class EventCreatorComponent implements OnInit {
     this.username = localStorage.getItem('username');
     this.eventForm = this.fb.group({
       title: ['', Validators.required],
-      date: ['', Validators.required],
-      time: ['', Validators.required],
-      location: ['', Validators.required],
-      description: ['', Validators.required],
-      participants: ['',] 
+      date: [''], 
+      time: [''], 
+      location: [''], 
+      description: [''], 
+      participants: [''] 
     });
 
     this.route.queryParams.subscribe(params => {
@@ -65,9 +65,16 @@ export class EventCreatorComponent implements OnInit {
     }
     this.usuarioService.obtenerUsuarioPorNombre(username).subscribe(
       (usuario: Usuario) => {
-        this.participants.push(usuario); 
-        this.eventForm.get('participants')?.setValue('');  // Limpiar el campo de participantes
-        this.participantError = false; // Restablecer error si el usuario fue encontrado
+        if (!this.participants.some(participant => participant.id_usuario === usuario.id_usuario)) {
+          this.participants.push(usuario);
+          console.log('Respuesta completa del servicio:', usuario)
+          console.log('Usuario añadido:', usuario.nombre);
+        }else{
+          alert("El usuario ya fue añadido al evento");
+        }
+        console.log('Participantes actualizados:', this.participants);
+        this.eventForm.get('participants')?.setValue('');
+        this.participantError = false;
       },
       (error: any) => {
         this.participantError = true; // Si el usuario no se encuentra
@@ -76,15 +83,20 @@ export class EventCreatorComponent implements OnInit {
     console.log(this.participants);
   }
 
+  removeParticipant(id: number): void {
+    this.participants = this.participants.filter(participant => participant.id_usuario !== id);
+  }
+  
 
   onSubmit(): void {
-    if (this.eventForm.valid) {
+    if (this.eventForm.get('title')?.valid) { 
+        const formData = this.eventForm.value;
+        // Filtrar campos vacíos para enviar solo los campos con valor
         const eventData: any = {
-            title: this.eventForm.get('title')?.value,
-            date: this.eventForm.get('date')?.value,
-            time: this.eventForm.get('time')?.value,
-            location: this.eventForm.get('location')?.value,
-            description: this.eventForm.get('description')?.value,
+            title: formData.title,
+            ...Object.fromEntries(
+                Object.entries(formData).filter(([key, value]) => value !== '' && key !== 'title')
+            ),
             participants: this.participants.map(participant => participant.id_usuario),
         };
 
@@ -127,9 +139,7 @@ export class EventCreatorComponent implements OnInit {
             );
         }
     } else {
-        alert('Por favor, completa todos los campos requeridos.');
+        alert('El campo "Título" es obligatorio. Por favor, rellénalo antes de continuar.');
     }
-}
-
-  
+  }
 }  
