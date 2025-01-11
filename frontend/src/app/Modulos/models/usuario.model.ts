@@ -3,4 +3,5 @@ export interface Usuario {
     nombre: string;  // Nombre de usuario
     password: string;  // Contraseña
     rol?: string;      // Rol (opcional, si se necesita)
+    error?: string;      // Rol (opcional, si se necesita)
   }

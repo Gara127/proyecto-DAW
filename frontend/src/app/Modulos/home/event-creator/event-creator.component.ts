@@ -60,11 +60,19 @@ export class EventCreatorComponent implements OnInit {
     const username = this.eventForm.get('participants')?.value;  
 
     if (!username) {
-      this.participantError = true; // Si no hay nombre de usuario
+      this.participantError = true;
+      alert('Por favor introducir el nombre de un usuario.');
       return;
     }
+
     this.usuarioService.obtenerUsuarioPorNombre(username).subscribe(
       (usuario: Usuario) => {
+        if (usuario.error) {
+          this.participantError = true;
+          alert('Este usuario no existe.');
+          return;
+        }
+
         if (!this.participants.some(participant => participant.id_usuario === usuario.id_usuario)) {
           this.participants.push(usuario);
           console.log('Respuesta completa del servicio:', usuario)
@@ -74,10 +82,10 @@ export class EventCreatorComponent implements OnInit {
         }
         console.log('Participantes actualizados:', this.participants);
         this.eventForm.get('participants')?.setValue('');
-        this.participantError = false;
       },
       (error: any) => {
-        this.participantError = true; // Si el usuario no se encuentra
+        console.error('Error al agregar participante:', error);
+        alert('Error al agregar participante.');
       }
     );
     console.log(this.participants);
