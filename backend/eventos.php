@@ -197,22 +197,6 @@ switch ($method) {
                     // Enviar correo a los participantes
                     try {
                         // Configuración del servidor SMTP
-                        // $mail->isSMTP();
-                        // $mail->Host = 'crewconnect.rf.gd'; // Servidor SMTP
-                        // $mail->SMTPAuth = true; // Requiere autenticación
-                        // $mail->Username = '_mainaccount@crewconnect.rf.gd'; // Nombre de usuario del correo
-                        // $mail->Password = '5kgXzeZtXD4WZO'; // Contraseña de cPanel asociada
-                        // $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // Usa SSL
-                        // $mail->Port = 465; // Puerto para SSL
-
-                        // $mail->isSMTP();
-                        // $mail->Host = 'mail.crewconnect.rf.gd'; // Servidor SMTP
-                        // $mail->SMTPAuth = true; // Autenticación habilitada
-                        // $mail->Username = '_mainaccount@crewconnect.rf.gd'; // Nombre de usuario del correo
-                        // $mail->Password = 'tu-contraseña-cpanel'; // Contraseña de cPanel asociada
-                        // $mail->Port = 587; // Puerto SMTP para conexiones sin SSL
-                        // $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Usa TLS en lugar de SSL
-
                         $mail->isSMTP();
                         $mail->Host = 'smtp.gmail.com'; // Servidor SMTP de Gmail
                         $mail->SMTPAuth = true; // Habilitar autenticación SMTP
@@ -221,13 +205,14 @@ switch ($method) {
                         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Usar encriptación TLS
                         $mail->Port = 587; // Puerto para conexiones TLS
 
-                        $mail->SMTPOptions = [
-                            'ssl' => [
-                                'verify_peer' => false,
-                                'verify_peer_name' => false,
-                                'allow_self_signed' => true,
-                            ],
-                        ];
+                        // Para probar en local descomentar estas líneas
+                        // $mail->SMTPOptions = [
+                        //     'ssl' => [
+                        //         'verify_peer' => false,
+                        //         'verify_peer_name' => false,
+                        //         'allow_self_signed' => true,
+                        //     ],
+                        // ];
                     
                         // Configuración del correo
                         $mail->setFrom('app.crew.connect@gmail.com', 'Crew Connect'); // Dirección del remitente
