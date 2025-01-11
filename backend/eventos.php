@@ -1,4 +1,7 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 // Configurar los encabezados para respuestas JSON y permitir el acceso desde cualquier origen
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *");
@@ -8,11 +11,19 @@ header("Access-Control-Allow-Headers: Content-Type");
 // Archivo de conexión a la base de datos
 require_once("database.php");
 
+// Carga automáticamente las dependencias instaladas
+require 'vendor/autoload.php';
+
 // Se establece conexión con la base de datos
 $con = conectar();
 
 // Obtener el método HTTP utilizado en la solicitud
 $method = $_SERVER['REQUEST_METHOD'];
+
+// Instanciar la clase PHPMailer
+$mail = new PHPMailer(true);
+$mail->Timeout = 30; // Tiempo máximo de espera en segundos
+$mail->SMTPDebug = 2; // Habilitar logs de depuración para verificar errores
 
 // Manejar la solicitud según el método HTTP
 switch ($method) {
@@ -182,7 +193,74 @@ switch ($method) {
                             }
                         }
                     }
-        
+
+                    // Enviar correo a los participantes
+                    try {
+                        echo "Configurando correo...";
+
+                        // Configuración del servidor SMTP
+                        // $mail->isSMTP();
+                        // $mail->Host = 'crewconnect.rf.gd'; // Servidor SMTP
+                        // $mail->SMTPAuth = true; // Requiere autenticación
+                        // $mail->Username = '_mainaccount@crewconnect.rf.gd'; // Nombre de usuario del correo
+                        // $mail->Password = '5kgXzeZtXD4WZO'; // Contraseña de cPanel asociada
+                        // $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // Usa SSL
+                        // $mail->Port = 465; // Puerto para SSL
+
+                        // $mail->isSMTP();
+                        // $mail->Host = 'mail.crewconnect.rf.gd'; // Servidor SMTP
+                        // $mail->SMTPAuth = true; // Autenticación habilitada
+                        // $mail->Username = '_mainaccount@crewconnect.rf.gd'; // Nombre de usuario del correo
+                        // $mail->Password = 'tu-contraseña-cpanel'; // Contraseña de cPanel asociada
+                        // $mail->Port = 587; // Puerto SMTP para conexiones sin SSL
+                        // $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Usa TLS en lugar de SSL
+
+                        $mail->isSMTP();
+                        $mail->Host = 'smtp.gmail.com'; // Servidor SMTP de Gmail
+                        $mail->SMTPAuth = true; // Habilitar autenticación SMTP
+                        $mail->Username = 'app.crew.connect@gmail.com'; // Tu dirección de correo Gmail
+                        $mail->Password = 'yubu vibi ucks qzwd'; // Contraseña o token de aplicación de Gmail
+                        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Usar encriptación TLS
+                        $mail->Port = 587; // Puerto para conexiones TLS
+
+                        $mail->SMTPOptions = [
+                            'ssl' => [
+                                'verify_peer' => false,
+                                'verify_peer_name' => false,
+                                'allow_self_signed' => true,
+                            ],
+                        ];
+                    
+                        // Configuración del correo
+                        $mail->setFrom('app.crew.connect@gmail.com', 'Crew Connect'); // Dirección del remitente
+                        $mail->addAddress('gara127gs@gmail.com', 'Usuario');
+                        $mail->Subject = 'Evento creado';
+                        $mail->Body = 'Este es un correo de prueba enviado con PHPMailer.';
+                    
+                        // Enviar correo
+                        echo "Enviando correo...";
+                        if (!$mail->send()) {
+                            http_response_code(500);
+                            echo json_encode([
+                                "success" => false,
+                                "message" => "Error al enviar correo: " . $mail->ErrorInfo
+                            ]);
+                            exit;
+                        }
+
+                        echo "Correo enviado con éxito";
+                    } catch (Exception $e) {
+                        http_response_code(500);
+                        echo json_encode([
+                            "success" => false,
+                            "message" => "Excepción al enviar correo: " . $e->getMessage()
+                        ]);
+                        exit;
+                    }
+                    
+                    // Cerrar la conexión SMTP
+                    $mail->smtpClose();
+
                     // Responder con éxito
                     echo json_encode([
                         "success" => true,
