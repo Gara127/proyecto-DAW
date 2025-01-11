@@ -45,37 +45,31 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit() {
-    
     if (this.loginForm.valid) {
-      // Captura los datos del formulario y agrega el campo "action"
-      const loginData = {
-          ...this.loginForm.value, // Obtiene todos los valores del formulario
-          action: 'login' // Añade el campo action
-      };
-      
-      // Llama al método iniciarSesion del servicio
+      const loginData = { ...this.loginForm.value, action: 'login' };
+  
       this.usuarioService.iniciarSesion(loginData).subscribe(
-        (response: any) => { // Asegúrate de que el backend devuelva un objeto con el rol
-          console.log('Inicio de sesión exitoso!', response);
-          localStorage.setItem('username', response.nombre); // guardamos el nombre en localstorage
-          
-          if (response && response.rol) {
-            // Verifica el rol y redirige
-            if (response.rol === 'admin') {
-              this.router.navigate(['/home']);
-            } else if (response.rol === 'user') {
+        (response: any) => {
+          console.log('Respuesta del backend:', response);
+  
+          if (response && response.id_usuario) {
+            // Guardar usuario en localStorage
+            localStorage.setItem('usuario', JSON.stringify(response));
+            console.log('Usuario almacenado en localStorage:', response);
+  
+            // Redirigir según el rol
+            if (response.rol === 'user') {
               this.router.navigate(['/home-user']);
-            } else {
-              console.error('Rol desconocido:', response.rol);
-              alert('Rol desconocido, contacte al administrador.');
+            } else if (response.rol === 'admin') {
+              this.router.navigate(['/home']);
             }
           } else {
-            console.error('Respuesta sin rol:', response);
+            console.error('Error en la respuesta del backend:', response);
             alert('Error al procesar el inicio de sesión.');
           }
         },
-        error => {
-          console.error('Error en el inicio de sesión', error);
+        (error) => {
+          console.error('Error en el inicio de sesión:', error);
           alert('Usuario o contraseña no encontrados.');
         }
       );
@@ -84,4 +78,7 @@ export class LoginComponent implements OnInit {
       alert('Formulario inválido.');
     }
   }
+  
+  
+  
 }  

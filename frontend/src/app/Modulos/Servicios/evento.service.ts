@@ -8,7 +8,7 @@ import { Subject } from 'rxjs';
   providedIn: 'root'
 })
 export class EventoService {
-  private apiUrl = 'http://localhost/backend/eventos.php'; // URL del endpoint PHP
+  private apiUrl = 'http://localhost/proyecto-daw/backend/eventos.php'; // URL del endpoint PHP
   private eventoCreado = new Subject<Evento>(); // Subject para emitir eventos creados
   constructor(private http: HttpClient) { }
 
@@ -70,7 +70,10 @@ export class EventoService {
     this.eventoCreado.next(evento);
   }
   
-
+  obtenerEventosPorUsuario(id_usuario: number): Observable<Evento[]> {
+    return this.http.get<Evento[]>(`${this.apiUrl}?id_usuario=${id_usuario}`);
+  }
+  
   // Escuchar nuevos eventos creados
   obtenerEventoCreado$(): Observable<Evento> {
     return this.eventoCreado.asObservable(); // Devolver el observable

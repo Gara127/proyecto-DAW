@@ -37,34 +37,34 @@ export class HomeUserComponent implements OnInit {
   }
 
   cargarEventos(): void {
-    this.eventoService.obtenerEventos().subscribe(
-      (data) => {
-        if (Array.isArray(data)) {
-          this.eventos = data.map((evento) => ({
-            ...evento,
-            checklist: Array.isArray(evento.checklist)
-              ? evento.checklist
-              : typeof evento.checklist === 'string'
-              ? JSON.parse(evento.checklist)
-              : [],
-            participants: Array.isArray(evento.participants)
-              ? evento.participants
-              : [],
-          }));
-          this.eventosFiltrados = [...this.eventos]; // Inicializar eventos filtrados
-        } else {
-          console.error('Datos de eventos inválidos:', data);
-          this.eventos = [];
-          this.eventosFiltrados = [];
-        }
+    const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+    const idUsuario = usuario?.id_usuario || 0;
+  
+    if (!idUsuario) {
+      console.error('No se encontró el ID del usuario autenticado.');
+      return;
+    }
+  
+    this.eventoService.obtenerEventosPorUsuario(idUsuario).subscribe(
+      (eventos) => {
+        this.eventos = eventos.map((evento) => ({
+          ...evento,
+          checklist: Array.isArray(evento.checklist)
+            ? evento.checklist
+            : JSON.parse(evento.checklist || '[]'),
+          participants: Array.isArray(evento.participants)
+            ? evento.participants
+            : JSON.parse(evento.participants || '[]'),
+        }));
+        this.eventosFiltrados = [...this.eventos];
       },
       (error) => {
-        console.error('Error al cargar eventos:', error);
-        this.eventos = [];
-        this.eventosFiltrados = [];
+        console.error('Error al cargar los eventos:', error);
       }
     );
   }
+  
+  
   
   
 

@@ -97,57 +97,52 @@ export class EventCreatorComponent implements OnInit {
   
 
   onSubmit(): void {
-    if (this.eventForm.get('title')?.valid) { 
-        const formData = this.eventForm.value;
-        // Filtrar campos vacíos para enviar solo los campos con valor
-        const eventData: any = {
-            title: formData.title,
-            ...Object.fromEntries(
-                Object.entries(formData).filter(([key, value]) => value !== '' && key !== 'title')
-            ),
-            participants: this.participants.map(participant => participant.id_usuario),
-        };
-
-        if (this.route.snapshot.queryParams['id_evento']) {
-            eventData.id_evento = this.route.snapshot.queryParams['id_evento'];
+    if (this.eventForm.valid) {
+      const formData = this.eventForm.value;
+      const creatorId = JSON.parse(localStorage.getItem('usuario') || '{}').id_usuario;
+  
+      if (!creatorId) {
+        console.error('No se encontró el ID del creador.');
+        alert('Error: No se pudo identificar al creador del evento.');
+        return;
+      }
+  
+      const eventData: any = {
+        title: formData.title,
+        date: formData.date || null,
+        time: formData.time || null,
+        location: formData.location || null,
+        description: formData.description || null,
+        participants: [
+          ...this.participants.map(participant => participant.id_usuario),
+          creatorId,
+        ],
+      };
+  
+      console.log('Datos del evento a enviar:', eventData);
+  
+      this.eventoService.crearEvento(eventData).subscribe(
+        (response) => {
+          console.log('Evento creado con éxito:', response);
+  
+          const nuevoEvento = {
+            ...eventData,
+            id_evento: response.id_evento,
+          };
+  
+          this.eventoService.notificarEventoCreado(nuevoEvento);
+          alert('Evento creado con éxito.');
+          this.router.navigate(['/home-user']);
+        },
+        (error) => {
+          console.error('Error al crear evento:', error);
+          alert('Error al crear evento. Revisa los datos e inténtalo nuevamente.');
         }
-
-        if (eventData.id_evento) {
-            // Editar evento
-            this.eventoService.actualizarEvento(eventData).subscribe(
-                (response: any) => {
-                    console.log('Evento actualizado con éxito:', response);
-                    alert('Evento actualizado con éxito.');
-                    this.router.navigate(['/home-user']);
-                },
-                (error: any) => {
-                    console.error('Error al actualizar evento:', error);
-                    alert('Error al actualizar evento.');
-                }
-            );
-        } else {
-            // Crear evento
-            this.eventoService.crearEvento(eventData).subscribe(
-                (response: any) => {
-                    console.log('Evento creado con éxito:', response);
-
-                    const nuevoEvento = {
-                        ...eventData,
-                        id_evento: response.id_evento,
-                    };
-
-                    this.eventoService.notificarEventoCreado(nuevoEvento);
-                    alert('Evento creado con éxito.');
-                    this.router.navigate(['/home-user']);
-                },
-                (error: any) => {
-                    console.error('Error al crear evento:', error);
-                    alert('Error al crear evento.');
-                }
-            );
-        }
+      );
     } else {
-        alert('El campo "Título" es obligatorio. Por favor, rellénalo antes de continuar.');
+      alert('Por favor, completa todos los campos requeridos.');
     }
   }
+  
+  
 }  

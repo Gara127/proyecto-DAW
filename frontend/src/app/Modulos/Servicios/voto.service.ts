@@ -6,7 +6,7 @@ import { catchError, Observable, throwError } from 'rxjs';
   providedIn: 'root',
 })
 export class VotoService {
-  private apiUrl = 'http://localhost/backend/upcomingEvents.php'; // URL del endpoint PHP
+  private apiUrl = 'http://localhost/proyecto-daw/backend/upcomingEvents.php'; // URL del endpoint PHP
 
   constructor(private http: HttpClient) {}
 
