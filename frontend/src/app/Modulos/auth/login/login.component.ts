@@ -59,6 +59,7 @@ export class LoginComponent implements OnInit {
           console.log('Inicio de sesión exitoso!', response);
           localStorage.setItem('id', response.id); // guardamos el nombre en localstorage
           localStorage.setItem('username', response.nombre); // guardamos el nombre en localstorage
+          localStorage.setItem('id', response.id);
           
           if (response && response.rol) {
             // Verifica el rol y redirige

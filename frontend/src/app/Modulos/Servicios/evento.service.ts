@@ -13,7 +13,6 @@ export class EventoService {
   private apiUrl = 'http://localhost/proyecto-DAW/backend/eventos.php'; // URL del endpoint PHP
   private eventoCreado = new Subject<Evento>(); // Subject para emitir eventos creados
   private apiUrlEncuestas = 'http://localhost/proyecto-DAW/backend/upcomingEvents.php'; 
-
   constructor(private http: HttpClient) { }
 
   // Obtener todos los eventos
@@ -38,7 +37,6 @@ export class EventoService {
     return this.http.put<any>(`${this.apiUrl}?id_evento=${evento.id_evento}`, evento, { headers });
   }
 
-
   // Actualizar parcialmente un evento
   actualizarEventoParcial(id_evento: number, cambios: any): Observable<any> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
@@ -53,7 +51,7 @@ export class EventoService {
       })
     );
   }
-  
+
   // Obtener todas las encuestas
 obtenerEncuestas(): Observable<any[]> {
   const apiUrlEncuestas = 'http://localhost/proyecto-DAW/backend/upcomingEvents.php'; // Asegúrate de que esta URL sea correcta
@@ -61,7 +59,7 @@ obtenerEncuestas(): Observable<any[]> {
     catchError((error) => {
       console.error('Error al obtener encuestas:', error);
       return throwError(() => error); // Retorna el error para el manejo adecuado
-    })
+      })
   );
 }
 
@@ -90,7 +88,6 @@ obtenerEncuestas(): Observable<any[]> {
     console.log('Evento notificado:', evento); // Verifica aquí
     this.eventoCreado.next(evento);
   }
-  
 
   // Escuchar nuevos eventos creados
   obtenerEventoCreado$(): Observable<Evento> {
@@ -99,14 +96,11 @@ obtenerEncuestas(): Observable<any[]> {
 
   // Obtener eventos con filtrado opcional
   obtenerEventosFiltrados(fecha_min?: string, fecha_max?: string, solo_caducados?: boolean): Observable<Evento[]> {
-  let params: any = {};
-  if (fecha_min) params.fecha_min = fecha_min;
-  if (fecha_max) params.fecha_max = fecha_max;
-  if (solo_caducados) params.solo_caducados = solo_caducados;
+    let params: any = {};
+    if (fecha_min) params.fecha_min = fecha_min;
+    if (fecha_max) params.fecha_max = fecha_max;
+    if (solo_caducados) params.solo_caducados = solo_caducados;
 
-  return this.http.get<Evento[]>(this.apiUrl, { params });
+    return this.http.get<Evento[]>(this.apiUrl, { params });
   }
-
-
-  
 }

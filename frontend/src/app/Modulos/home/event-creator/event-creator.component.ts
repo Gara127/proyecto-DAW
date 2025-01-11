@@ -22,6 +22,7 @@ export class EventCreatorComponent implements OnInit {
   participantError: boolean = false;
   userService: any;
   username: string | null = null; // para login usuario
+  userID: number = 0; // para login usuario
 
   constructor(
     private fb: FormBuilder,
@@ -33,6 +34,7 @@ export class EventCreatorComponent implements OnInit {
 
   ngOnInit(): void {
     this.username = localStorage.getItem('username');
+    this.userID = parseInt(localStorage.getItem('id') || '0');
     this.eventForm = this.fb.group({
       title: ['', Validators.required],
       date: [''], 
@@ -41,7 +43,7 @@ export class EventCreatorComponent implements OnInit {
       description: [''], 
       participants: [''] 
     });
-
+    
     this.route.queryParams.subscribe(params => {
       if (params['id_evento']) {
         this.cargarEvento(params['id_evento']);
@@ -55,16 +57,22 @@ export class EventCreatorComponent implements OnInit {
     });
   }
 
-
   addParticipant(): void {
     const username = this.eventForm.get('participants')?.value;  
-
     if (!username) {
-      this.participantError = true; // Si no hay nombre de usuario
+      this.participantError = true;
+      alert('Por favor introducir el nombre de un usuario.');
       return;
     }
+
     this.usuarioService.obtenerUsuarioPorNombre(username).subscribe(
       (usuario: Usuario) => {
+        if (usuario.error) {
+          this.participantError = true;
+          alert('Este usuario no existe.');
+          return;
+        }
+
         if (!this.participants.some(participant => participant.id_usuario === usuario.id_usuario)) {
           this.participants.push(usuario);
           console.log('Respuesta completa del servicio:', usuario)
@@ -74,10 +82,10 @@ export class EventCreatorComponent implements OnInit {
         }
         console.log('Participantes actualizados:', this.participants);
         this.eventForm.get('participants')?.setValue('');
-        this.participantError = false;
       },
       (error: any) => {
-        this.participantError = true; // Si el usuario no se encuentra
+        console.error('Error al agregar participante:', error);
+        alert('Error al agregar participante.');
       }
     );
     console.log(this.participants);
@@ -86,18 +94,27 @@ export class EventCreatorComponent implements OnInit {
   removeParticipant(id: number): void {
     this.participants = this.participants.filter(participant => participant.id_usuario !== id);
   }
-  
 
   onSubmit(): void {
     if (this.eventForm.get('title')?.valid) { 
+        // Inicializar como un objeto para crear un array asociativo
+        const participants: { [key: number]: any } = {};
+        
+        // Agregar el usuario actual al objeto
+        participants[this.userID] = this.username;
+        
+        // Recorrer los participantes y agregarlos al objeto asociativo
+        this.participants.forEach(usuario => {
+          participants[usuario.id_usuario] = usuario.nombre;
+        });
+        
         const formData = this.eventForm.value;
-        // Filtrar campos vacíos para enviar solo los campos con valor
         const eventData: any = {
             title: formData.title,
             ...Object.fromEntries(
                 Object.entries(formData).filter(([key, value]) => value !== '' && key !== 'title')
             ),
-            participants: this.participants.map(participant => participant.id_usuario),
+            participants: participants,
         };
 
         if (this.route.snapshot.queryParams['id_evento']) {
