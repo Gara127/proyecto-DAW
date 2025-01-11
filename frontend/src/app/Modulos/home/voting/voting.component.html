@@ -1,57 +1,43 @@
 <div class="voting-system">
   <h2>Sistema de Votación de Eventos</h2>
 
-  <!-- Formulario para agregar una nueva sugerencia -->
   <div class="suggestion-form">
-    <!-- Campo para el nombre de la sugerencia -->
-    <input
-      type="text"
-      [(ngModel)]="newSuggestion"
-      placeholder="Nombre de la sugerencia"
-      required
-    />
+    <form [formGroup]="encuestaForm" (ngSubmit)="addSurvey()">
+      <select
+        formControlName="id_evento"
+        required
+        class="form-control"
+      >
+        <option value="" disabled>-- Selecciona un evento --</option>
+        <option *ngFor="let evento of eventosSelect" [value]="evento.id_evento">
+          {{ evento.title }}
+        </option>
+      </select>
 
-    <form [formGroup]="eventForm" (ngSubmit)="addSuggestion()">
+      <div>
+        <label for="name">Descripción:</label>
+        <input id="name" type="text" formControlName="name" placeholder="Descripción de la encuesta" />
+        <div *ngIf="encuestaForm.controls['name'].invalid && encuestaForm.controls['name'].touched" class="error">
+          El nombre es obligatorio.
+        </div>
+      </div>
+
       <div>
         <label for="date">Fecha:</label>
         <input id="date" type="date" formControlName="date" />
-        <div *ngIf="eventForm.controls['date'].invalid && eventForm.controls['date'].touched" class="error">
-          La fecha es obligatoria.
-        </div>
       </div>
-    
+
       <div>
         <label for="time">Hora:</label>
         <input id="time" type="time" formControlName="time" />
-        <div *ngIf="eventForm.controls['time'].invalid && eventForm.controls['time'].touched" class="error">
-          La hora es obligatoria.
-        </div>
       </div>
-    
+
       <div>
         <label for="location">Ubicación:</label>
         <input id="location" type="text" formControlName="location" placeholder="Nombre del lugar o enlace" />
-        <div *ngIf="eventForm.controls['location'].invalid && eventForm.controls['location'].touched" class="error">
-          La ubicación es obligatoria.
-        </div>
       </div>
-    
-      <button type="submit" [disabled]="eventForm.invalid || !newSuggestion.trim()">Agregar Sugerencia</button>
-    </form>
-  </div>
 
-  <!-- Lista de sugerencias -->
-  <div class="suggestions-list">
-    <h3>Lista de Sugerencias</h3>
-    <div *ngFor="let suggestion of suggestions">
-      <p>
-        <strong>{{ suggestion.name }}</strong><br />
-        Fecha: {{ suggestion.date }}<br />
-        Hora: {{ suggestion.time }}<br />
-        Ubicación: {{ suggestion.location }}<br />
-        Votos: {{ suggestion.votes }}
-      </p>
-      <button (click)="vote(suggestion)">Votar</button>
-    </div>
+      <button type="submit" [disabled]="encuestaForm.invalid">Agregar Encuesta</button>
+    </form>
   </div>
 </div>

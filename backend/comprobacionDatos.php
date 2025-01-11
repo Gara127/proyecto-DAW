@@ -26,6 +26,7 @@ function comprobarLogin($con) {
             "status" => "success", 
             "message" => "Inicio de sesión exitoso",
             "rol" => $rol, // Incluye el rol en la respuesta
+            "id" => $id_del_usuario, // Incluye el rol en la respuesta
             "nombre" => $row['nombre'] // Incluye el nombre
         ]);
     } else {
