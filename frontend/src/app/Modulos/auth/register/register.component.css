@@ -1,156 +1,136 @@
 /* Estilos globales */
 body, html {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    height: 100%;
-    overflow: hidden; 
-  }
-    
-  #header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 50px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  #slogan {
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    font-size: 32px;
-    font-weight: 700;
-    color: rgb(44, 58, 94);
-    margin: 0;
-    text-transform: uppercase;
-  }
-  
-  #logo {
-    width: 40px;
-    height: 40px;
-    margin-right: 10px;
-  }
-  
-  #app-name-container {
-    display: flex;
-    align-items: center;
-  }
-  
-  #app-name {
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    font-size: 32px;
-    font-weight: 700;
-    color: #0056b3;
-    margin: 0;
-    text-transform: uppercase;
-  }
-  
-  /* Contenedor principal */
-  .container {
-    background-color:rgb(236, 215, 183);
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    width: 320px;
-    text-align: center;
-    margin: 50px auto;
-  }
-  
-  h2 {
-    margin-bottom: 20px;
-    font-size: 24px;
-    color: #333;
-    font-weight: 600;
-  }
-  
-  .form-group {
-    margin-bottom: 20px;
-  }
-  
-  /* Estilos de los inputs */
-  input[type="email"], input[type="password"] {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-    text-align: center;
-    box-sizing: border-box;
-  }
-  
-  /* Estilo del botón de submit */
-  input[type="submit"] {
-    background-color: #0056b3;  
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    width: 100%;
-    margin-top: 10px;
-    transition: background-color 0.3s ease;
-  }
-  
-  input[type="submit"]:hover {
-    background-color: #0056b3;
-  }
-  
-  /* Botón de "Atrás" */
-  .back-button {
-    padding: 10px 20px;
-    background-color: #b3b3b3;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    display: inline-block;
-    width: 30%;
-    margin-top: 20px;
-  }
-  
-  .back-button:hover {
-    background-color: #0056b3;
-  }
-  
-  /* Estilos adicionales para enlaces (si se descomentaran) */
-  p {
-    margin: 10px 0;
-    font-size: 12px;
-    color: #333;
-  }
-  
-  .button-gmail {
-    background-color: #DB4437;
-    width: 100%;
-    padding: 10px;
-    border-radius: 4px;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    font-size: 16px;
-    margin-top: 10px;
-  }
-  
-  .button-facebook {
-    background-color: #3b5998;
-    width: 100%;
-    padding: 10px;
-    border-radius: 4px;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    font-size: 16px;
-    margin-top: 10px;
-  }
-  
-  .button-gmail:hover {
-    background-color: #c1351d;
-  }
-  
-  .button-facebook:hover {
-    background-color: #2d4373;
-  }
-  
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  height: 100%; 
+  display: flex;
+  flex-direction: column; 
+  min-height: 100vh; 
+}
+
+/* Header */
+#header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 50px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#slogan {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: rgb(44, 58, 94);
+  margin: 0;
+  text-transform: uppercase;
+}
+
+#app-name-container {
+  display: flex;
+  align-items: center;
+}
+
+#logo {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+#app-name {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #0056b3;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+/* Contenedor principal */
+.container {
+  background-color: rgb(236, 215, 183);
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px 30px; 
+  width: 400px; 
+  text-align: center;
+  margin: auto;
+  flex: 0; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  gap: 10px; 
+}
+
+h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Inputs del formulario */
+input[type="email"], input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* Botón de submit */
+input[type="submit"] {
+  background-color: #0056b3;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+input[type="submit"]:hover {
+  background-color: #004494;
+}
+
+/* Botón de "Atrás" */
+.back-button {
+  padding: 10px 20px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: inline-block;
+  width: 30%;
+  margin-top: 20px;
+}
+
+.back-button:hover {
+  background-color: #5a6268;
+}
+
+/* Footer */
+footer {
+  background-color: #0056b3;
+  color: white;
+  text-align: center;
+  padding: 15px 0;
+  margin-top: auto; 
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+footer p {
+  margin: 0;
+  font-size: 16px; 
+}
+

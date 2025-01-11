@@ -1,9 +1,11 @@
-export interface Evento{
-    id_evento?: number;      // Opcional, ya que se generará automáticamente
-    title: string;           
-    date: string;            
-    time: string;            
-    location: string;       
+export interface Evento {
+    id_evento?: number; 
+    title: string;
+    date: string;
+    time: string;
+    location: string;
     description: string;
-    participants?: number[]; // lista id de usuarios    
-}
+    participants?: string[]; // Lista de nombres de participantes
+    checklist?: string[]; // Lista de tareas en la checklist
+  }
+  

@@ -1,31 +1,52 @@
-<div id="header">
-    <h1 id="slogan">Let's plan together</h1>
-    <div id="app-name-container">
-      <img id="logo" src="/assets/img/fotoLogo.png" alt="Logo" />
-      <h1 id="app-name">Crew Connect</h1>
+
+<body>  
+    <div id="header">
+        <h1 id="slogan">Let's plan together</h1>
+        <div id="app-name-container">
+        <img id="logo" src="/assets/img/fotoLogo.png" alt="Logo" />
+        <h1 id="app-name">Crew Connect</h1>
+        </div>
     </div>
-  </div>
-  
-  <div class="container">
-    <h2>Regístrate</h2>
-    <form (submit)="onSubmit($event)">
-      <div>
-        <input type="email" id="email" [(ngModel)]="email" name="email" placeholder="Correo" required>
-      </div>
-  
-      <div class="form-group">
-        <input type="password" id="password" [(ngModel)]="password" name="password" placeholder="Contraseña" required>
-      </div>
-  
-      <div class="form-group">
-        <input type="password" id="confirm_password" [(ngModel)]="confirm" name="confirm_password" placeholder="Confirma tu contraseña" required>
-      </div>
-  
-      <div>
-        <input type="submit" value="Sign up">
-      </div>
-    </form>
-    <button class="back-button" onclick="window.history.back()">Atrás</button>
-  </div>
-  
+
+    <div class="container">
+        <h2>Regístrate</h2>
+        <form (submit)="onSubmit($event)">
+            <div>
+                <label for="email"></label>
+                <input type="email" id="email" [(ngModel)]="email" name="email" placeholder="Correo" required>
+            </div>
+
+            <div class="form-group">
+                <div>
+                    <label for="password"></label>
+                    <input type="password" id="password" [(ngModel)]="password" name="password" placeholder="Contraseña" required>
+                </div>
+
+                <div>
+                    <label for="confirm_password"></label>
+                    <input type="password" id="confirm_password" [(ngModel)]="confirm" name="confirm_password" placeholder="Confirma tu contraseña" required>
+                </div>
+
+                <div>
+                    <input type="submit" value="Sign up">
+                </div>
+            </div>
+        </form>
+        <button class="back-button" onclick="window.history.back()">Atrás</button>   
+    </div>
+        
+        <!--<div>
+            <p>Login with:</p>
+            <button class="button-gmail" (click)="signInWithGoogle()">Google</button>
+            <button class="button-facebook" (click)="signInWithFacebook()">Facebook</button>
+        </div>-->
+    <!-- Footer -->
+        <div id="div-footer">
+        <footer class="bg-dark text-white py-4">
+            <div class="container-text-center">
+            <p class="mb-0">&copy; 2024 Crew Connect. Todos los derechos reservados.</p>
+            </div>
+        </footer>
+    </div>
+</body>  
 

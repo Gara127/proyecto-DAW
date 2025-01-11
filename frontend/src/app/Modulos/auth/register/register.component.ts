@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UsuarioService } from '../../Servicios/usuario.service';
 import { Router } from '@angular/router';
+ 
 
 @Component({
   standalone: true,
@@ -43,7 +44,7 @@ export class RegisterComponent {
     const registerData = {
       nombre: this.email, // Usamos email como nombre
       pass: this.password,
-      rol: "user", // Asumimos rol "normal"
+      rol: "user", // Asumimos rol "user"
       action: 'register'
     };
 
