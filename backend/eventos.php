@@ -5,8 +5,8 @@ use PHPMailer\PHPMailer\Exception;
 // Configurar los encabezados para respuestas JSON y permitir el acceso desde cualquier origen
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE");
-header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 // Archivo de conexión a la base de datos
 require_once("database.php");
@@ -23,7 +23,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 // Instanciar la clase PHPMailer
 $mail = new PHPMailer(true);
 $mail->Timeout = 30; // Tiempo máximo de espera en segundos
-$mail->SMTPDebug = 2; // Habilitar logs de depuración para verificar errores
+// $mail->SMTPDebug = 2; // Habilitar logs de depuración para verificar errores
 
 // Manejar la solicitud según el método HTTP
 switch ($method) {
@@ -196,8 +196,6 @@ switch ($method) {
 
                     // Enviar correo a los participantes
                     try {
-                        echo "Configurando correo...";
-
                         // Configuración del servidor SMTP
                         // $mail->isSMTP();
                         // $mail->Host = 'crewconnect.rf.gd'; // Servidor SMTP
@@ -238,7 +236,6 @@ switch ($method) {
                         $mail->Body = 'Este es un correo de prueba enviado con PHPMailer.';
                     
                         // Enviar correo
-                        echo "Enviando correo...";
                         if (!$mail->send()) {
                             http_response_code(500);
                             echo json_encode([
@@ -247,8 +244,6 @@ switch ($method) {
                             ]);
                             exit;
                         }
-
-                        echo "Correo enviado con éxito";
                     } catch (Exception $e) {
                         http_response_code(500);
                         echo json_encode([
