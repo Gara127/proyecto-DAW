@@ -34,25 +34,12 @@ export class EventoService {
     return this.http.put<any>(`${this.apiUrl}?id_evento=${evento.id_evento}`, evento, { headers });
   }
 
-
   // Actualizar parcialmente un evento
   actualizarEventoParcial(id_evento: number, cambios: any): Observable<any> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     return this.http.patch<any>(`${this.apiUrl}?id_evento=${id_evento}`, cambios, { headers });
   }
   
-  
-  
-  
-  
-
-
-
-  
-  
-  
-
-
   // Eliminar un evento
   eliminarEvento(id_evento: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}?id_evento=${id_evento}`);
@@ -69,7 +56,6 @@ export class EventoService {
     console.log('Evento notificado:', evento); // Verifica aquí
     this.eventoCreado.next(evento);
   }
-  
 
   // Escuchar nuevos eventos creados
   obtenerEventoCreado$(): Observable<Evento> {
@@ -78,14 +64,11 @@ export class EventoService {
 
   // Obtener eventos con filtrado opcional
   obtenerEventosFiltrados(fecha_min?: string, fecha_max?: string, solo_caducados?: boolean): Observable<Evento[]> {
-  let params: any = {};
-  if (fecha_min) params.fecha_min = fecha_min;
-  if (fecha_max) params.fecha_max = fecha_max;
-  if (solo_caducados) params.solo_caducados = solo_caducados;
+    let params: any = {};
+    if (fecha_min) params.fecha_min = fecha_min;
+    if (fecha_max) params.fecha_max = fecha_max;
+    if (solo_caducados) params.solo_caducados = solo_caducados;
 
-  return this.http.get<Evento[]>(this.apiUrl, { params });
+    return this.http.get<Evento[]>(this.apiUrl, { params });
   }
-
-
-  
 }
