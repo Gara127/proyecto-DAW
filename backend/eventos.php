@@ -183,7 +183,7 @@ switch ($method) {
         
                     // Agregar participantes al evento (si existen)
                     if (!empty($data['participants']) && is_array($data['participants'])) {
-                        foreach ($data['participants'] as $id_usuario) {
+                        foreach ($data['participants'] as $id_usuario => $nombre) {
                             $id_usuario = (int)$id_usuario; // Asegurarse de que es un entero
                             $relacion_query = "INSERT INTO evento_participantes (id_evento, id_usuario) 
                                                VALUES ($id_evento, $id_usuario)";
@@ -220,7 +220,9 @@ switch ($method) {
                     
                         // Configuración del correo
                         $mail->setFrom('app.crew.connect@gmail.com', 'Crew Connect'); // Dirección del remitente
-                        $mail->addAddress('gara127gs@gmail.com', 'Usuario');
+                        foreach ($data['participants'] as $id_usuario => $nombre) {
+                            $mail->addAddress($nombre, 'Usuario');
+                        }
                         $mail->Subject = 'Evento creado';
                         $mail->Body = 'Este es un correo de prueba enviado con PHPMailer.';
                     
