@@ -22,8 +22,12 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 // Instanciar la clase PHPMailer
 $mail = new PHPMailer(true);
-$mail->Timeout = 30; // Tiempo máximo de espera en segundos
-// $mail->SMTPDebug = 2; // Habilitar logs de depuración para verificar errores
+
+// Tiempo máximo de espera en segundos
+$mail->Timeout = 30;
+
+// Para mostrar logs de depuración en local
+// $mail->SMTPDebug = 2;
 
 // Manejar la solicitud según el método HTTP
 switch ($method) {

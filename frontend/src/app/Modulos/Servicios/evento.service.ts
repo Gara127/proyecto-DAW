@@ -8,7 +8,7 @@ import { Subject } from 'rxjs';
   providedIn: 'root'
 })
 export class EventoService {
-  private apiUrl = 'https://crewconnect.rf.gd/eventos.php'; // URL del endpoint PHP
+  private apiUrl = 'http://localhost/backend/eventos.php'; // URL del endpoint PHP
   private eventoCreado = new Subject<Evento>(); // Subject para emitir eventos creados
   constructor(private http: HttpClient) { }
 
