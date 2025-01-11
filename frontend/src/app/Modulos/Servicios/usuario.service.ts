@@ -7,7 +7,7 @@ import { Usuario } from '../models/usuario.model';
   providedIn: 'root',
 })
 export class UsuarioService {
-  private apiUrl = 'https://crewconnect.rf.gd/eventos.php'; // URL del endpoint PHP
+  private apiUrl = 'https://crewconnect.rf.gd/usuarios.php'; // URL del endpoint PHP
   
   constructor(private http: HttpClient) {}
 
