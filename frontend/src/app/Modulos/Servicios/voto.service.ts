@@ -2,69 +2,83 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, Observable, throwError } from 'rxjs';
 
+
 @Injectable({
   providedIn: 'root',
 })
 export class VotoService {
-  private apiUrl = 'http://localhost/backend/upcomingEvents.php'; // URL del endpoint PHP
+  private apiUrl = 'http://localhost/proyecto-DAW/backend/upcomingEvents.php'; 
 
   constructor(private http: HttpClient) {}
 
-  // Obtener todos los eventos de un grupo
-  obtenerUpcomingEventsPorGrupo(idGrupo: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}?id_grupo=${idGrupo}`).pipe(
+  // Obtener todas las encuestas
+  obtenerTodasEncuestas(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl).pipe(
       catchError((error) => {
-        console.error('Error al obtener los eventos por grupo:', error);
-        return throwError(() => error); // Retorna el error completo para depuración
+        console.error('Error al obtener todas las encuestas:', error);
+        return throwError(() => error);
       })
     );
   }
 
-  // Obtener un evento específico por id_voting
-  obtenerUpcomingEventPorId(id_voting: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}?id_voting=${id_voting}`).pipe(
+  // Obtener encuestas filtradas por id_evento
+  obtenerEncuestasPorEvento(idEvento: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}?id_evento=${idEvento}`).pipe(
       catchError((error) => {
-        console.error('Error al obtener el evento:', error);
-        return throwError(() => new Error('Error al obtener el evento'));
+        console.error('Error al obtener las encuestas por evento:', error);
+        return throwError(() => error);
       })
     );
   }
 
-  // Crear un nuevo evento para un grupo
-  crearUpcomingEvent(idUsuario: number, idGrupo: number, name: string, time: string, date: string, location: string): Observable<any> {
-    const data = { id_usuario: idUsuario, id_grupo: idGrupo, name, time, date, location };
-  
-    console.log('Datos enviados al backend (servicio):', data); // Depuración
-  
+  // Crear una nueva encuesta
+  crearEncuesta(
+    idUsuario: number,
+    idEvento: number,
+    name: string,
+    time: string,
+    date: string,
+    location: string
+  ): Observable<any> {
+    
+    const data = { id_usuario: idUsuario, id_evento: idEvento, name, time, date, location };
+
+    console.log('Datos enviados al backend (servicio):', data); // Para depuración
+
     return this.http.post(`${this.apiUrl}`, data, {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
       }),
     }).pipe(
       catchError((error) => {
-        console.error('Error al crear el evento:', error);
-        return throwError(() => new Error('Error al crear el evento'));
+        console.error('Error al crear la encuesta:', error);
+        return throwError(() => new Error('Error al crear la encuesta'));
       })
     );
   }
 
-  // Votar por un evento
-  votarUpcomingEvent(idUsuario: number, id_voting: number, voto: number): Observable<any> {
-    const data = { id_usuario: idUsuario, id_voting, voto };
-    return this.http.put(`${this.apiUrl}`, data).pipe(
+  // Registrar o actualizar un voto
+  votarEncuesta(idUsuario: number, idVoting: number, voto: number): Observable<any> {
+    const data = { id_usuario: idUsuario, id_voting: idVoting, voto };
+
+    return this.http.put(`${this.apiUrl}`, data, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    }).pipe(
       catchError((error) => {
-        console.error('Error al votar por el evento:', error);
-        return throwError(() => new Error('Error al votar por el evento'));
+        console.error('Error al votar en la encuesta:', error);
+        return throwError(() => new Error('Error al votar en la encuesta'));
       })
     );
   }
 
-  // Eliminar un voto
-  eliminarVotoUpcomingEvent(idUsuario: number, id_voting: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}?id_usuario=${idUsuario}&id_voting=${id_voting}`).pipe(
+  // Eliminar un voto de una encuesta
+  eliminarVotoEncuesta(idUsuario: number, idVoting: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}?id_usuario=${idUsuario}&id_voting=${idVoting}`).pipe(
       catchError((error) => {
-        console.error('Error al eliminar el voto:', error);
-        return throwError(() => new Error('Error al eliminar el voto'));
+        console.error('Error al eliminar el voto de la encuesta:', error);
+        return throwError(() => new Error('Error al eliminar el voto de la encuesta'));
       })
     );
   }

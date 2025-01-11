@@ -3,13 +3,16 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Evento } from '../models/evento.model';
 import { Subject } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EventoService {
-  private apiUrl = 'http://localhost/backend/eventos.php'; // URL del endpoint PHP
+  private apiUrl = 'http://localhost/proyecto-DAW/backend/eventos.php'; // URL del endpoint PHP
   private eventoCreado = new Subject<Evento>(); // Subject para emitir eventos creados
+  private apiUrlEncuestas = 'http://localhost/proyecto-DAW/backend/upcomingEvents.php'; 
   constructor(private http: HttpClient) { }
 
   // Obtener todos los eventos
@@ -40,6 +43,35 @@ export class EventoService {
     return this.http.patch<any>(`${this.apiUrl}?id_evento=${id_evento}`, cambios, { headers });
   }
   
+  obtenerTodosEventos(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl).pipe(
+      catchError((error) => {
+        console.error('Error al obtener todos los eventos:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  // Obtener todas las encuestas
+obtenerEncuestas(): Observable<any[]> {
+  const apiUrlEncuestas = 'http://localhost/proyecto-DAW/backend/upcomingEvents.php'; // Asegúrate de que esta URL sea correcta
+  return this.http.get<any[]>(apiUrlEncuestas).pipe(
+    catchError((error) => {
+      console.error('Error al obtener encuestas:', error);
+      return throwError(() => error); // Retorna el error para el manejo adecuado
+      })
+  );
+}
+
+  
+
+
+
+  
+  
+  
+
+
   // Eliminar un evento
   eliminarEvento(id_evento: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}?id_evento=${id_evento}`);

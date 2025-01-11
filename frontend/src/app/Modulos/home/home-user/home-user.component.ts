@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { EventoService } from '../../Servicios/evento.service';
 import { FormsModule } from '@angular/forms';
+import { VotoService } from '../../Servicios/voto.service';
 
 @Component({
   selector: 'app-home-user',
@@ -14,6 +15,8 @@ import { FormsModule } from '@angular/forms';
 export class HomeUserComponent implements OnInit {
   eventos: any[] = [];
   eventosFiltrados: any[] = []; // Array para almacenar los eventos después de aplicar filtros
+  encuestasPorEvento: { [key: number]: any[] } = {};
+  encuestas: any[] = [];
 
   username: string | null = null;
   fechaMin: string | null = null;
@@ -24,11 +27,16 @@ export class HomeUserComponent implements OnInit {
   checklistItem: string = ''; // Nuevo ítem de la checklist
   eventoSeleccionado: any = null; // Evento actualmente seleccionado para el modal
 
-  constructor(private router: Router, private eventoService: EventoService) {}
+  constructor(
+    private router: Router,
+    private eventoService: EventoService,
+    private votoService: VotoService
+  ) {}
 
   ngOnInit(): void {
     this.username = localStorage.getItem('username');
     this.cargarEventos();
+    this.cargarEncuestas();
 
     // Escuchar actualizaciones en los eventos (checklist actualizada)
     this.eventoService.obtenerEventoCreado$().subscribe(() => {
@@ -65,18 +73,56 @@ export class HomeUserComponent implements OnInit {
       }
     );
   }
+
+  cargarEncuestas(): void {
+    this.votoService.obtenerTodasEncuestas().subscribe(
+      (data) => {
+        if (Array.isArray(data)) {
+          this.encuestas = data;
+          this.agruparEncuestasPorEvento(); // Agrupar encuestas después de cargar los datos
+          console.log('Encuestas agrupadas:', this.encuestasPorEvento);
+        } else {
+          console.error('Datos de encuestas inválidos:', data);
+          this.encuestas = [];
+        }
+      },
+      (error) => {
+        console.error('Error al cargar encuestas:', error);
+        this.encuestas = [];
+      }
+    );
+  }
+
+  agruparEncuestasPorEvento(): void {
+    this.encuestasPorEvento = {};
   
+    this.encuestas.forEach((encuesta) => {
+      const eventoId = encuesta.id_evento;
+      const eventoRelacionado = this.eventos.find(evento => evento.id_evento === eventoId);
+      if (!this.encuestasPorEvento[eventoId]) {
+        this.encuestasPorEvento[eventoId] = [];
+      }
+      this.encuestasPorEvento[eventoId].push(encuesta);
+      console.log("qué hay aquí", this.encuestasPorEvento[eventoId]);
+    
+    });
   
+    console.log('Encuestas agrupadas por evento:', this.encuestasPorEvento); // Depuración
+  }
+
 
   eliminarEvento(id_evento: number): void {
     if (confirm('¿Estás seguro de que deseas eliminar este evento?')) {
-      this.eventoService.eliminarEvento(id_evento).subscribe(() => {
-        this.eventos = this.eventos.filter(evento => evento.id_evento !== id_evento);
-        alert('Evento eliminado con éxito.');
-      }, error => {
-        console.error('Error al eliminar el evento:', error);
-        alert('Error al eliminar el evento.');
-      });
+      this.eventoService.eliminarEvento(id_evento).subscribe(
+        () => {
+          this.eventos = this.eventos.filter((evento) => evento.id_evento !== id_evento);
+          alert('Evento eliminado con éxito.');
+        },
+        (error) => {
+          console.error('Error al eliminar el evento:', error);
+          alert('Error al eliminar el evento.');
+        }
+      );
     }
   }
 
@@ -88,23 +134,17 @@ export class HomeUserComponent implements OnInit {
     const fechaMinDate = this.fechaMin ? new Date(this.fechaMin) : null;
     const fechaMaxDate = this.fechaMax ? new Date(this.fechaMax) : null;
     const ahora = new Date();
-  
+
     this.eventosFiltrados = this.eventos.filter((evento) => {
       const fechaEvento = new Date(evento.date);
-  
-      // Verifica si cumple con la fecha mínima
+
       const cumpleMinimo = fechaMinDate ? fechaEvento >= fechaMinDate : true;
-  
-      // Verifica si cumple con la fecha máxima
       const cumpleMaximo = fechaMaxDate ? fechaEvento <= fechaMaxDate : true;
-  
-      // Verifica si está caducado (si mostrarSoloCaducados está activado)
       const cumpleCaducidad = this.mostrarSoloCaducados ? fechaEvento < ahora : true;
-  
+
       return cumpleMinimo && cumpleMaximo && cumpleCaducidad;
     });
   }
-  
 
   abrirChecklist(idEvento: number): void {
     this.eventoSeleccionado = this.eventos.find(evento => evento.id_evento === idEvento);
@@ -154,4 +194,9 @@ export class HomeUserComponent implements OnInit {
     this.router.navigate(['/event-creator']);
   }
   
+  navigateToCreatePoll(): void {
+    this.router.navigate(['/voting']);
+  }
 }
+
+

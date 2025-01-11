@@ -160,11 +160,35 @@ body {
   text-decoration: none;
   font-weight: bold;
   color: #0056b3;
+  margin: 0px;
 }
 
 .btn-link:hover {
   color: #004494;
 }
+
+.button-container {
+  display: flex; /* Flexbox para disposición en fila */
+  justify-content: center; /* Centra los botones en el contenedor */
+  align-items: center; /* Alinea los botones verticalmente */
+  gap: 20px; /* Espacio entre botones */
+}
+
+/* Botón específico (opcional) */
+.my-custom-button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+}
+
+.my-custom-button:hover {
+  background-color: #45a049;
+}
+
+.my-custom-button:hover {
+  background-color: #45a049;
+}
+
 
 /* Footer */
 #footer {
