@@ -109,15 +109,22 @@ export class HomeUserComponent implements OnInit {
       // Verifica si está caducado (si mostrarSoloCaducados está activado)
       const cumpleCaducidad = this.mostrarSoloCaducados ? fechaEvento < ahora : true;
   
-      // Verifica si el término de búsqueda coincide con el título o descripción
+      // Verifica si el término de búsqueda coincide con el título, descripción, ubicación o participantes
+      const terminoBusqueda = this.busqueda.toLowerCase();
       const cumpleBusqueda = this.busqueda
-        ? evento.title.toLowerCase().includes(this.busqueda.toLowerCase()) ||
-          (evento.description || '').toLowerCase().includes(this.busqueda.toLowerCase())
+        ? evento.title.toLowerCase().includes(terminoBusqueda) || // Coincidencia en el título
+          (evento.description || '').toLowerCase().includes(terminoBusqueda) || // Coincidencia en la descripción
+          (evento.location || '').toLowerCase().includes(terminoBusqueda) || // Coincidencia en la ubicación
+          evento.participants.some((p: any) =>
+            (p.nombre || '').toLowerCase().includes(terminoBusqueda) || // Coincidencia en nombre del participante
+            (p.email || '').toLowerCase().includes(terminoBusqueda) // Coincidencia en correo del participante
+          )
         : true;
   
       return cumpleMinimo && cumpleMaximo && cumpleCaducidad && cumpleBusqueda;
     });
   }
+  
   
   
 
