@@ -27,14 +27,18 @@ export class HomeUserComponent implements OnInit {
   constructor(private router: Router, private eventoService: EventoService) {}
 
   ngOnInit(): void {
-    this.username = localStorage.getItem('username');
+    // Obtiene el objeto completo del usuario desde localStorage
+    const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+    this.username = usuario.nombre || null; // Extrae el nombre del usuario o asigna null si no existe
+  
     this.cargarEventos();
-
+  
     // Escuchar actualizaciones en los eventos (checklist actualizada)
     this.eventoService.obtenerEventoCreado$().subscribe(() => {
       this.cargarEventos(); // Recargar eventos al recibir notificación
     });
   }
+  
 
   cargarEventos(): void {
     const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
@@ -153,5 +157,11 @@ export class HomeUserComponent implements OnInit {
   navigateToCreateEvent(): void {
     this.router.navigate(['/event-creator']);
   }
+
+  cerrarSesion(): void {
+    localStorage.clear(); // Limpia todo el almacenamiento local
+    this.router.navigate(['/login']); // Redirige al login
+  }
+  
   
 }

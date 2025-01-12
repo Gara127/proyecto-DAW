@@ -15,7 +15,7 @@
           <span *ngIf="username">Hola, {{username}}</span>
         </button>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-          <li><a class="dropdown-item" href="#">Cerrar Sesión</a></li>
+          <li><a class="dropdown-item" (click)="cerrarSesion()">Cerrar Sesión</a></li>
         </ul>
       </div>
     </nav>
