@@ -49,7 +49,12 @@
           <input type="checkbox" id="mostrarSoloCaducados" [(ngModel)]="mostrarSoloCaducados" class="form-check-input">
           <label for="mostrarSoloCaducados" class="form-check-label">Mostrar solo eventos caducados</label>
         </div>
+        <div>
+          <label for="busqueda" class="form-label">Buscar:</label>
+          <input type="text" id="busqueda" [(ngModel)]="busqueda" class="form-control" placeholder="Buscar eventos..." (input)="aplicarFiltros()">
+        </div>
         <button class="btn btn-outline-primary" (click)="aplicarFiltros()">Aplicar Filtros</button>
+        <button class="btn btn-outline-secondary" (click)="borrarFiltros()">Borrar Filtros</button>
       </div>
     </div>
 

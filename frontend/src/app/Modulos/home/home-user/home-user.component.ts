@@ -14,7 +14,7 @@ import { FormsModule } from '@angular/forms';
 export class HomeUserComponent implements OnInit {
   eventos: any[] = [];
   eventosFiltrados: any[] = []; // Array para almacenar los eventos después de aplicar filtros
-
+  busqueda: string = ''; // Almacena el término de búsqueda
   username: string | null = null;
   fechaMin: string | null = null;
   fechaMax: string | null = null;
@@ -51,15 +51,18 @@ export class HomeUserComponent implements OnInit {
   
     this.eventoService.obtenerEventosPorUsuario(idUsuario).subscribe(
       (eventos) => {
-        this.eventos = eventos.map((evento) => ({
-          ...evento,
-          checklist: Array.isArray(evento.checklist)
-            ? evento.checklist
-            : JSON.parse(evento.checklist || '[]'),
-          participants: Array.isArray(evento.participants)
-            ? evento.participants
-            : JSON.parse(evento.participants || '[]'),
-        }));
+        this.eventos = eventos
+          .map((evento) => ({
+            ...evento,
+            checklist: Array.isArray(evento.checklist)
+              ? evento.checklist
+              : JSON.parse(evento.checklist || '[]'),
+            participants: Array.isArray(evento.participants)
+              ? evento.participants
+              : JSON.parse(evento.participants || '[]'),
+          }))
+          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()); // Orden descendente por fecha
+  
         this.eventosFiltrados = [...this.eventos];
       },
       (error) => {
@@ -67,6 +70,7 @@ export class HomeUserComponent implements OnInit {
       }
     );
   }
+  
   
   
   
@@ -105,9 +109,16 @@ export class HomeUserComponent implements OnInit {
       // Verifica si está caducado (si mostrarSoloCaducados está activado)
       const cumpleCaducidad = this.mostrarSoloCaducados ? fechaEvento < ahora : true;
   
-      return cumpleMinimo && cumpleMaximo && cumpleCaducidad;
+      // Verifica si el término de búsqueda coincide con el título o descripción
+      const cumpleBusqueda = this.busqueda
+        ? evento.title.toLowerCase().includes(this.busqueda.toLowerCase()) ||
+          (evento.description || '').toLowerCase().includes(this.busqueda.toLowerCase())
+        : true;
+  
+      return cumpleMinimo && cumpleMaximo && cumpleCaducidad && cumpleBusqueda;
     });
   }
+  
   
 
   abrirChecklist(idEvento: number): void {
@@ -157,6 +168,18 @@ export class HomeUserComponent implements OnInit {
   navigateToCreateEvent(): void {
     this.router.navigate(['/event-creator']);
   }
+
+  borrarFiltros(): void {
+    this.fechaMin = null;
+    this.fechaMax = null;
+    this.mostrarSoloCaducados = false;
+    this.busqueda = ''; // Limpia el término de búsqueda
+  
+    // Restablece los eventos filtrados a la lista completa
+    this.eventosFiltrados = [...this.eventos];
+  }
+  
+  
 
   cerrarSesion(): void {
     localStorage.clear(); // Limpia todo el almacenamiento local
