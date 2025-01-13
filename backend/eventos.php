@@ -40,7 +40,43 @@ switch ($method) {
 
     // Obtener todos los eventos
     case 'GET':
-        if (isset($_GET['id_evento'])) {
+        if (isset($_GET['id_usuario'])) {
+            $id_usuario = intval($_GET['id_usuario']);
+            
+            // Consultar eventos donde el usuario es creador o participante
+            $query = "SELECT 
+                e.id_evento, 
+                e.title, 
+                e.date, 
+                e.time, 
+                e.location, 
+                e.description, 
+                COALESCE(e.checklist, '[]') AS checklist, 
+                (SELECT CONCAT('[', GROUP_CONCAT(JSON_OBJECT('nombre', u.nombre)), ']') 
+                 FROM evento_participantes ep 
+                 JOIN usuario u ON ep.id_usuario = u.id_usuario 
+                 WHERE ep.id_evento = e.id_evento) AS participants
+            FROM eventos e
+            LEFT JOIN evento_participantes ep ON e.id_evento = ep.id_evento
+            WHERE e.id_usuario = $id_usuario OR ep.id_usuario = $id_usuario
+            GROUP BY e.id_evento";
+    
+            $result = mysqli_query($con, $query);
+    
+            if ($result) {
+                $eventos = [];
+                while ($evento = mysqli_fetch_assoc($result)) {
+                    $evento['checklist'] = json_decode($evento['checklist']) ?: [];
+                    $evento['participants'] = $evento['participants'] ? json_decode($evento['participants']) : [];
+                    $eventos[] = $evento;
+                }
+                echo json_encode($eventos);
+            } else {
+                http_response_code(500);
+                echo json_encode(["error" => "Error al obtener eventos: " . mysqli_error($con)]);
+            }
+        } elseif (isset($_GET['id_evento'])) {
+            // Consultar un evento específico
             $id_evento = intval($_GET['id_evento']);
             $query = "SELECT 
                 e.id_evento, 
@@ -56,14 +92,12 @@ switch ($method) {
                  WHERE ep.id_evento = e.id_evento) AS participants
             FROM eventos e
             WHERE e.id_evento = $id_evento";
-
+    
             $result = mysqli_query($con, $query);
-
+    
             if ($result) {
                 $evento = mysqli_fetch_assoc($result);
-                // Decodificar checklist si no está vacío
                 $evento['checklist'] = json_decode($evento['checklist']) ?: [];
-                // Asegurar que participants sea un array válido
                 $evento['participants'] = $evento['participants'] ? json_decode($evento['participants']) : [];
                 echo json_encode($evento);
             } else {
@@ -85,13 +119,12 @@ switch ($method) {
                  JOIN usuario u ON ep.id_usuario = u.id_usuario 
                  WHERE ep.id_evento = e.id_evento) AS participants
             FROM eventos e";
-
+    
             $result = mysqli_query($con, $query);
-
+    
             if ($result) {
                 $eventos = [];
                 while ($evento = mysqli_fetch_assoc($result)) {
-                    // Decodificar checklist y participants para cada evento
                     $evento['checklist'] = json_decode($evento['checklist']) ?: [];
                     $evento['participants'] = $evento['participants'] ? json_decode($evento['participants']) : [];
                     $eventos[] = $evento;
@@ -103,6 +136,8 @@ switch ($method) {
             }
         }
         break;
+    
+    
     
         // Actualizar parcialmente un evento (PATCH)
         case 'PATCH':
@@ -156,124 +191,45 @@ switch ($method) {
                   
         // Crear un nuevo evento
         case 'POST':
-            $data = json_decode(file_get_contents("php://input"), true); // Obtener datos del cuerpo de la solicitud
-
+            $data = json_decode(file_get_contents("php://input"), true);
+        
             // Validar los campos obligatorios
-            if (!empty($data['title'])) {
+            if (!empty($data['title']) && !empty($data['id_usuario'])) {
                 // Escapar datos para prevenir inyección SQL
                 $title = mysqli_real_escape_string($con, $data['title']);
-                $date = !empty($data['date']) ? mysqli_real_escape_string($con, $data['date']) : null; // Opcional
-                $time = !empty($data['time']) ? mysqli_real_escape_string($con, $data['time']) : null; // Opcional
-                $location = !empty($data['location']) ? mysqli_real_escape_string($con, $data['location']) : null; // Opcional
-                $description = !empty($data['description']) ? mysqli_real_escape_string($con, $data['description']) : null; // Opcional
+                $date = !empty($data['date']) ? mysqli_real_escape_string($con, $data['date']) : null;
+                $time = !empty($data['time']) ? mysqli_real_escape_string($con, $data['time']) : null;
+                $location = !empty($data['location']) ? mysqli_real_escape_string($con, $data['location']) : null;
+                $description = !empty($data['description']) ? mysqli_real_escape_string($con, $data['description']) : null;
+                $id_usuario = intval($data['id_usuario']); // ID del usuario creador
         
-                // Crear consulta dinámica para manejar campos opcionales
-                $fields = ['title', 'date', 'time', 'location', 'description'];
-                $values = [$title, $date, $time, $location, $description];
-        
-                // Construir dinámicamente los campos y valores
-                $insertFields = [];
-                $insertValues = [];
-                foreach ($fields as $index => $field) {
-                    if (!is_null($values[$index])) {
-                        $insertFields[] = $field;
-                        $insertValues[] = "'" . $values[$index] . "'";
-                    }
-                }
-        
-                $query = "INSERT INTO eventos (" . implode(", ", $insertFields) . ") 
-                          VALUES (" . implode(", ", $insertValues) . ")";
+                $query = "INSERT INTO eventos (title, date, time, location, description, id_usuario) 
+                          VALUES ('$title', '$date', '$time', '$location', '$description', $id_usuario)";
         
                 if (mysqli_query($con, $query)) {
-                    $id_evento = mysqli_insert_id($con); // Obtener el ID del evento recién creado
+                    $id_evento = mysqli_insert_id($con);
         
                     // Agregar participantes al evento (si existen)
                     if (!empty($data['participants']) && is_array($data['participants'])) {
-                        foreach ($data['participants'] as $id_usuario => $nombre) {
-                            $id_usuario = (int)$id_usuario; // Asegurarse de que es un entero
-                            $relacion_query = "INSERT INTO evento_participantes (id_evento, id_usuario) 
-                                               VALUES ($id_evento, $id_usuario)";
-                            if (!mysqli_query($con, $relacion_query)) {
-                                http_response_code(500); // Error al agregar participantes
-                                echo json_encode([
-                                    "success" => false,
-                                    "message" => "Error al agregar participante: " . mysqli_error($con)
-                                ]);
-                                exit;
-                            }
+                        foreach ($data['participants'] as $id_participante) {
+                            $id_participante = intval($id_participante);
+                            $insertQuery = "INSERT INTO evento_participantes (id_evento, id_usuario) 
+                                            VALUES ($id_evento, $id_participante)";
+                            mysqli_query($con, $insertQuery);
                         }
                     }
-
-                    // Enviar correo a los participantes
-                    try {
-                        // Configuración del servidor SMTP
-                        $mail->isSMTP();
-                        $mail->Host = 'smtp.gmail.com'; // Servidor SMTP de Gmail
-                        $mail->SMTPAuth = true; // Habilitar autenticación SMTP
-                        $mail->Username = 'app.crew.connect@gmail.com'; // Tu dirección de correo Gmail
-                        $mail->Password = 'yubu vibi ucks qzwd'; // Contraseña o token de aplicación de Gmail
-                        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Usar encriptación TLS
-                        $mail->Port = 587; // Puerto para conexiones TLS
-
-                        // Para probar en local descomentar estas líneas
-                        // $mail->SMTPOptions = [
-                        //     'ssl' => [
-                        //         'verify_peer' => false,
-                        //         'verify_peer_name' => false,
-                        //         'allow_self_signed' => true,
-                        //     ],
-                        // ];
-                    
-                        // Configuración del correo
-                        $mail->setFrom('app.crew.connect@gmail.com', 'Crew Connect'); // Dirección del remitente
-                        foreach ($data['participants'] as $id_usuario => $nombre) {
-                            $mail->addAddress($nombre, 'Usuario');
-                        }
-                        $mail->Subject = 'Evento creado';
-                        $mail->Body = 'Este es un correo de prueba enviado con PHPMailer.';
-                    
-                        // Enviar correo
-                        if (!$mail->send()) {
-                            http_response_code(500);
-                            echo json_encode([
-                                "success" => false,
-                                "message" => "Error al enviar correo: " . $mail->ErrorInfo
-                            ]);
-                            exit;
-                        }
-                    } catch (Exception $e) {
-                        http_response_code(500);
-                        echo json_encode([
-                            "success" => false,
-                            "message" => "Excepción al enviar correo: " . $e->getMessage()
-                        ]);
-                        exit;
-                    }
-                    
-                    // Cerrar la conexión SMTP
-                    $mail->smtpClose();
-
-                    // Responder con éxito
-                    echo json_encode([
-                        "success" => true,
-                        "message" => "Evento creado con éxito",
-                        "id_evento" => $id_evento
-                    ]);
+        
+                    echo json_encode(["success" => true, "message" => "Evento creado con éxito.", "id_evento" => $id_evento]);
                 } else {
-                    http_response_code(500); // Error interno del servidor
-                    echo json_encode([
-                        "success" => false,
-                        "message" => "Error al crear el evento: " . mysqli_error($con)
-                    ]);
+                    http_response_code(500);
+                    echo json_encode(["error" => "Error al crear el evento: " . mysqli_error($con)]);
                 }
             } else {
-                http_response_code(400); // Solicitud incorrecta
-                echo json_encode([
-                    "success" => false,
-                    "message" => "Datos incompletos para crear un evento"
-                ]);
+                http_response_code(400);
+                echo json_encode(["error" => "Datos incompletos para crear el evento."]);
             }
             break;
+        
 
         // Eliminar un evento
         case 'DELETE':

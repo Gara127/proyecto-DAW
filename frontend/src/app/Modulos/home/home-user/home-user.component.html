@@ -54,8 +54,14 @@
       </div>
     </div>
 
-    <!-- Lista de eventos -->
+   <!-- Lista de eventos -->
 <div class="row g-4">
+  <!-- Mostrar mensaje si no hay eventos -->
+  <div *ngIf="eventosFiltrados.length === 0" class="text-center">
+    <p class="text-muted">No hay eventos disponibles.</p>
+  </div>
+
+  <!-- Mostrar eventos filtrados -->
   <div *ngFor="let evento of eventosFiltrados" class="col-lg-4 col-md-6">
     <div class="card shadow-sm h-100">
       <div class="card-body">
@@ -93,6 +99,7 @@
     </div>
   </div>
 </div>
+
 
 
 <!-- Modal para Checklist -->

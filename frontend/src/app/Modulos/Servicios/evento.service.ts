@@ -51,7 +51,12 @@ export class EventoService {
       })
     );
   }
-
+  getEventosPorUsuario(idUsuario: number): Observable<Evento[]> {
+    const url = `${this.apiUrl}?id_usuario=${idUsuario}`;
+    return this.http.get<Evento[]>(url);
+  }
+  
+  
   // Obtener todas las encuestas
 obtenerEncuestas(): Observable<any[]> {
   const apiUrlEncuestas = 'http://localhost/proyecto-DAW/backend/upcomingEvents.php'; // Asegúrate de que esta URL sea correcta

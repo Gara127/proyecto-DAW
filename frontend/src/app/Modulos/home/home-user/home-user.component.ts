@@ -35,24 +35,46 @@ export class HomeUserComponent implements OnInit {
 
   ngOnInit(): void {
     this.username = localStorage.getItem('username');
+  
+    if (!this.username) {
+      console.error('Usuario no logueado');
+      // Redirigir al login si el usuario no está logueado
+      this.router.navigate(['/login']);
+      return;
+    }
+  
+    console.log('Usuario logueado:', this.username);
+  
     this.cargarEventos();
     this.cargarEncuestas();
-
+  
     // Escuchar actualizaciones en los eventos
     this.eventoService.obtenerEventoCreado$().subscribe(() => {
       this.cargarEventos();
     });
   }
+  
+  
 
   cargarEventos(): void {
-    this.eventoService.obtenerEventos().subscribe(
-      (data) => {
-        this.eventos = Array.isArray(data) ? data.map(this.formatearEvento) : [];
-        this.eventosFiltrados = [...this.eventos];
-      },
-      (error) => console.error('Error al cargar eventos:', error)
+    const idUsuario = localStorage.getItem('id_usuario'); // Usar la clave correcta
+    if (!idUsuario) {
+        console.error('ID de usuario no encontrado en localStorage');
+        return;
+    }
+
+    this.eventoService.getEventosPorUsuario(Number(idUsuario)).subscribe(
+        (data) => {
+            this.eventos = Array.isArray(data) ? data.map(this.formatearEvento) : [];
+            this.eventosFiltrados = [...this.eventos];
+        },
+        (error) => console.error('Error al cargar eventos:', error)
     );
-  }
+}
+
+
+  
+  
 
   cargarEncuestas(): void {
     this.votoService.obtenerTodasEncuestas().subscribe(
