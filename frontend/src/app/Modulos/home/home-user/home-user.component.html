@@ -160,27 +160,40 @@
     <!-- Iterar sobre los eventos -->
     <ng-container *ngFor="let eventoId of encuestasPorEvento | keyvalue">
       <!-- Verificar que haya encuestas para este evento -->
-      <div *ngIf="eventoId.value.encuestas?.length > 0" class="mb-5">
+      <div *ngIf="eventoId?.value?.encuestas && eventoId.value.encuestas.length > 0" class="mb-5">
         <!-- Título del evento relacionado -->
         <h3 class="h5 text-secondary mb-3">
           {{ eventoId.value.nombreEvento || 'Evento Desconocido' }}
         </h3>
 
-        <!-- Encuestas relacionadas con el evento -->
-        <div class="row g-4">
-          <div *ngFor="let encuesta of encuestasPorEvento[evento.id_evento]" class="col-lg-4 col-md-6">
-            <div class="card shadow-sm h-100">
-              <div class="card-body">
-                <h4 class="card-title text-secondary">{{ encuesta.name }}</h4>
-                <p class="card-text"><strong>Fecha:</strong> {{ encuesta.date }} a las {{ encuesta.time }}</p>
-                <p class="card-text"><strong>Ubicación:</strong> {{ encuesta.location || 'No especificada' }}</p>
+       <!-- Encuestas relacionadas con el evento -->
+      <div class="section featured-polls mb-5">
+        <div class="container">
+          <h2 class="h4 text-primary fw-bold mb-4">Encuestas Agrupadas por Eventos</h2>
+          <ng-container *ngIf="encuestasPorEvento && Object.keys(encuestasPorEvento).length > 0">
+            <ng-container *ngFor="let eventoId of encuestasPorEvento | keyvalue">
+              <div *ngIf="eventoId.value && eventoId.value.encuestas && eventoId.value.encuestas.length > 0" class="mb-5">
+                <h3 class="h5 text-secondary mb-3">{{ eventoId.value.nombreEvento }}</h3>
+                <div class="row g-4">
+                  <div *ngFor="let encuesta of eventoId.value.encuestas" class="col-lg-4 col-md-6">
+                    <div class="card shadow-sm h-100">
+                      <div class="card-body">
+                        <h4 class="card-title text-secondary">{{ encuesta.name }}</h4>
+                        <p class="card-text"><strong>Fecha:</strong> {{ encuesta.date }} a las {{ encuesta.time }}</p>
+                        <p class="card-text"><strong>Ubicación:</strong> {{ encuesta.location || 'No especificada' }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            </ng-container>
+          </ng-container>
         </div>
-    </ng-container>
-  </div>
-</div>
+      </div>
+
+
+        
+
 <!-- Footer -->
 <footer class="bg-dark text-white py-4">
   <div class="container text-center">

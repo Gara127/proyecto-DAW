@@ -14,18 +14,18 @@ import { VotoService } from '../../Servicios/voto.service';
 })
 export class HomeUserComponent implements OnInit {
   eventos: any[] = [];
-  eventosFiltrados: any[] = []; // Array para almacenar los eventos después de aplicar filtros
-  encuestasPorEvento: { [key: number]: any[] } = {};
+  eventosFiltrados: any[] = []; // Eventos tras aplicar filtros
+  encuestasPorEvento: { [key: number]: { encuestas: any[], nombreEvento?: string } } = {};  // Mapeo de encuestas por ID de evento
+  Object = Object; // Asignar Object para usarlo en el template
   encuestas: any[] = [];
-
   username: string | null = null;
   fechaMin: string | null = null;
   fechaMax: string | null = null;
   mostrarSoloCaducados: boolean = false;
 
-  checklist: string[] = []; // Checklist actual
-  checklistItem: string = ''; // Nuevo ítem de la checklist
-  eventoSeleccionado: any = null; // Evento actualmente seleccionado para el modal
+  checklist: string[] = [];
+  checklistItem: string = '';
+  eventoSeleccionado: any = null;
 
   constructor(
     private router: Router,
@@ -38,78 +38,63 @@ export class HomeUserComponent implements OnInit {
     this.cargarEventos();
     this.cargarEncuestas();
 
-    // Escuchar actualizaciones en los eventos (checklist actualizada)
+    // Escuchar actualizaciones en los eventos
     this.eventoService.obtenerEventoCreado$().subscribe(() => {
-      this.cargarEventos(); // Recargar eventos al recibir notificación
+      this.cargarEventos();
     });
   }
 
   cargarEventos(): void {
     this.eventoService.obtenerEventos().subscribe(
       (data) => {
-        if (Array.isArray(data)) {
-          this.eventos = data.map((evento) => ({
-            ...evento,
-            checklist: Array.isArray(evento.checklist)
-              ? evento.checklist
-              : typeof evento.checklist === 'string'
-              ? JSON.parse(evento.checklist)
-              : [],
-            participants: Array.isArray(evento.participants)
-              ? evento.participants
-              : [],
-          }));
-          this.eventosFiltrados = [...this.eventos]; // Inicializar eventos filtrados
-        } else {
-          console.error('Datos de eventos inválidos:', data);
-          this.eventos = [];
-          this.eventosFiltrados = [];
-        }
+        this.eventos = Array.isArray(data) ? data.map(this.formatearEvento) : [];
+        this.eventosFiltrados = [...this.eventos];
       },
-      (error) => {
-        console.error('Error al cargar eventos:', error);
-        this.eventos = [];
-        this.eventosFiltrados = [];
-      }
+      (error) => console.error('Error al cargar eventos:', error)
     );
   }
 
   cargarEncuestas(): void {
     this.votoService.obtenerTodasEncuestas().subscribe(
       (data) => {
-        if (Array.isArray(data)) {
-          this.encuestas = data;
-          this.agruparEncuestasPorEvento(); // Agrupar encuestas después de cargar los datos
-          console.log('Encuestas agrupadas:', this.encuestasPorEvento);
-        } else {
-          console.error('Datos de encuestas inválidos:', data);
-          this.encuestas = [];
-        }
+        this.encuestas = Array.isArray(data) ? data : [];
+        this.agruparEncuestasPorEvento();
       },
-      (error) => {
-        console.error('Error al cargar encuestas:', error);
-        this.encuestas = [];
-      }
+      (error) => console.error('Error al cargar encuestas:', error)
     );
   }
 
   agruparEncuestasPorEvento(): void {
     this.encuestasPorEvento = {};
-  
+
     this.encuestas.forEach((encuesta) => {
       const eventoId = encuesta.id_evento;
-      const eventoRelacionado = this.eventos.find(evento => evento.id_evento === eventoId);
       if (!this.encuestasPorEvento[eventoId]) {
-        this.encuestasPorEvento[eventoId] = [];
+        const eventoRelacionado = this.eventos.find(e => e.id_evento === eventoId);
+        this.encuestasPorEvento[eventoId] = {
+          encuestas: [],
+          nombreEvento: eventoRelacionado?.title || 'Evento Desconocido',
+        };
       }
-      this.encuestasPorEvento[eventoId].push(encuesta);
-      console.log("qué hay aquí", this.encuestasPorEvento[eventoId]);
-    
+      this.encuestasPorEvento[eventoId].encuestas.push(encuesta);
     });
-  
-    console.log('Encuestas agrupadas por evento:', this.encuestasPorEvento); // Depuración
+
+    console.log('Encuestas agrupadas por evento:', this.encuestasPorEvento);
   }
 
+  formatearEvento(evento: any): any {
+    return {
+      ...evento,
+      checklist: Array.isArray(evento.checklist)
+        ? evento.checklist
+        : typeof evento.checklist === 'string'
+        ? JSON.parse(evento.checklist)
+        : [],
+      participants: Array.isArray(evento.participants)
+        ? evento.participants
+        : [],
+    };
+  }
 
   eliminarEvento(id_evento: number): void {
     if (confirm('¿Estás seguro de que deseas eliminar este evento?')) {
@@ -118,10 +103,7 @@ export class HomeUserComponent implements OnInit {
           this.eventos = this.eventos.filter((evento) => evento.id_evento !== id_evento);
           alert('Evento eliminado con éxito.');
         },
-        (error) => {
-          console.error('Error al eliminar el evento:', error);
-          alert('Error al eliminar el evento.');
-        }
+        (error) => console.error('Error al eliminar evento:', error)
       );
     }
   }
@@ -137,17 +119,15 @@ export class HomeUserComponent implements OnInit {
 
     this.eventosFiltrados = this.eventos.filter((evento) => {
       const fechaEvento = new Date(evento.date);
-
       const cumpleMinimo = fechaMinDate ? fechaEvento >= fechaMinDate : true;
       const cumpleMaximo = fechaMaxDate ? fechaEvento <= fechaMaxDate : true;
       const cumpleCaducidad = this.mostrarSoloCaducados ? fechaEvento < ahora : true;
-
       return cumpleMinimo && cumpleMaximo && cumpleCaducidad;
     });
   }
 
   abrirChecklist(idEvento: number): void {
-    this.eventoSeleccionado = this.eventos.find(evento => evento.id_evento === idEvento);
+    this.eventoSeleccionado = this.eventos.find((evento) => evento.id_evento === idEvento);
     if (this.eventoSeleccionado) {
       this.checklist = Array.isArray(this.eventoSeleccionado.checklist)
         ? this.eventoSeleccionado.checklist
@@ -158,10 +138,8 @@ export class HomeUserComponent implements OnInit {
   }
 
   agregarElemento(): void {
-    if (this.checklistItem.trim()) {
-      if (!this.checklist.includes(this.checklistItem.trim())) {
-        this.checklist.push(this.checklistItem.trim());
-      }
+    if (this.checklistItem.trim() && !this.checklist.includes(this.checklistItem.trim())) {
+      this.checklist.push(this.checklistItem.trim());
       this.checklistItem = '';
     }
   }
@@ -171,32 +149,20 @@ export class HomeUserComponent implements OnInit {
   }
 
   guardarChecklist(): void {
-    if (this.eventoSeleccionado && this.eventoSeleccionado.id_evento) {
-      const datosActualizar = {
-        checklist: JSON.stringify(this.checklist)
-      };
-
-      this.eventoService.actualizarEventoParcial(this.eventoSeleccionado.id_evento, datosActualizar)
-        .subscribe(
-          () => {
-            alert('Checklist actualizada con éxito.');
-            this.eventoSeleccionado.checklist = [...this.checklist];
-          },
-          (error) => {
-            console.error('Error al actualizar la checklist:', error);
-            alert('No se pudo actualizar la checklist. Revisa la consola.');
-          }
-        );
+    if (this.eventoSeleccionado?.id_evento) {
+      const datosActualizar = { checklist: JSON.stringify(this.checklist) };
+      this.eventoService.actualizarEventoParcial(this.eventoSeleccionado.id_evento, datosActualizar).subscribe(
+        () => alert('Checklist actualizada con éxito.'),
+        (error) => console.error('Error al actualizar la checklist:', error)
+      );
     }
   }
 
   navigateToCreateEvent(): void {
     this.router.navigate(['/event-creator']);
   }
-  
+
   navigateToCreatePoll(): void {
     this.router.navigate(['/voting']);
   }
 }
-
-

@@ -1,7 +1,9 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('log_errors', 1);
+error_reporting(E_ALL);
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-
 // Configurar los encabezados para respuestas JSON y permitir el acceso desde cualquier origen
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *");
@@ -12,7 +14,11 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
 require_once("database.php");
 
 // Carga automáticamente las dependencias instaladas
+if (!file_exists('vendor/autoload.php')) {
+    die("Error: No se encuentra el archivo vendor/autoload.php");
+}
 require 'vendor/autoload.php';
+
 
 // Se establece conexión con la base de datos
 $con = conectar();

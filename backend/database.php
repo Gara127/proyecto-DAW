@@ -1,7 +1,7 @@
 <?php
     $host = "localhost";
     $user = "root";
-    $pass = "Sander123";
+    $pass = "";
     $db_name = "ProyectoDaw";
 
     function init(){
