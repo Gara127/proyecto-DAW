@@ -21,10 +21,13 @@ export class EventoService {
   }
 
   // Crear un evento
-  crearEvento(evento: Evento): Observable<any> {
+  crearEvento(evento: any): Observable<any> {
+    const id_creador = localStorage.getItem('id'); // Obtener el ID del creador desde localStorage
+    const payload = { ...evento, id_creador }; // Añadir id_creador al objeto
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.post<any>(this.apiUrl, evento, { headers });
-  }
+    return this.http.post<any>(this.apiUrl, payload, { headers });
+}
+
 
   // Obtener un evento por ID
   obtenerEventoPorId(id_evento: number): Observable<Evento> {
@@ -51,10 +54,7 @@ export class EventoService {
       })
     );
   }
-  getEventosPorUsuario(idUsuario: number): Observable<Evento[]> {
-    const url = `${this.apiUrl}?id_usuario=${idUsuario}`;
-    return this.http.get<Evento[]>(url);
-  }
+ 
   
   
   // Obtener todas las encuestas
@@ -70,6 +70,12 @@ obtenerEncuestas(): Observable<any[]> {
 
   
 
+
+getEventosPorUsuario(idUsuario: number): Observable<Evento[]> {
+  const url = `${this.apiUrl}?id_usuario=${idUsuario}`;
+  console.log('URL para obtener eventos:', url); // Log para verificar
+  return this.http.get<Evento[]>(url);
+}
 
 
   

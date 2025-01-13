@@ -35,46 +35,37 @@ export class HomeUserComponent implements OnInit {
 
   ngOnInit(): void {
     this.username = localStorage.getItem('username');
-  
-    if (!this.username) {
-      console.error('Usuario no logueado');
-      // Redirigir al login si el usuario no está logueado
-      this.router.navigate(['/login']);
-      return;
-    }
-  
-    console.log('Usuario logueado:', this.username);
-  
-    this.cargarEventos();
-    this.cargarEncuestas();
-  
-    // Escuchar actualizaciones en los eventos
-    this.eventoService.obtenerEventoCreado$().subscribe(() => {
-      this.cargarEventos();
-    });
-  }
-  
-  
+    const idUsuario = localStorage.getItem('id'); // Obtener ID del usuario
 
-  cargarEventos(): void {
-    const idUsuario = localStorage.getItem('id_usuario'); // Usar la clave correcta
     if (!idUsuario) {
-        console.error('ID de usuario no encontrado en localStorage');
+        console.error('Usuario no logueado');
+        this.router.navigate(['/login']);
         return;
     }
 
+    console.log('ID de usuario obtenido:', idUsuario);
+
+    // Obtener eventos del backend
     this.eventoService.getEventosPorUsuario(Number(idUsuario)).subscribe(
-        (data) => {
-            this.eventos = Array.isArray(data) ? data.map(this.formatearEvento) : [];
-            this.eventosFiltrados = [...this.eventos];
-        },
-        (error) => console.error('Error al cargar eventos:', error)
+      (eventos) => {
+        console.log('Eventos recibidos desde el backend:', eventos);
+        if (Array.isArray(eventos)) {
+          this.eventos = eventos.map(this.formatearEvento);
+          this.eventosFiltrados = [...this.eventos];
+        } else {
+          console.error('La respuesta del backend no es un array:', eventos);
+        }
+      },
+      (error) => {
+        console.error('Error al cargar eventos:', error);
+        alert('Hubo un problema al cargar los eventos.');
+      }
     );
+    
+    
 }
 
 
-  
-  
 
   cargarEncuestas(): void {
     this.votoService.obtenerTodasEncuestas().subscribe(
@@ -88,7 +79,6 @@ export class HomeUserComponent implements OnInit {
 
   agruparEncuestasPorEvento(): void {
     this.encuestasPorEvento = {};
-
     this.encuestas.forEach((encuesta) => {
       const eventoId = encuesta.id_evento;
       if (!this.encuestasPorEvento[eventoId]) {
@@ -100,9 +90,8 @@ export class HomeUserComponent implements OnInit {
       }
       this.encuestasPorEvento[eventoId].encuestas.push(encuesta);
     });
-
-    console.log('Encuestas agrupadas por evento:', this.encuestasPorEvento);
   }
+  
 
   formatearEvento(evento: any): any {
     return {
@@ -110,13 +99,16 @@ export class HomeUserComponent implements OnInit {
       checklist: Array.isArray(evento.checklist)
         ? evento.checklist
         : typeof evento.checklist === 'string'
-        ? JSON.parse(evento.checklist)
+        ? JSON.parse(evento.checklist || '[]')
         : [],
       participants: Array.isArray(evento.participants)
         ? evento.participants
+        : typeof evento.participants === 'string'
+        ? JSON.parse(evento.participants || '[]')
         : [],
     };
   }
+  
 
   eliminarEvento(id_evento: number): void {
     if (confirm('¿Estás seguro de que deseas eliminar este evento?')) {
@@ -187,4 +179,15 @@ export class HomeUserComponent implements OnInit {
   navigateToCreatePoll(): void {
     this.router.navigate(['/voting']);
   }
+
+  cerrarSesion(): void {
+    // Eliminar datos de sesión almacenados en localStorage
+    localStorage.removeItem('username');
+    localStorage.removeItem('id');
+    localStorage.removeItem('token');
+  
+    // Redirigir al usuario a la página de inicio de sesión
+    this.router.navigate(['/login']);
+  }
+  
 }

@@ -96,67 +96,49 @@ export class EventCreatorComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.eventForm.get('title')?.valid) { 
-        // Inicializar como un objeto para crear un array asociativo
-        const participants: { [key: number]: any } = {};
-        
-        // Agregar el usuario actual al objeto
-        participants[this.userID] = this.username;
-        
-        // Recorrer los participantes y agregarlos al objeto asociativo
-        this.participants.forEach(usuario => {
-          participants[usuario.id_usuario] = usuario.nombre;
-        });
-        
-        const formData = this.eventForm.value;
-        const eventData: any = {
-            title: formData.title,
-            ...Object.fromEntries(
-                Object.entries(formData).filter(([key, value]) => value !== '' && key !== 'title')
-            ),
-            participants: participants,
-        };
-
-        if (this.route.snapshot.queryParams['id_evento']) {
-            eventData.id_evento = this.route.snapshot.queryParams['id_evento'];
-        }
-
-        if (eventData.id_evento) {
-            // Editar evento
-            this.eventoService.actualizarEvento(eventData).subscribe(
-                (response: any) => {
-                    console.log('Evento actualizado con éxito:', response);
-                    alert('Evento actualizado con éxito.');
-                    this.router.navigate(['/home-user']);
-                },
-                (error: any) => {
-                    console.error('Error al actualizar evento:', error);
-                    alert('Error al actualizar evento.');
-                }
-            );
-        } else {
-            // Crear evento
-            this.eventoService.crearEvento(eventData).subscribe(
-                (response: any) => {
-                    console.log('Evento creado con éxito:', response);
-
-                    const nuevoEvento = {
-                        ...eventData,
-                        id_evento: response.id_evento,
-                    };
-
-                    this.eventoService.notificarEventoCreado(nuevoEvento);
-                    alert('Evento creado con éxito.');
-                    this.router.navigate(['/home-user']);
-                },
-                (error: any) => {
-                    console.error('Error al crear evento:', error);
-                    alert('Error al crear evento.');
-                }
-            );
-        }
+    if (this.eventForm.get('title')?.valid) {
+      const formData = this.eventForm.value;
+      const eventData: any = {
+        title: formData.title,
+        date: formData.date || null,
+        time: formData.time || null,
+        location: formData.location || null,
+        description: formData.description || null,
+        participants: this.participants.map((usuario) => usuario.id_usuario), // Solo IDs
+      };
+  
+      if (this.route.snapshot.queryParams['id_evento']) {
+        eventData.id_evento = this.route.snapshot.queryParams['id_evento'];
+      }
+  
+      if (eventData.id_evento) {
+        this.eventoService.actualizarEvento(eventData).subscribe(
+          (response) => {
+            console.log('Evento actualizado con éxito:', response);
+            alert('Evento actualizado con éxito.');
+            this.router.navigate(['/home-user']);
+          },
+          (error) => {
+            console.error('Error al actualizar evento:', error);
+            alert('Error al actualizar evento.');
+          }
+        );
+      } else {
+        this.eventoService.crearEvento(eventData).subscribe(
+          (response) => {
+            console.log('Evento creado con éxito:', response);
+            alert('Evento creado con éxito.');
+            this.router.navigate(['/home-user']);
+          },
+          (error) => {
+            console.error('Error al crear evento:', error);
+            alert('Error al crear evento.');
+          }
+        );
+      }
     } else {
-        alert('El campo "Título" es obligatorio. Por favor, rellénalo antes de continuar.');
+      alert('El campo "Título" es obligatorio. Por favor, rellénalo antes de continuar.');
     }
   }
+  
 }  

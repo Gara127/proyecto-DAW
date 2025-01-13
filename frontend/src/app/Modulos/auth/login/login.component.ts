@@ -54,7 +54,7 @@ export class LoginComponent implements OnInit {
         this.usuarioService.iniciarSesion(loginData).subscribe(
             (response: any) => {
                 console.log('Inicio de sesión exitoso!', response);
-                localStorage.setItem('id_usuario', response.id); // Cambiar la clave a 'id_usuario'
+                localStorage.setItem('id', response.id.toString()); // Cambiar la clave a 'id_usuario'
                 localStorage.setItem('username', response.nombre);
 
                 if (response && response.rol) {

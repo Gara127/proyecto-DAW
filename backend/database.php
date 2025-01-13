@@ -56,18 +56,8 @@
                     time TIME NOT NULL,
                     location VARCHAR(255),
                     description TEXT,
-                    checklist TEXT, -- Agregar la columna checklist como tipo TEXT
-                    id_usuario INT NOT NULL, -- Agregar la columna id_usuario
-                    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
+                    checklist TEXT -- La columna checklist como tipo TEXT
                     )") or die("Error al crear la tabla evento: " . mysqli_error($con));
-    
-        // Verificar si la columna 'id_usuario' ya existe
-        $column_check = mysqli_query($con, "SHOW COLUMNS FROM eventos LIKE 'id_usuario'");
-        if (mysqli_num_rows($column_check) == 0) {
-            // Si la columna no existe, agregarla
-            mysqli_query($con, "ALTER TABLE eventos ADD COLUMN id_usuario INT NOT NULL") or die("Error al agregar la columna id_usuario: " . mysqli_error($con));
-            mysqli_query($con, "ALTER TABLE eventos ADD FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE") or die("Error al agregar clave foránea para id_usuario: " . mysqli_error($con));
-        }
     }
     
     
