@@ -28,7 +28,7 @@ export class HomeUserComponent implements OnInit {
   eventoSeleccionado: any = null;
 
   searchQuery: string = ''; // Para el texto del buscador
-
+  mensajeChecklist: string | null = null;
 
   constructor(
     private router: Router,
@@ -120,13 +120,17 @@ export class HomeUserComponent implements OnInit {
     if (confirm('¿Estás seguro de que deseas eliminar este evento?')) {
       this.eventoService.eliminarEvento(id_evento).subscribe(
         () => {
+          // Filtrar el evento eliminado tanto en 'eventos' como en 'eventosFiltrados'
           this.eventos = this.eventos.filter((evento) => evento.id_evento !== id_evento);
+          this.eventosFiltrados = this.eventosFiltrados.filter((evento) => evento.id_evento !== id_evento);
+  
           alert('Evento eliminado con éxito.');
         },
         (error) => console.error('Error al eliminar evento:', error)
       );
     }
   }
+  
 
   editarEvento(evento: any): void {
     this.router.navigate(['/event-creator'], { queryParams: { id_evento: evento.id_evento } });
@@ -183,12 +187,17 @@ export class HomeUserComponent implements OnInit {
   guardarChecklist(): void {
     if (this.eventoSeleccionado?.id_evento) {
       const datosActualizar = { checklist: JSON.stringify(this.checklist) };
+  
       this.eventoService.actualizarEventoParcial(this.eventoSeleccionado.id_evento, datosActualizar).subscribe(
-        () => alert('Checklist actualizada con éxito.'),
+        () => {
+          alert('Checklist actualizada con éxito.');
+          this.router.navigate(['/home-user']); // Redirigir a Home User
+        },
         (error) => console.error('Error al actualizar la checklist:', error)
       );
     }
   }
+  
   
   
   resetFilters(): void {
