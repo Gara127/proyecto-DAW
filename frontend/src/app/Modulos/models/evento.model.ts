@@ -5,8 +5,9 @@ export interface Evento {
   time: string | null;
   location: string | null;
   description: string | null;
-  participants?: number[]; // IDs de los participantes
+  participants?: { id_usuario: number; nombre: string }[]; // Cambiar a objetos con ID y nombre
   checklist?: string[]; // Checklist como array de strings
 }
+
 
   

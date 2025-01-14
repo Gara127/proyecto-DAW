@@ -48,12 +48,14 @@ export class HomeUserComponent implements OnInit {
     // Obtener eventos del backend
     this.eventoService.getEventosPorUsuario(Number(idUsuario)).subscribe(
       (eventos) => {
-        console.log('Eventos recibidos desde el backend:', eventos);
         if (Array.isArray(eventos)) {
+          console.log('Eventos recibidos desde el backend:', eventos);
           this.eventos = eventos.map(this.formatearEvento);
           this.eventosFiltrados = [...this.eventos];
         } else {
           console.error('La respuesta del backend no es un array:', eventos);
+          this.eventos = []; // Asegúrate de inicializar con un array vacío
+          this.eventosFiltrados = [];
         }
       },
       (error) => {
@@ -61,6 +63,7 @@ export class HomeUserComponent implements OnInit {
         alert('Hubo un problema al cargar los eventos.');
       }
     );
+    
     
     
 }
@@ -125,6 +128,8 @@ export class HomeUserComponent implements OnInit {
   editarEvento(evento: any): void {
     this.router.navigate(['/event-creator'], { queryParams: { id_evento: evento.id_evento } });
   }
+  
+  
 
   aplicarFiltros(): void {
     const fechaMinDate = this.fechaMin ? new Date(this.fechaMin) : null;

@@ -46,16 +46,42 @@ export class EventCreatorComponent implements OnInit {
     
     this.route.queryParams.subscribe(params => {
       if (params['id_evento']) {
-        this.cargarEvento(params['id_evento']);
+        this.cargarEvento(+params['id_evento']); // Asegúrate de que es un número
+
       }
     });
   }
   
   cargarEvento(id_evento: number): void {
-    this.eventoService.obtenerEventoPorId(id_evento).subscribe(evento => {
-      this.eventForm.patchValue(evento);
-    });
+    this.eventoService.obtenerEventoPorId(id_evento).subscribe(
+      evento => {
+        this.eventForm.patchValue({
+          title: evento.title,
+          date: evento.date,
+          time: evento.time,
+          location: evento.location,
+          description: evento.description,
+        });
+  
+        // Mapeo de participantes
+        this.participants = (evento.participants || []).map(participant => ({
+          id_usuario: participant.id_usuario,
+          nombre: participant.nombre,
+          password: '', // Asignar un valor por defecto
+          rol: '' // Asignar un valor por defecto
+        }));
+      },
+      error => {
+        console.error('Error al cargar el evento:', error);
+        alert('No se pudo cargar el evento. Por favor, inténtalo de nuevo.');
+        this.router.navigate(['/home-user']); // Redirigir si falla
+      }
+    );
   }
+  
+  
+  
+  
 
   addParticipant(): void {
     const username = this.eventForm.get('participants')?.value;  
@@ -99,19 +125,17 @@ export class EventCreatorComponent implements OnInit {
     if (this.eventForm.get('title')?.valid) {
       const formData = this.eventForm.value;
       const eventData: any = {
+        id_evento: this.route.snapshot.queryParams['id_evento'], // ID del evento si se está editando
         title: formData.title,
         date: formData.date || null,
         time: formData.time || null,
         location: formData.location || null,
         description: formData.description || null,
-        participants: this.participants.map((usuario) => usuario.id_usuario), // Solo IDs
+        participants: this.participants.map((usuario) => usuario.id_usuario), // IDs de participantes
       };
   
-      if (this.route.snapshot.queryParams['id_evento']) {
-        eventData.id_evento = this.route.snapshot.queryParams['id_evento'];
-      }
-  
       if (eventData.id_evento) {
+        // Actualizar evento existente
         this.eventoService.actualizarEvento(eventData).subscribe(
           (response) => {
             console.log('Evento actualizado con éxito:', response);
@@ -124,6 +148,7 @@ export class EventCreatorComponent implements OnInit {
           }
         );
       } else {
+        // Crear nuevo evento
         this.eventoService.crearEvento(eventData).subscribe(
           (response) => {
             console.log('Evento creado con éxito:', response);
@@ -140,5 +165,7 @@ export class EventCreatorComponent implements OnInit {
       alert('El campo "Título" es obligatorio. Por favor, rellénalo antes de continuar.');
     }
   }
+  
+  
   
 }  

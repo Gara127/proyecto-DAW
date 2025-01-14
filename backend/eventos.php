@@ -46,29 +46,67 @@ switch ($method) {
 
     // Obtener todos los eventos
     case 'GET':
-        if (isset($_GET['id_usuario'])) {
-            $id_usuario = intval($_GET['id_usuario']);
-        
+        if (isset($_GET['id_evento'])) {
+            $id_evento = intval($_GET['id_evento']);
             $query = "
-    SELECT 
-        e.id_evento,
-        e.title,
-        e.date,
-        e.time,
-        e.location,
-        e.description,
-        COALESCE(e.checklist, '[]') AS checklist,
-        (SELECT JSON_ARRAYAGG(JSON_OBJECT('id_usuario', u.id_usuario, 'nombre', u.nombre)) 
-         FROM evento_participantes ep 
-         JOIN usuario u ON ep.id_usuario = u.id_usuario 
-         WHERE ep.id_evento = e.id_evento) AS participants
-    FROM eventos e
-    LEFT JOIN evento_participantes ep ON e.id_evento = ep.id_evento
-    WHERE ep.id_usuario = $id_usuario
-    GROUP BY e.id_evento";
-        
+                SELECT 
+                    e.id_evento,
+                    e.title,
+                    e.date,
+                    e.time,
+                    e.location,
+                    e.description,
+                    COALESCE(e.checklist, '[]') AS checklist,
+                    (SELECT JSON_ARRAYAGG(JSON_OBJECT('id_usuario', u.id_usuario, 'nombre', u.nombre)) 
+                     FROM evento_participantes ep 
+                     JOIN usuario u ON ep.id_usuario = u.id_usuario 
+                     WHERE ep.id_evento = e.id_evento) AS participants
+                FROM eventos e
+                WHERE e.id_evento = $id_evento";
+    
             $result = mysqli_query($con, $query);
-        
+    
+            if ($result && mysqli_num_rows($result) > 0) {
+                $evento = mysqli_fetch_assoc($result);
+                $evento['checklist'] = json_decode($evento['checklist']) ?: [];
+                $evento['participants'] = $evento['participants'] ? json_decode($evento['participants']) : [];
+                echo json_encode($evento);
+            } else {
+                // Responder con un evento vacío si no se encuentra el ID
+                http_response_code(200); // Usar 200 para mantener la compatibilidad con el frontend
+                echo json_encode([
+                    "id_evento" => $id_evento,
+                    "title" => "",
+                    "date" => null,
+                    "time" => null,
+                    "location" => "",
+                    "description" => "",
+                    "checklist" => [],
+                    "participants" => []
+                ]);
+            }
+        } elseif (isset($_GET['id_usuario'])) {
+            $id_usuario = intval($_GET['id_usuario']);
+            $query = "
+                SELECT 
+                    e.id_evento,
+                    e.title,
+                    e.date,
+                    e.time,
+                    e.location,
+                    e.description,
+                    COALESCE(e.checklist, '[]') AS checklist,
+                    (SELECT JSON_ARRAYAGG(JSON_OBJECT('id_usuario', u.id_usuario, 'nombre', u.nombre)) 
+                     FROM evento_participantes ep 
+                     JOIN usuario u ON ep.id_usuario = u.id_usuario 
+                     WHERE ep.id_evento = e.id_evento) AS participants
+                FROM eventos e
+                LEFT JOIN evento_participantes ep ON e.id_evento = ep.id_evento
+                WHERE ep.id_usuario = $id_usuario
+                GROUP BY e.id_evento";
+    
+            $result = mysqli_query($con, $query);
+    
             if ($result) {
                 $eventos = [];
                 while ($evento = mysqli_fetch_assoc($result)) {
@@ -78,15 +116,17 @@ switch ($method) {
                 }
                 echo json_encode($eventos);
             } else {
-                http_response_code(500);
-                echo json_encode(["error" => "Error al obtener eventos: " . mysqli_error($con)]);
+                http_response_code(200); // Usar 200 y devolver un array vacío
+                echo json_encode([]);
             }
         } else {
             http_response_code(400);
-            echo json_encode(["error" => "Falta el parámetro id_usuario"]);
+            echo json_encode(["error" => "Faltan parámetros"]);
         }
-        
         break;
+    
+    
+    
     
     
     
@@ -255,10 +295,9 @@ switch ($method) {
                     $updates[] = "description = '$description'";
                 }
         
-                // Actualizar evento
+                // Actualizar el evento
                 if (!empty($updates)) {
                     $query = "UPDATE eventos SET " . implode(", ", $updates) . " WHERE id_evento = $id_evento";
-        
                     if (!mysqli_query($con, $query)) {
                         http_response_code(500);
                         echo json_encode(["error" => "Error al actualizar el evento: " . mysqli_error($con)]);
@@ -294,6 +333,8 @@ switch ($method) {
                 echo json_encode(["error" => "ID del evento no especificado."]);
             }
             break;
+        
+        
         
         
     }

@@ -33,12 +33,14 @@ export class EventoService {
   obtenerEventoPorId(id_evento: number): Observable<Evento> {
     return this.http.get<Evento>(`${this.apiUrl}?id_evento=${id_evento}`);
   }
+  
 
   // Actualizar un evento
   actualizarEvento(evento: Evento): Observable<any> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     return this.http.put<any>(`${this.apiUrl}?id_evento=${evento.id_evento}`, evento, { headers });
   }
+  
 
   // Actualizar parcialmente un evento
   actualizarEventoParcial(id_evento: number, cambios: any): Observable<any> {
