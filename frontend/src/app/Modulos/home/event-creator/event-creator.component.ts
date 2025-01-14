@@ -23,6 +23,7 @@ export class EventCreatorComponent implements OnInit {
   userService: any;
   username: string | null = null; // para login usuario
   userID: number = 0; // para login usuario
+  isEditMode: boolean = false; // Por defecto, no es modo edición
 
   constructor(
     private fb: FormBuilder,
@@ -46,11 +47,14 @@ export class EventCreatorComponent implements OnInit {
     
     this.route.queryParams.subscribe(params => {
       if (params['id_evento']) {
-        this.cargarEvento(+params['id_evento']); // Asegúrate de que es un número
-
+        this.isEditMode = true; // Cambiar a modo edición
+        this.cargarEvento(params['id_evento']);
+      } else {
+        this.isEditMode = false; // Modo creación
       }
     });
   }
+  
   
   cargarEvento(id_evento: number): void {
     this.eventoService.obtenerEventoPorId(id_evento).subscribe(

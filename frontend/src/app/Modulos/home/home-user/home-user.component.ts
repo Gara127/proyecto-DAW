@@ -27,6 +27,9 @@ export class HomeUserComponent implements OnInit {
   checklistItem: string = '';
   eventoSeleccionado: any = null;
 
+  searchQuery: string = ''; // Para el texto del buscador
+
+
   constructor(
     private router: Router,
     private eventoService: EventoService,
@@ -135,13 +138,23 @@ export class HomeUserComponent implements OnInit {
     const fechaMinDate = this.fechaMin ? new Date(this.fechaMin) : null;
     const fechaMaxDate = this.fechaMax ? new Date(this.fechaMax) : null;
     const ahora = new Date();
-
+  
     this.eventosFiltrados = this.eventos.filter((evento) => {
       const fechaEvento = new Date(evento.date);
       const cumpleMinimo = fechaMinDate ? fechaEvento >= fechaMinDate : true;
       const cumpleMaximo = fechaMaxDate ? fechaEvento <= fechaMaxDate : true;
       const cumpleCaducidad = this.mostrarSoloCaducados ? fechaEvento < ahora : true;
-      return cumpleMinimo && cumpleMaximo && cumpleCaducidad;
+  
+      const query = this.searchQuery.toLowerCase();
+      const cumpleBusqueda =
+        query === '' ||
+        evento.title.toLowerCase().includes(query) ||
+        (evento.location && evento.location.toLowerCase().includes(query)) ||
+        (evento.description && evento.description.toLowerCase().includes(query)) ||
+        evento.participants.some((p: any) => p.nombre.toLowerCase().includes(query)) ||
+        evento.checklist.some((item: string) => item.toLowerCase().includes(query));
+  
+      return cumpleMinimo && cumpleMaximo && cumpleCaducidad && cumpleBusqueda;
     });
   }
 
@@ -176,6 +189,16 @@ export class HomeUserComponent implements OnInit {
       );
     }
   }
+  
+  
+  resetFilters(): void {
+    this.fechaMin = null;
+    this.fechaMax = null;
+    this.mostrarSoloCaducados = false;
+    this.searchQuery = ''; // Reinicia el buscador
+    this.eventosFiltrados = [...this.eventos]; // Vuelve a mostrar todos los eventos
+  }
+  
 
   navigateToCreateEvent(): void {
     this.router.navigate(['/event-creator']);

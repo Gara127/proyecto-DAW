@@ -24,70 +24,75 @@
   <div class="container text-center">
     <h2 class="display-4 fw-bold mb-4">¡Bienvenido a Crew Connect!</h2>
     <p class="lead text mb-4">Organiza tus planes con amigos y familiares fácilmente.</p>
-    <button class="btn btn-primary btn-lg shadow-sm" (click)="navigateToCreateEvent()">Crear Evento</button>
-    <button class="btn btn-secondary btn-lg shadow-sm my-custom-button" (click)="navigateToCreatePoll()">Crear Encuesta</button>
+    <div class="button-container">
+      <button class="btn btn-primary btn-lg shadow-sm me-3" (click)="navigateToCreateEvent()">Crear Evento</button>
+      <button class="btn btn-secondary btn-lg shadow-sm" (click)="navigateToCreatePoll()">Crear Encuesta</button>
+    </div>
   </div>
 </section>
 
-<!-- Eventos Destacados -->
-<div class="section featured-events mb-5">
-  <div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="h4 text-primary fw-bold">Eventos Destacados</h2>
-      <div class="filter-container d-flex flex-wrap align-items-center gap-3">
-        <div>
-          <label for="fechaMin" class="form-label">Fecha mínima:</label>
-          <input type="date" id="fechaMin" [(ngModel)]="fechaMin" class="form-control">
-        </div>
-        <div>
-          <label for="fechaMax" class="form-label">Fecha máxima:</label>
-          <input type="date" id="fechaMax" [(ngModel)]="fechaMax" class="form-control">
-        </div>
-        <div class="form-check">
-          <input type="checkbox" id="mostrarSoloCaducados" [(ngModel)]="mostrarSoloCaducados" class="form-check-input">
-          <label for="mostrarSoloCaducados" class="form-check-label">Mostrar solo eventos caducados</label>
-        </div>
-        <button class="btn btn-outline-primary" (click)="aplicarFiltros()">Aplicar Filtros</button>
-      </div>
-    </div>
 
-    <!-- Lista de eventos -->
-    <div class="row g-4">
-      <div *ngIf="eventosFiltrados.length === 0" class="text-center">
-        <p class="text-muted">No hay eventos disponibles.</p>
-      </div>
-      <div *ngFor="let evento of eventosFiltrados" class="col-lg-4 col-md-6">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <h3 class="card-title text-primary">{{ evento.title }}</h3>
-            <p class="card-text"><strong>Fecha:</strong> {{ evento.date }} a las {{ evento.time }}</p>
-            <p class="card-text"><strong>Ubicación:</strong> {{ evento.location || 'No especificada' }}</p>
-            <p class="card-text"><strong>Descripción:</strong> {{ evento.description || 'Sin descripción' }}</p>
-            <p><strong>Participantes:</strong></p>
-            <ul *ngIf="evento.participants?.length > 0; else noParticipants">
-              <li *ngFor="let participante of evento.participants">{{ participante.nombre }}</li>
-            </ul>
-            <ng-template #noParticipants>
-              <p class="text-muted">No hay participantes</p>
-            </ng-template>
-            <p><strong>Checklist:</strong></p>
-            <ul *ngIf="evento.checklist?.length > 0; else noChecklist">
-              <li *ngFor="let item of evento.checklist">{{ item }}</li>
-            </ul>
-            <ng-template #noChecklist>
-              <p class="text-muted">No hay elementos en la checklist</p>
-            </ng-template>
-            <div class="d-flex justify-content-between mt-3">
-              <button class="btn btn-danger btn-sm" (click)="eliminarEvento(evento.id_evento)">Eliminar</button>
-              <button class="btn btn-warning btn-sm" (click)="editarEvento(evento)">Editar</button>
-              <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#taskModal" (click)="abrirChecklist(evento.id_evento)">Ver Checklist</button>
-            </div>
+
+  <!-- Filtros -->
+  <div class="container d-flex flex-column align-items-center justify-content-center min-vh-100">
+  <div class="filter-container d-flex flex-wrap align-items-center gap-3 mb-5">
+    <div>
+      <label for="fechaMin" class="form-label">Fecha mínima:</label>
+      <input type="date" id="fechaMin" [(ngModel)]="fechaMin" class="form-control">
+    </div>
+    <div>
+      <label for="fechaMax" class="form-label">Fecha máxima:</label>
+      <input type="date" id="fechaMax" [(ngModel)]="fechaMax" class="form-control">
+    </div>
+    <div class="form-check">
+      <input type="checkbox" id="mostrarSoloCaducados" [(ngModel)]="mostrarSoloCaducados" class="form-check-input">
+      <label for="mostrarSoloCaducados" class="form-check-label">Mostrar solo eventos caducados</label>
+    </div>
+    <div>
+      <label for="searchQuery" class="form-label">Buscar:</label>
+      <input type="text" id="searchQuery" [(ngModel)]="searchQuery" (input)="aplicarFiltros()" class="form-control" placeholder="Buscar eventos...">
+    </div>
+    <button class="btn btn-outline-primary" (click)="aplicarFiltros()">Aplicar Filtros</button>
+    <button class="btn btn-outline-secondary" (click)="resetFilters()">Borrar Filtros</button>
+  </div>
+
+  <!-- Lista de eventos -->
+  <div class="row g-4 w-100">
+    <div *ngIf="eventosFiltrados.length === 0" class="text-center">
+      <p class="text-muted">No hay eventos disponibles.</p>
+    </div>
+    <div *ngFor="let evento of eventosFiltrados" class="col-lg-4 col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h3 class="card-title text-primary">{{ evento.title }}</h3>
+          <p class="card-text"><strong>Fecha:</strong> {{ evento.date }} a las {{ evento.time }}</p>
+          <p class="card-text"><strong>Ubicación:</strong> {{ evento.location || 'No especificada' }}</p>
+          <p class="card-text"><strong>Descripción:</strong> {{ evento.description || 'Sin descripción' }}</p>
+          <p><strong>Participantes:</strong></p>
+          <ul *ngIf="evento.participants?.length > 0; else noParticipants">
+            <li *ngFor="let participante of evento.participants">{{ participante.nombre }}</li>
+          </ul>
+          <ng-template #noParticipants>
+            <p class="text-muted">No hay participantes</p>
+          </ng-template>
+          <p><strong>Checklist:</strong></p>
+          <ul *ngIf="evento.checklist?.length > 0; else noChecklist">
+            <li *ngFor="let item of evento.checklist">{{ item }}</li>
+          </ul>
+          <ng-template #noChecklist>
+            <p class="text-muted">No hay elementos en la checklist</p>
+          </ng-template>
+          <div class="d-flex justify-content-between mt-3">
+            <button class="btn btn-danger btn-sm" (click)="eliminarEvento(evento.id_evento)">Eliminar</button>
+            <button class="btn btn-warning btn-sm" (click)="editarEvento(evento)">Editar</button>
+            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#taskModal" (click)="abrirChecklist(evento.id_evento)">Ver Checklist</button>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
 
 <!-- Modal para Checklist -->
 <div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
