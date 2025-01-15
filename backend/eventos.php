@@ -57,23 +57,24 @@ switch ($method) {
                     e.location,
                     e.description,
                     COALESCE(e.checklist, '[]') AS checklist,
-                    (SELECT JSON_ARRAYAGG(JSON_OBJECT('id_usuario', u.id_usuario, 'nombre', u.nombre)) 
-                     FROM evento_participantes ep 
-                     JOIN usuario u ON ep.id_usuario = u.id_usuario 
-                     WHERE ep.id_evento = e.id_evento) AS participants
+                    (
+                        SELECT GROUP_CONCAT(CONCAT('{\"id_usuario\":', u.id_usuario, ',\"nombre\":\"', u.nombre, '\"}') SEPARATOR ',')
+                        FROM evento_participantes ep 
+                        JOIN usuario u ON ep.id_usuario = u.id_usuario 
+                        WHERE ep.id_evento = e.id_evento
+                    ) AS participants
                 FROM eventos e
                 WHERE e.id_evento = $id_evento";
-    
+            
             $result = mysqli_query($con, $query);
     
             if ($result && mysqli_num_rows($result) > 0) {
                 $evento = mysqli_fetch_assoc($result);
                 $evento['checklist'] = json_decode($evento['checklist']) ?: [];
-                $evento['participants'] = $evento['participants'] ? json_decode($evento['participants']) : [];
+                $evento['participants'] = $evento['participants'] ? json_decode('[' . $evento['participants'] . ']') : [];
                 echo json_encode($evento);
             } else {
-                // Responder con un evento vacío si no se encuentra el ID
-                http_response_code(200); // Usar 200 para mantener la compatibilidad con el frontend
+                http_response_code(200);
                 echo json_encode([
                     "id_evento" => $id_evento,
                     "title" => "",
@@ -96,27 +97,29 @@ switch ($method) {
                     e.location,
                     e.description,
                     COALESCE(e.checklist, '[]') AS checklist,
-                    (SELECT JSON_ARRAYAGG(JSON_OBJECT('id_usuario', u.id_usuario, 'nombre', u.nombre)) 
-                     FROM evento_participantes ep 
-                     JOIN usuario u ON ep.id_usuario = u.id_usuario 
-                     WHERE ep.id_evento = e.id_evento) AS participants
+                    (
+                        SELECT GROUP_CONCAT(CONCAT('{\"id_usuario\":', u.id_usuario, ',\"nombre\":\"', u.nombre, '\"}') SEPARATOR ',')
+                        FROM evento_participantes ep 
+                        JOIN usuario u ON ep.id_usuario = u.id_usuario 
+                        WHERE ep.id_evento = e.id_evento
+                    ) AS participants
                 FROM eventos e
                 LEFT JOIN evento_participantes ep ON e.id_evento = ep.id_evento
                 WHERE ep.id_usuario = $id_usuario
                 GROUP BY e.id_evento";
-    
+            
             $result = mysqli_query($con, $query);
     
             if ($result) {
                 $eventos = [];
                 while ($evento = mysqli_fetch_assoc($result)) {
                     $evento['checklist'] = json_decode($evento['checklist']) ?: [];
-                    $evento['participants'] = $evento['participants'] ? json_decode($evento['participants']) : [];
+                    $evento['participants'] = $evento['participants'] ? json_decode('[' . $evento['participants'] . ']') : [];
                     $eventos[] = $evento;
                 }
                 echo json_encode($eventos);
             } else {
-                http_response_code(200); // Usar 200 y devolver un array vacío
+                http_response_code(200);
                 echo json_encode([]);
             }
         } else {
@@ -124,6 +127,7 @@ switch ($method) {
             echo json_encode(["error" => "Faltan parámetros"]);
         }
         break;
+    
     
     
     
