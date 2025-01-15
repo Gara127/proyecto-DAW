@@ -44,7 +44,13 @@ export class VotingComponent implements OnInit {
 
   // Cargar eventos para el select
   cargarEventosParaSelect(): void {
-    this.eventoService.obtenerTodosEventos().subscribe({
+    const idUsuario = parseInt(localStorage.getItem('id') || '0'); // Obtener ID del usuario logueado
+    if (!idUsuario) {
+      console.error('Usuario no logueado');
+      return;
+    }
+  
+    this.eventoService.getEventosPorUsuario(idUsuario).subscribe({
       next: (data) => {
         this.eventosSelect = data.map((evento: any) => ({
           id_evento: evento.id_evento,
@@ -57,6 +63,7 @@ export class VotingComponent implements OnInit {
       },
     });
   }
+  
 
   // Crear una nueva encuesta
   addSurvey(): void {
