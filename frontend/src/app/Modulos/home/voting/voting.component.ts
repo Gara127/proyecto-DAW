@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { VotoService } from '../../Servicios/voto.service';
 import { EventoService } from '../../Servicios/evento.service';
 import { catchError, Observable, throwError } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-voting',
@@ -24,6 +25,7 @@ export class VotingComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private router: Router,
     private votoService: VotoService,
     private eventoService: EventoService
   ) {
@@ -70,7 +72,7 @@ export class VotingComponent implements OnInit {
     if (this.encuestaForm.valid) {
       const id = parseInt(localStorage.getItem('id') || '0');
       const nuevaEncuesta = {
-        id_usuario: id, 
+        id_usuario: id,
         id_evento: this.encuestaForm.value.id_evento,
         name: this.encuestaForm.value.name,
         date: this.encuestaForm.value.date ?? "",
@@ -80,28 +82,27 @@ export class VotingComponent implements OnInit {
 
       console.log('Datos enviados al backend:', nuevaEncuesta);
 
-      this.votoService
-        .crearEncuesta(
-          nuevaEncuesta.id_usuario,
-          nuevaEncuesta.id_evento,
-          nuevaEncuesta.name,
-          nuevaEncuesta.time,
-          nuevaEncuesta.date,
-          nuevaEncuesta.location
-        )
-        .subscribe({
-          next: () => {
-            this.mensaje = 'Encuesta creada exitosamente.';
-            // this.obtenerEncuestas(); // Actualizar lista de encuestas
-            this.encuestaForm.reset(); // Limpiar el formulario
-          },
-          error: (error) => {
-            console.error('Error al crear la encuesta:', error);
-            this.mensaje = 'Hubo un error al crear la encuesta.';
-          },
-        });
+      this.votoService.crearEncuesta(
+        nuevaEncuesta.id_usuario,
+        nuevaEncuesta.id_evento,
+        nuevaEncuesta.name,
+        nuevaEncuesta.time,
+        nuevaEncuesta.date,
+        nuevaEncuesta.location
+      ).subscribe({
+        next: () => {
+          console.log('Encuesta creada con éxito.');
+          this.router.navigate(['/home-user']); // Redirigir a Home-User
+        },
+        error: (error) => {
+          console.error('Error al crear la encuesta:', error.message);
+        },
+      });
     }
-  }
+}
+
+
+  
 
   
 

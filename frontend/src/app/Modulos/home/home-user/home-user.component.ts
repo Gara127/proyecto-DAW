@@ -48,16 +48,17 @@ export class HomeUserComponent implements OnInit {
 
     console.log('ID de usuario obtenido:', idUsuario);
 
-    // Obtener eventos del backend
+    // Obtener eventos y encuestas del backend
     this.eventoService.getEventosPorUsuario(Number(idUsuario)).subscribe(
       (eventos) => {
         if (Array.isArray(eventos)) {
           console.log('Eventos recibidos desde el backend:', eventos);
           this.eventos = eventos.map(this.formatearEvento);
           this.eventosFiltrados = [...this.eventos];
+          this.cargarEncuestas(); // Cargar encuestas después de obtener los eventos
         } else {
           console.error('La respuesta del backend no es un array:', eventos);
-          this.eventos = []; // Asegúrate de inicializar con un array vacío
+          this.eventos = [];
           this.eventosFiltrados = [];
         }
       },
@@ -66,37 +67,36 @@ export class HomeUserComponent implements OnInit {
         alert('Hubo un problema al cargar los eventos.');
       }
     );
-    
-    
-    
 }
 
 
 
-  cargarEncuestas(): void {
-    this.votoService.obtenerTodasEncuestas().subscribe(
-      (data) => {
-        this.encuestas = Array.isArray(data) ? data : [];
-        this.agruparEncuestasPorEvento();
-      },
-      (error) => console.error('Error al cargar encuestas:', error)
-    );
-  }
+cargarEncuestas(): void {
+  this.votoService.obtenerTodasEncuestas().subscribe(
+    (data) => {
+      this.encuestas = Array.isArray(data) ? data : [];
+      this.agruparEncuestasPorEvento();
+    },
+    (error) => console.error('Error al cargar encuestas:', error)
+  );
+}
 
-  agruparEncuestasPorEvento(): void {
-    this.encuestasPorEvento = {};
-    this.encuestas.forEach((encuesta) => {
-      const eventoId = encuesta.id_evento;
-      if (!this.encuestasPorEvento[eventoId]) {
-        const eventoRelacionado = this.eventos.find(e => e.id_evento === eventoId);
-        this.encuestasPorEvento[eventoId] = {
-          encuestas: [],
-          nombreEvento: eventoRelacionado?.title || 'Evento Desconocido',
-        };
-      }
-      this.encuestasPorEvento[eventoId].encuestas.push(encuesta);
-    });
-  }
+agruparEncuestasPorEvento(): void {
+  this.encuestasPorEvento = {};
+  this.encuestas.forEach((encuesta) => {
+    const eventoId = encuesta.id_evento;
+    if (!this.encuestasPorEvento[eventoId]) {
+      const eventoRelacionado = this.eventos.find(e => e.id_evento === eventoId);
+      this.encuestasPorEvento[eventoId] = {
+        encuestas: [],
+        nombreEvento: eventoRelacionado?.title || 'Evento Desconocido',
+      };
+    }
+    this.encuestasPorEvento[eventoId].encuestas.push(encuesta);
+  });
+  console.log('Agrupación de encuestas:', this.encuestasPorEvento);
+}
+
   
 
   formatearEvento(evento: any): any {
