@@ -84,10 +84,12 @@
     </tbody>
   </table>
 </div>
-  <div class="form-actions">
-    <button id="create-btn" type="submit">Crear Evento</button>
-    <button class="back-button" type="button" onclick="window.history.back()">Atrás</button>
-  </div>
+<div class="form-actions">
+  <button id="create-btn" type="submit">
+    {{ isEditMode ? 'Actualizar Evento' : 'Crear Evento' }}
+  </button>
+  <button class="back-button" type="button" onclick="window.history.back()">Atrás</button>
+</div>
 </form>
 
 <!-- Footer -->

@@ -1,93 +1,91 @@
 <!-- Encabezado principal -->
 <header class="bg-primary text-white py-3">
   <div class="container d-flex justify-content-between align-items-center gap-3">
-    <!-- Logo y nombre de la aplicación -->
     <div id="app-name-container" class="d-flex align-items-center gap-2">
       <img id="logo" src="assets/img/fotoLogo.png" alt="Logo" class="img-fluid rounded" style="width: 50px; height: 50px;">
       <h1 id="app-name" class="h4 mb-0">Crew Connect</h1>
     </div>
 
-    <!-- Navegación de usuario -->
     <nav class="d-flex align-items-center">
       <div class="dropdown">
         <button class="btn btn-outline-light dropdown-toggle d-flex align-items-center gap-2" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
           <img src="assets/img/fotodeperfil.webp" alt="Foto de perfil" class="rounded-circle" width="30" height="30">
-          <span *ngIf="username">Hola, {{username}}</span>
+          <span *ngIf="username">Hola, {{ username }}</span>
         </button>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-          <li><a class="dropdown-item" href="#">Cerrar Sesión</a></li>
+          <li><a class="dropdown-item" href="#" (click)="cerrarSesion()">Cerrar Sesión</a></li>
         </ul>
       </div>
     </nav>
   </div>
 </header>
+
 <!-- Hero -->
 <section class="hero bg py-5">
   <div class="container text-center">
     <h2 class="display-4 fw-bold mb-4">¡Bienvenido a Crew Connect!</h2>
     <p class="lead text mb-4">Organiza tus planes con amigos y familiares fácilmente.</p>
-    <button class="btn btn-primary btn-lg shadow-sm" (click)="navigateToCreateEvent()">Crear Evento</button>
-    <br>
-    <button class="btn btn-secondary btn-lg shadow-sm my-custom-button" (click)="navigateToCreatePoll()">Crear Encuesta</button>
+    <div class="button-container">
+      <button class="btn btn-primary btn-lg shadow-sm me-3" (click)="navigateToCreateEvent()">Crear Evento</button>
+      <button class="btn btn-secondary btn-lg shadow-sm" (click)="navigateToCreatePoll()">Crear Encuesta</button>
     </div>
+  </div>  
 </section>
 
-<!-- Eventos Destacados -->
-<div class="section featured-events mb-5">
-  <div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="h4 text-primary fw-bold">Eventos Destacados</h2>
-      <div class="filter-container d-flex flex-wrap align-items-center gap-3">
-        <div>
-          <label for="fechaMin" class="form-label">Fecha mínima:</label>
-          <input type="date" id="fechaMin" [(ngModel)]="fechaMin" class="form-control">
-        </div>
-        <div>
-          <label for="fechaMax" class="form-label">Fecha máxima:</label>
-          <input type="date" id="fechaMax" [(ngModel)]="fechaMax" class="form-control">
-        </div>
-        <div class="form-check">
-          <input type="checkbox" id="mostrarSoloCaducados" [(ngModel)]="mostrarSoloCaducados" class="form-check-input">
-          <label for="mostrarSoloCaducados" class="form-check-label">Mostrar solo eventos caducados</label>
-        </div>
-        <button class="btn btn-outline-primary" (click)="aplicarFiltros()">Aplicar Filtros</button>
-      </div>
+<!-- Filtros -->
+<div class="container d-flex flex-column align-items-center justify-content-center min-vh-100">
+  <div class="filter-container d-flex flex-wrap align-items-center gap-3 mb-5">
+    <div>
+      <label for="fechaMin" class="form-label">Fecha mínima:</label>
+      <input type="date" id="fechaMin" [(ngModel)]="fechaMin" class="form-control">
+    </div>
+    <div>
+      <label for="fechaMax" class="form-label">Fecha máxima:</label>
+      <input type="date" id="fechaMax" [(ngModel)]="fechaMax" class="form-control">
+    </div>
+    <div class="form-check">
+      <input type="checkbox" id="mostrarSoloCaducados" [(ngModel)]="mostrarSoloCaducados" class="form-check-input">
+      <label for="mostrarSoloCaducados" class="form-check-label">Mostrar solo eventos caducados</label>
+    </div>
+    <div>
+      <label for="searchQuery" class="form-label">Buscar:</label>
+      <input type="text" id="searchQuery" [(ngModel)]="searchQuery" (input)="aplicarFiltros()" class="form-control" placeholder="Buscar eventos...">
+    </div>
+    <button class="btn btn-outline-primary" (click)="aplicarFiltros()">Aplicar Filtros</button>
+    <button class="btn btn-outline-secondary" (click)="resetFilters()">Borrar Filtros</button>
     </div>
 
-    <!-- Lista de eventos -->
-<div class="row g-4">
-  <div *ngFor="let evento of eventosFiltrados" class="col-lg-4 col-md-6">
-    <div class="card shadow-sm h-100">
-      <div class="card-body">
-        <h3 class="card-title text-primary">{{ evento.title }}</h3>
-        <p class="card-text"><strong>Fecha:</strong> {{ evento.date }} a las {{ evento.time }}</p>
-        <p class="card-text"><strong>Ubicación:</strong> {{ evento.location || 'No especificada' }}</p>
-        <p class="card-text"><strong>Descripción:</strong> {{ evento.description || 'Sin descripción' }}</p>
-        <!-- Participantes -->
-        <div>
-          <p class="card-text"><strong>Participantes:</strong></p>
+     <!-- Lista de eventos -->
+  <div class="row g-4 w-100">
+    <div *ngIf="eventosFiltrados.length === 0" class="text-center">
+      <p class="text-muted">No hay eventos disponibles.</p>
+    </div>
+    <div *ngFor="let evento of eventosFiltrados" class="col-lg-4 col-md-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h3 class="card-title text-primary">{{ evento.title }}</h3>
+          <p class="card-text"><strong>Fecha:</strong> {{ evento.date }} a las {{ evento.time }}</p>
+          <p class="card-text"><strong>Ubicación:</strong> {{ evento.location || 'No especificada' }}</p>
+          <p class="card-text"><strong>Descripción:</strong> {{ evento.description || 'Sin descripción' }}</p>
+          <p><strong>Participantes:</strong></p>
           <ul *ngIf="evento.participants?.length > 0; else noParticipants">
             <li *ngFor="let participante of evento.participants">{{ participante.nombre }}</li>
           </ul>
           <ng-template #noParticipants>
             <p class="text-muted">No hay participantes</p>
           </ng-template>
-        </div>
-        <!-- Checklist -->
-        <div>
-          <p class="card-text"><strong>Checklist:</strong></p>
+          <p><strong>Checklist:</strong></p>
           <ul *ngIf="evento.checklist?.length > 0; else noChecklist">
             <li *ngFor="let item of evento.checklist">{{ item }}</li>
           </ul>
           <ng-template #noChecklist>
             <p class="text-muted">No hay elementos en la checklist</p>
           </ng-template>
-        </div>
-        <!-- Botones -->
-        <div class="d-flex justify-content-between mt-3">
-          <button class="btn btn-danger btn-sm" (click)="eliminarEvento(evento.id_evento)">Eliminar</button>
-          <button class="btn btn-warning btn-sm" (click)="editarEvento(evento)">Editar</button>
-          <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#taskModal" (click)="abrirChecklist(evento.id_evento)">Ver Checklist</button>
+          <div class="d-flex justify-content-between mt-3">
+            <button class="btn btn-danger btn-sm" (click)="eliminarEvento(evento.id_evento)">Eliminar</button>
+            <button class="btn btn-warning btn-sm" (click)="editarEvento(evento)">Editar</button>
+            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#taskModal" (click)="abrirChecklist(evento.id_evento)">Ver Checklist</button>
+          </div>
         </div>
       </div>
     </div>
@@ -104,45 +102,24 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <!-- Formulario de Tasks -->
         <form (ngSubmit)="guardarChecklist()">
           <div class="mb-3">
             <label for="checklistItem" class="form-label">Añadir Elemento</label>
             <div class="input-group">
-              <input
-                type="text"
-                id="checklistItem"
-                [(ngModel)]="checklistItem"
-                name="checklistItem"
-                class="form-control"
-                placeholder="Escribe un elemento"
-                required
-              />
+              <input type="text" id="checklistItem" [(ngModel)]="checklistItem" name="checklistItem" class="form-control" placeholder="Escribe un elemento" required />
               <button type="button" class="btn btn-primary" (click)="agregarElemento()">Añadir</button>
             </div>
           </div>
 
-          <!-- Lista de elementos añadidos -->
           <ul class="list-group mt-3">
-            <li
-              class="list-group-item d-flex justify-content-between align-items-center"
-              *ngFor="let item of checklist; let i = index"
-            >
-              <!-- Mostrar cada elemento -->
+            <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let item of checklist; let i = index">
               <span>{{ item }}</span>
-              <!-- Botón para eliminar -->
-              <button
-                type="button"
-                class="btn btn-danger btn-sm"
-                (click)="eliminarElemento(i)"
-                aria-label="Eliminar elemento"
-              >
+              <button type="button" class="btn btn-danger btn-sm" (click)="eliminarElemento(i)" aria-label="Eliminar elemento">
                 <i class="bi bi-trash"></i>
               </button>
             </li>
           </ul>
 
-          <!-- Botón para guardar la checklist -->
           <div class="text-end mt-3">
             <button type="submit" class="btn btn-success">Guardar Checklist</button>
           </div>
@@ -156,29 +133,22 @@
 <div class="section featured-polls mb-5">
   <div class="container">
     <h2 class="h4 text-primary fw-bold mb-4">Encuestas Agrupadas por Eventos</h2>
-
-    <!-- Iterar sobre los eventos -->
     <ng-container *ngFor="let eventoId of encuestasPorEvento | keyvalue">
-      <!-- Verificar que haya encuestas para este evento -->
-      <div *ngIf="eventoId.value.encuestas?.length > 0" class="mb-5">
-        <!-- Título del evento relacionado -->
-        <h3 class="h5 text-secondary mb-3">
-          {{ eventoId.value.nombreEvento || 'Evento Desconocido' }}
-        </h3>
-
-        <!-- Encuestas relacionadas con el evento -->
-        <div class="row g-4">
-          <div *ngFor="let encuesta of encuestasPorEvento[evento.id_evento]" class="col-lg-4 col-md-6">
+      <div *ngIf="eventoId.value && eventoId.value.encuestas.length > 0" class="mb-5">
+      <h3 class="h5 text mb-3"><strong>Encuesta sobre evento: </strong>"{{ eventoId.value.nombreEvento }}"</h3>
+      <div class="row g-4">
+        <div *ngFor="let encuesta of eventoId.value.encuestas" class="col-lg-4 col-md-6">
             <div class="card shadow-sm h-100">
               <div class="card-body">
-                <h4 class="card-title text-secondary">{{ encuesta.name }}</h4>
+                <p class="card-text"><strong>Descripción:</strong> {{ encuesta.name }}</p>
                 <p class="card-text"><strong>Fecha:</strong> {{ encuesta.date }} a las {{ encuesta.time }}</p>
                 <p class="card-text"><strong>Ubicación:</strong> {{ encuesta.location || 'No especificada' }}</p>
               </div>
             </div>
           </div>
         </div>
-    </ng-container>
+      </div>  
+    </ng-container> 
   </div>
 </div>
 <!-- Footer -->

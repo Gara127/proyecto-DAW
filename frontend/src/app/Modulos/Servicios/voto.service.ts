@@ -7,7 +7,7 @@ import { catchError, Observable, throwError } from 'rxjs';
   providedIn: 'root',
 })
 export class VotoService {
-  private apiUrl = 'http://localhost/proyecto-DAW/backend/upcomingEvents.php'; 
+  private apiUrl = 'http://localhost/backend/upcomingEvents.php'; 
 
   constructor(private http: HttpClient) {}
 
@@ -51,8 +51,8 @@ export class VotoService {
       }),
     }).pipe(
       catchError((error) => {
-        console.error('Error al crear la encuesta:', error);
-        return throwError(() => new Error('Error al crear la encuesta'));
+        console.error('Error al crear la encuesta:', error.error?.message || error.message);
+        return throwError(() => new Error(error.error?.message || 'Error al crear la encuesta'));
       })
     );
   }

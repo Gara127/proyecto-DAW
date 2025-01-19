@@ -2,7 +2,7 @@
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 require_once("database.php");
 
@@ -56,6 +56,7 @@ switch ($method) {
 
         if (!isset($data['id_usuario'], $data['id_evento'], $data['name'], $data['time'], $data['date'], $data['location'])) {
             error_log("Faltan parámetros: " . json_encode($data));
+            http_response_code(400);
             echo json_encode(["error" => "Faltan parámetros"]);
             break;
 }
@@ -78,8 +79,10 @@ switch ($method) {
         $stmt->bind_param("iissss", $id_usuario, $id_evento, $name, $time, $date, $location);
 
         if ($stmt->execute()) {
-            echo json_encode(["mensaje" => "Encuesta creada correctamente" . $stmt->insert_id]);
+            http_response_code(201);
+            echo json_encode(["success" => true, "message" => "Encuesta creada correctamente", "id_voting" => $stmt->insert_id]);
         } else {
+            http_response_code(500);
             echo json_encode(["error" => "Error al crear la encuesta: " . $stmt->error]);
         }
 

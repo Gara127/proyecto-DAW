@@ -5,6 +5,7 @@
     <form [formGroup]="encuestaForm" (ngSubmit)="addSurvey()">
       <select
         formControlName="id_evento"
+        name="id_evento"
         required
         class="form-control"
       >
@@ -16,7 +17,7 @@
 
       <div>
         <label for="name">Descripción:</label>
-        <input id="name" type="text" formControlName="name" placeholder="Descripción de la encuesta" />
+        <input id="name" name="name" type="text" formControlName="name" placeholder="Descripción de la encuesta" />
         <div *ngIf="encuestaForm.controls['name'].invalid && encuestaForm.controls['name'].touched" class="error">
           El nombre es obligatorio.
         </div>
@@ -24,17 +25,17 @@
 
       <div>
         <label for="date">Fecha:</label>
-        <input id="date" type="date" formControlName="date" />
+        <input id="date" name="date" type="date" formControlName="date" />
       </div>
 
       <div>
         <label for="time">Hora:</label>
-        <input id="time" type="time" formControlName="time" />
+        <input id="time" name="time" type="time" formControlName="time" />
       </div>
 
       <div>
         <label for="location">Ubicación:</label>
-        <input id="location" type="text" formControlName="location" placeholder="Nombre del lugar o enlace" />
+        <input id="location" name="location" type="text" formControlName="location" placeholder="Nombre del lugar o enlace" />
       </div>
 
       <button type="submit" [disabled]="encuestaForm.invalid">Agregar Encuesta</button>
