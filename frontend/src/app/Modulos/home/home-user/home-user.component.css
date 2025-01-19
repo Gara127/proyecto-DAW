@@ -1,52 +1,46 @@
 html, body {
   margin: 0;
   padding: 0;
-  height: 100%; 
-  font-family: 'Roboto', Arial, sans-serif; /* Cambiado a una fuente más moderna */
+  height: 100%;
+  font-family: 'Roboto', Arial, sans-serif;
 }
 
 body {
   display: flex;
   flex-direction: column;
-  background-color: #f8f9fa; /* Fondo gris claro */
-  color: #333; /* Texto gris oscuro para mayor contraste */
+  background-color: #f8f9fa; 
+  color: #333; 
 }
 
 /* Header */
 #header {
+  background-color: #343a40; /* bg-dark */
+  color: white; /* text-white */
+  padding: 1rem 1.5rem; /* py-3 */
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* shadow-sm */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 15px 30px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  background-color: #aeb6bd; /* Azul oscuro para el encabezado */
-  color: white;
 }
 
 #app-name-container {
   display: flex;
   align-items: center;
-  gap: 10px; /* Espaciado entre logo y texto */
+  gap: 10px; 
 }
 
 #logo {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  border: 2px solid white; /* Borde blanco para destacar */
+  border: 2px solid white; 
 }
 
 #app-name {
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: 700;
   margin: 0;
   text-transform: uppercase;
-}
-
-#user-info {
-  font-size: 16px;
-  color: white;
-  font-weight: bold;
 }
 
 /* Main Content */
@@ -62,32 +56,28 @@ body {
 
 /* Hero Section */
 .hero {
-  padding: 60px 20px;
-  background: #222222; /* Fondo casi negro */
-  color: white; /* Texto blanco */
-  border-radius: 8px;
+  padding: 3rem 1.5rem; /* py-5, px-3 */
+  border-radius: 0.5rem; /* rounded */
   text-align: center;
-  margin-bottom: 30px;
+  background: #222;
+  color: #fff;
 }
 
 .hero-title {
-  font-size: 36px;
+  font-size: 2.5rem;
   font-weight: 700;
-  margin-bottom: 20px;
-  color: white; /* Asegura que el texto sea blanco */
 }
 
 .hero-subtitle {
-  font-size: 18px;
+  font-size: 1rem;
   margin-bottom: 30px;
-  color: white; /* Asegura que el texto sea blanco */
 }
 
 .action-button {
-  background-color: #ffc107;
+  background-color: #ffc107; /* btn-warning */
   color: #212529;
-  padding: 12px 24px;
-  font-size: 18px;
+  font-size: 1.25rem; /* btn-lg */
+  padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 25px;
   transition: background-color 0.3s ease;
@@ -97,27 +87,37 @@ body {
   background-color: #e0a800;
 }
 
+/* Filters */
+.filter-container {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 1.5rem; /* mb-4 */
+  padding: 15px;
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
+}
 
-/* Section Styles */
-.section {
-  margin-bottom: 40px;
-  padding: 20px;
-  background-color: rgb(255, 255, 255);
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+.filter-container label {
+  font-weight: bold;
+}
+
+.filter-container .form-control {
+  min-width: 200px;
 }
 
 /* Cards */
 .card {
-  border: none;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem; /* rounded */
+  box-shadow: 0 0.125rem 0.3125rem rgba(0, 0, 0, 0.1); /* shadow-sm */
   transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0.375rem 0.75rem rgba(0, 0, 0, 0.15);
 }
 
 .card-title {
@@ -136,87 +136,52 @@ body {
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 15px;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
-}
-
-/* Filters */
-.filter-container {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.filter-container label {
-  font-weight: bold;
-}
-
-.filter-container .form-control {
-  min-width: 200px;
-}
-
-/* Buttons */
-.btn-link {
-  text-decoration: none;
-  font-weight: bold;
-  color: #0056b3;
-  margin: 0px;
-}
-
-.btn-link:hover {
-  color: #004494;
 }
 
 .button-container {
-  display: flex; /* Flexbox para disposición en fila */
-  justify-content: center; /* Centra los botones en el contenedor */
-  align-items: center; /* Alinea los botones verticalmente */
-  gap: 20px; /* Espacio entre botones */
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  gap: 1rem; /* gap-3 */
 }
 
-/* Botón específico (opcional) */
 .my-custom-button {
-  background-color: #4CAF50;
-  border: none;
+  background-color: #28a745; /* btn-success */
   color: white;
+  border: none;
 }
 
 .my-custom-button:hover {
-  background-color: #45a049;
+  background-color: #218838;
 }
-
-.my-custom-button:hover {
-  background-color: #45a049;
-}
-
 
 /* Footer */
 #footer {
-  background-color: #0056b3;
-  color: white;
-  text-align: center;
-  padding: 15px 0;
-  margin-top: 30px;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  background-color: #007bff; /* bg-primary */
+  color: white; /* text-white */
+  text-align: center; /* text-center */
+  padding: 1rem; /* py-3 */
+  margin-top: auto;
+  box-shadow: 0 -0.125rem 0.625rem rgba(0, 0, 0, 0.1);
 }
 
 #footer p {
   margin: 0;
-  font-size: 14px;
+  font-size: 0.9rem;
 }
 
 /* Accordion Styles */
 .accordion .card-header {
-  background-color: #f8f9fa;
+  background-color: #f8f9fa; /* bg-light */
+  font-weight: bold; /* fw-bold */
   cursor: pointer;
-  font-weight: bold;
 }
 
 .accordion .card-header:hover {
   background-color: #e9ecef;
 }
 
-/* Carousel Styles */
+/* Carousel  */
 .carousel-inner {
   display: flex;
   align-items: center;
@@ -226,7 +191,6 @@ body {
 .carousel-item {
   display: flex;
   justify-content: center;
-  text-align: center;
   gap: 20px;
 }
 
@@ -238,15 +202,15 @@ body {
   }
 
   #app-name {
-    font-size: 20px;
+    font-size: 1.25rem;
   }
 
   .hero-title {
-    font-size: 28px;
+    font-size: 1.75rem;
   }
 
   .action-button {
-    font-size: 16px;
+    font-size: 1rem;
   }
 
   .filter-container {

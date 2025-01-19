@@ -1,7 +1,7 @@
 <?php
     $host = "localhost";
     $user = "root";
-    $pass = "Sander123";
+    $pass = "";
     $db_name = "ProyectoDaw";
 
     function init(){
@@ -52,22 +52,14 @@
         mysqli_query($con,"create table if not exists eventos(
                     id_evento INT AUTO_INCREMENT PRIMARY KEY,
                     title VARCHAR(255) NOT NULL,
-                    date DATE NOT NULL,
-                    time TIME NOT NULL,
-                    location VARCHAR(255),
-                    description TEXT,
-                    checklist TEXT -- Agregar la columna checklist como tipo TEXT
+                    date DATE NULL,
+                    time TIME NULL,
+                    location VARCHAR(255) NULL,
+                    description TEXT NULL,
+                    checklist TEXT NULL -- La columna checklist como tipo TEXT
                     )") or die("Error al crear la tabla evento: " . mysqli_error($con));
     
-        // Verificar si la columna 'checklist' ya existe
-        $column_check = mysqli_query($con, "SHOW COLUMNS FROM eventos LIKE 'checklist'");
-        if (mysqli_num_rows($column_check) == 0) {
-            // Si la columna no existe, agregarla
-            mysqli_query($con, "ALTER TABLE eventos ADD COLUMN checklist TEXT") or die("Error al agregar la columna checklist: " . mysqli_error($con));
-        }
     }
-    
-
     function evento_participantes($con){
          mysqli_query($con,"create table if not exists evento_participantes(
             id_evento INT,
