@@ -21,7 +21,7 @@ switch ($method) {
             // Filtrar encuestas por id_evento
             $id_evento = intval($_GET['id_evento']);
             $query = "
-                SELECT ue.id_voting, ue.name, ue.date, ue.time, ue.location, 
+                SELECT ue.id_voting, ue.id_evento, ue.name, ue.date, ue.time, ue.location, 
                        COALESCE(SUM(ev.totalVotos), 0) AS total_votos
                 FROM upcoming_events ue
                 LEFT JOIN event_votes ev ON ue.id_voting = ev.id_voting
@@ -45,7 +45,7 @@ switch ($method) {
         } else {
             // Obtener todas las encuestas
             $query = "
-                SELECT ue.id_voting, ue.name, ue.date, ue.time, ue.location, 
+                SELECT ue.id_voting, ue.id_evento, ue.name, ue.date, ue.time, ue.location, 
                        COALESCE(SUM(ev.totalVotos), 0) AS total_votos
                 FROM upcoming_events ue
                 LEFT JOIN event_votes ev ON ue.id_voting = ev.id_voting
@@ -61,7 +61,7 @@ switch ($method) {
             }
         }
         break;
-
+    
     // Crear una nueva encuesta
     case 'POST':
         $data = json_decode(file_get_contents("php://input"), true);
@@ -136,42 +136,42 @@ switch ($method) {
             $stmt->close();
             break;
 
-            case 'DELETE':
-                if (isset($_GET['id_usuario'], $_GET['id_voting'])) {
-                    $id_usuario = intval($_GET['id_usuario']);
-                    $id_voting = intval($_GET['id_voting']);
-                
-                    // Log para verificar parámetros recibidos
-                    error_log("Eliminar voto - id_usuario: $id_usuario, id_voting: $id_voting");
-                
-                    // Ejecutar la consulta DELETE
-                    $query = "UPDATE event_votes SET totalVotos = totalVotos - 1
-                              WHERE id_usuario = ? AND id_voting = ? AND totalVotos > 0";
-                    $stmt = $con->prepare($query);
-                
-                    if (!$stmt) {
-                        echo json_encode(["error" => "Error al preparar la consulta: " . $con->error]);
-                        exit;
-                    }
-                
-                    $stmt->bind_param("ii", $id_usuario, $id_voting);
-                
-                    if ($stmt->execute()) {
-                        if ($stmt->affected_rows > 0) {
-                            echo json_encode(["mensaje" => "Voto eliminado correctamente"]);
-                        } else {
-                            echo json_encode(["error" => "No se encontró el voto para eliminar."]);
-                        }
-                    } else {
-                        echo json_encode(["error" => "Error al ejecutar la consulta: " . $stmt->error]);
-                    }
-                
-                    $stmt->close();
-                } else {
-                    echo json_encode(["error" => "Faltan parámetros"]);
-                }
-                break;
-            
+    case 'DELETE':
+    if (isset($_GET['id_usuario'], $_GET['id_voting'])) {
+        $id_usuario = intval($_GET['id_usuario']);
+        $id_voting = intval($_GET['id_voting']);
+    
+        // Log para verificar parámetros recibidos
+        error_log("Eliminar voto - id_usuario: $id_usuario, id_voting: $id_voting");
+    
+        // Ejecutar la consulta DELETE
+        $query = "UPDATE event_votes SET totalVotos = totalVotos - 1
+                  WHERE id_usuario = ? AND id_voting = ? AND totalVotos > 0";
+        $stmt = $con->prepare($query);
+    
+        if (!$stmt) {
+            echo json_encode(["error" => "Error al preparar la consulta: " . $con->error]);
+            exit;
+        }
+    
+        $stmt->bind_param("ii", $id_usuario, $id_voting);
+    
+        if ($stmt->execute()) {
+            if ($stmt->affected_rows > 0) {
+                echo json_encode(["mensaje" => "Voto eliminado correctamente"]);
+            } else {
+                echo json_encode(["error" => "No se encontró el voto para eliminar."]);
+            }
+        } else {
+            echo json_encode(["error" => "Error al ejecutar la consulta: " . $stmt->error]);
+        }
+    
+        $stmt->close();
+    } else {
+        echo json_encode(["error" => "Faltan parámetros"]);
+    }
+    break;
+
         
         
     
