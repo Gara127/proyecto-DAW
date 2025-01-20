@@ -39,6 +39,7 @@ export class HomeUserComponent implements OnInit {
   ngOnInit(): void {
     this.username = localStorage.getItem('username');
     const idUsuario = localStorage.getItem('id'); // Obtener ID del usuario
+    this.cargarEncuestas();
 
     if (!idUsuario) {
       console.error('Usuario no logueado');
@@ -69,16 +70,33 @@ export class HomeUserComponent implements OnInit {
     );
   }
 
+
   cargarEncuestas(): void {
     this.votoService.obtenerTodasEncuestas().subscribe(
-      (data) => {
-        this.encuestas = Array.isArray(data) ? data : [];
+      (encuestas) => {
+        this.encuestas = encuestas;
+        this.encuestas = Array.isArray(encuestas) ? encuestas : [];
         this.agruparEncuestasPorEvento();
+  
+        // Obtener los votos acumulados
+        this.votoService.obtenerVotos().subscribe(
+          (votos) => {
+            this.encuestas = this.encuestas.map((encuesta) => {
+              const voto = votos.find((v) => v.id_voting === encuesta.id_voting);
+              console.log("los votos sonnn:", voto);
+              return {
+                ...encuesta,
+                total_votos: voto ? voto.total_votos : 0, // Asignar los votos acumulados
+              };
+            });
+          },
+          (error) => console.error('Error al cargar votos:', error)
+        );
       },
       (error) => console.error('Error al cargar encuestas:', error)
     );
   }
-  
+
   agruparEncuestasPorEvento(): void {
     this.encuestasPorEvento = {};
     this.encuestas.forEach((encuesta) => {
@@ -192,21 +210,84 @@ export class HomeUserComponent implements OnInit {
     }
   }
 
-  votarEncuesta(idVoting: number, voto: number): void {
+  //  // Función para cargar encuestas con los votos acumulados
+  //  cargarEncuestasConVotos(): void {
+  //   this.votoService.obtenerTodasEncuestas().subscribe(
+  //     (encuestas) => {
+  //       this.encuestas = encuestas;
+  
+  //       // Obtener los votos acumulados
+  //       this.votoService.obtenerVotos().subscribe(
+  //         (votos) => {
+  //           this.encuestas = this.encuestas.map((encuesta) => {
+  //             const voto = votos.find((v) => v.id_voting === encuesta.id_voting);
+  //             return {
+  //               ...encuesta,
+  //               total_votos: voto ? voto.total_votos : 0, // Asignar los votos acumulados
+  //             };
+  //           });
+  //         },
+  //         (error) => console.error('Error al cargar votos:', error)
+  //       );
+  //     },
+  //     (error) => console.error('Error al cargar encuestas:', error)
+  //   );
+  // }
+
+  votarEncuesta(idVoting: number): void {
     const idUsuario = localStorage.getItem('id');
     if (!idUsuario) {
-      console.error('ID de usuario no encontrado');
+      alert('Debes iniciar sesión para votar.');
       return;
     }
-
+  
+    const voto = 1; // Valor del voto (puedes configurarlo a 1 o 0)
+  
+    // Llamar al servicio para registrar el voto
     this.votoService.votarEncuesta(Number(idUsuario), idVoting, voto).subscribe(
       () => {
-        alert('Voto registrado con éxito.');
+        alert('Voto registrado correctamente.');
+        this.cargarEncuestas();
+  
+        // Actualizamos los votos en el frontend inmediatamente
+        const encuesta = this.encuestas.find(e => e.id_voting === idVoting);
+        if (encuesta) {
+          encuesta.total_votos = (encuesta.total_votos || 0) + 1;  // Sumar votos en el frontend
+        }
+  
+        // Recargar las encuestas con los votos actualizados desde el backend
         this.cargarEncuestas();
       },
-      (error) => console.error('Error al votar en la encuesta:', error)
+      (error) => {
+        console.error('Error al votar en la encuesta:', error);
+        alert('Hubo un error al registrar el voto.');
+      }
     );
-  }  resetFilters(): void {
+  }
+
+  eliminarVoto(idVoting: number): void {
+    const idUsuario = localStorage.getItem('id');
+    if (!idUsuario) {
+      alert('Debes iniciar sesión para eliminar el voto.');
+      return;
+    }
+    // Llamar al servicio para eliminar el voto
+    console.log("aquíiii", idVoting);
+    this.votoService.eliminarVotoEncuesta(Number(idUsuario), idVoting).subscribe(
+      () => {
+        // Recargar las encuestas con los votos actualizados desde el backend
+        this.cargarEncuestas();
+  
+        alert('Voto eliminado correctamente.');
+      },
+      (error) => {
+        console.error('Error al eliminar el voto:', error);
+        alert('Hubo un error al eliminar el voto.');
+      }
+    );
+  }
+
+ resetFilters(): void {
     this.fechaMin = null;
     this.fechaMax = null;
     this.mostrarSoloCaducados = false;

@@ -43,7 +43,6 @@ export class VotingComponent implements OnInit {
     this.cargarEventosParaSelect();
   }
 
-
   // Cargar eventos para el select
   cargarEventosParaSelect(): void {
     const idUsuario = parseInt(localStorage.getItem('id') || '0'); // Obtener ID del usuario logueado
@@ -99,9 +98,7 @@ export class VotingComponent implements OnInit {
       });
     }
   }
-
-  
-
+ 
   // Votar por una encuesta
   // vote(suggestion: {
   //   id_voting: number;

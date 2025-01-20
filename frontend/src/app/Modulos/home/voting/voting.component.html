@@ -1,44 +1,51 @@
-<div class="voting-system">
-  <h2>Sistema de Votación de Eventos</h2>
+<!-- Cabecera -->
+<header class="bg-primary text-white py-3">
+  <div class="container d-flex justify-content-between align-items-center gap-3">
+    <div id="app-name-container" class="d-flex align-items-center gap-2">
+      <img id="logo" src="assets/img/fotoLogo.png" alt="Logo" class="img-fluid rounded" style="width: 50px; height: 50px;">
+      <h1 id="app-name" class="h4 mb-0">Crew Connect</h1>
+    </div>
+  </div>
+</header>
 
-  <div class="suggestion-form">
-    <form [formGroup]="encuestaForm" (ngSubmit)="addSurvey()">
-      <select
-        formControlName="id_evento"
-        name="id_evento"
-        required
-        class="form-control"
-      >
-        <option value="" disabled>-- Selecciona un evento --</option>
-        <option *ngFor="let evento of eventosSelect" [value]="evento.id_evento">
-          {{ evento.title }}
-        </option>
-      </select>
-
-      <div>
+<!-- Contenedor principal -->
+<div class="container">
+  <div class="voting-system">
+    <h2>Sistema de Votación de Eventos</h2>
+    <div class="suggestion-form">
+      <form [formGroup]="encuestaForm" (ngSubmit)="addSurvey()">
+        <label for="id_evento">Selecciona un evento:</label>
+        <select formControlName="id_evento" id="id_evento" class="form-control">
+          <option value="" disabled>-- Selecciona un evento --</option>
+          <option *ngFor="let evento of eventosSelect" [value]="evento.id_evento">{{ evento.title }}</option>
+        </select>
+        
         <label for="name">Descripción:</label>
         <input id="name" name="name" type="text" formControlName="name" placeholder="Descripción de la encuesta" />
         <div *ngIf="encuestaForm.controls['name'].invalid && encuestaForm.controls['name'].touched" class="error">
           El nombre es obligatorio.
         </div>
-      </div>
 
-      <div>
         <label for="date">Fecha:</label>
         <input id="date" name="date" type="date" formControlName="date" />
-      </div>
-
-      <div>
+        
         <label for="time">Hora:</label>
         <input id="time" name="time" type="time" formControlName="time" />
-      </div>
-
-      <div>
+        
         <label for="location">Ubicación:</label>
         <input id="location" name="location" type="text" formControlName="location" placeholder="Nombre del lugar o enlace" />
+        <div class="form-actions">
+        <button type="submit" [disabled]="encuestaForm.invalid">Agregar Encuesta</button>
+        <button class="back-button" type="button" onclick="window.history.back()">Atrás</button>
       </div>
-
-      <button type="submit" [disabled]="encuestaForm.invalid">Agregar Encuesta</button>
-    </form>
+      </form>
+    </div>
   </div>
 </div>
+
+<!-- Pie de página -->
+<footer class="bg-dark text-white py-4">
+  <div class="container text-center">
+    <p class="mb-0">&copy; 2024 Crew Connect. Todos los derechos reservados.</p>
+  </div>
+</footer>
