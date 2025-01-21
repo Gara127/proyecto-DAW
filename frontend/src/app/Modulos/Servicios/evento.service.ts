@@ -10,9 +10,9 @@ import { throwError } from 'rxjs';
   providedIn: 'root'
 })
 export class EventoService {
-  private apiUrl = 'http://localhost/proyecto-DAW/backend/eventos.php'; // URL del endpoint PHP
+  private apiUrl = 'http://localhost/backend/eventos.php'; // URL del endpoint PHP
   private eventoCreado = new Subject<Evento>(); // Subject para emitir eventos creados
-  private apiUrlEncuestas = 'http://localhost/proyecto-DAW/backend/upcomingEvents.php'; 
+  private apiUrlEncuestas = 'http://localhost/backend/upcomingEvents.php'; 
   constructor(private http: HttpClient) { }
 
   // Obtener todos los eventos
@@ -29,12 +29,6 @@ export class EventoService {
   // Obtener un evento por ID
   obtenerEventoPorId(id_evento: number): Observable<Evento> {
     return this.http.get<Evento>(`${this.apiUrl}?id_evento=${id_evento}`);
-  }
-
-  // Actualizar un evento
-  actualizarEvento(evento: Evento): Observable<any> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.put<any>(`${this.apiUrl}?id_evento=${evento.id_evento}`, evento, { headers });
   }
 
   // Actualizar parcialmente un evento
@@ -54,7 +48,7 @@ export class EventoService {
 
   // Obtener todas las encuestas
   obtenerEncuestas(): Observable<any[]> {
-    const apiUrlEncuestas = 'http://localhost/proyecto-DAW/backend/upcomingEvents.php'; // Asegúrate de que esta URL sea correcta
+    const apiUrlEncuestas = 'http://localhost/backend/upcomingEvents.php'; // Asegúrate de que esta URL sea correcta
     return this.http.get<any[]>(apiUrlEncuestas).pipe(
       catchError((error) => {
         console.error('Error al obtener encuestas:', error);

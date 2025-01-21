@@ -23,7 +23,7 @@
         <label for="name">Descripción:</label>
         <input id="name" name="name" type="text" formControlName="name" placeholder="Descripción de la encuesta" />
         <div *ngIf="encuestaForm.controls['name'].invalid && encuestaForm.controls['name'].touched" class="error">
-          El nombre es obligatorio.
+          La descripción es obligatorio.
         </div>
 
         <label for="date">Fecha:</label>

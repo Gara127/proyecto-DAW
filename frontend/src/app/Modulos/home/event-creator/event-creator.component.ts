@@ -146,37 +146,28 @@ export class EventCreatorComponent implements OnInit {
           eventData.id_evento = this.route.snapshot.queryParams['id_evento'];
       }
 
-      if (eventData.id_evento) {
-        // Actualizar evento existente
-        this.eventoService.actualizarEvento(eventData).subscribe(
-          (response) => {
-            console.log('Evento actualizado con éxito:', response);
+      if (this.isEditMode) {
+        // Modo edición
+        this.eventoService.editarEvento(eventData).subscribe(
+          response => {
             alert('Evento actualizado con éxito.');
             this.router.navigate(['/home-user']);
           },
-          (error) => {
+          error => {
             console.error('Error al actualizar evento:', error);
-            alert('Error al actualizar evento.');
+            alert('Error al actualizar el evento.');
           }
         );
       } else {
-        // Crear nuevo evento
+        // Modo creación
         this.eventoService.crearEvento(eventData).subscribe(
-          (response: any) => {
-              console.log('Evento creado con éxito:', response);
-
-              const nuevoEvento = {
-                  ...eventData,
-                  id_evento: response.id_evento,
-              };
-
-              this.eventoService.notificarEventoCreado(nuevoEvento);
-              alert('Evento creado con éxito.');
-              this.router.navigate(['/home-user']);
+          response => {
+            alert('Evento creado con éxito.');
+            this.router.navigate(['/home-user']);
           },
-          (error: any) => {
-              console.error('Error al crear evento:', error);
-              alert('Error al crear evento.');
+          error => {
+            console.error('Error al crear evento:', error);
+            alert('Error al crear el evento.');
           }
         );
       }

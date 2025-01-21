@@ -72,7 +72,7 @@ switch ($method) {
             http_response_code(400);
             echo json_encode(["error" => "Faltan parámetros"]);
             break;
-}
+    }
 
         $id_usuario = intval($data['id_usuario']);
         $id_evento = intval($data['id_evento']);
@@ -102,51 +102,22 @@ switch ($method) {
         $stmt->close();
         break;
 
-        case 'PUT':
-            $data = json_decode(file_get_contents("php://input"), true);
-            
-            if (!isset($data['id_usuario'], $data['id_voting'], $data['voto'])) {
-                echo json_encode(["error" => "Faltan parámetros"]);
-                break;
-            }
+    case 'PUT':
+        $data = json_decode(file_get_contents("php://input"), true);
         
-            $id_usuario = intval($data['id_usuario']);
-            $id_voting = intval($data['id_voting']);
-            $voto = intval($data['voto']);
-        
-            // Si el voto es -1, restamos el voto
-            $query = "INSERT INTO event_votes (id_usuario, id_voting, totalVotos) 
-                      VALUES (?, ?, ?) 
-                      ON DUPLICATE KEY UPDATE totalVotos = totalVotos + ?";
-            $stmt = $con->prepare($query);
-        
-            if (!$stmt) {
-                echo json_encode(["error" => "Error al preparar la consulta: " . $con->error]);
-                exit;
-            }
-        
-            $stmt->bind_param("iiii", $id_usuario, $id_voting, $voto, $voto);
-        
-            if ($stmt->execute()) {
-                echo json_encode(["mensaje" => "Voto registrado correctamente"]);
-            } else {
-                echo json_encode(["error" => "Error al registrar el voto: " . $stmt->error]);
-            }
-        
-            $stmt->close();
+        if (!isset($data['id_usuario'], $data['id_voting'], $data['voto'])) {
+            echo json_encode(["error" => "Faltan parámetros"]);
             break;
-
-    case 'DELETE':
-    if (isset($_GET['id_usuario'], $_GET['id_voting'])) {
-        $id_usuario = intval($_GET['id_usuario']);
-        $id_voting = intval($_GET['id_voting']);
+        }
     
-        // Log para verificar parámetros recibidos
-        error_log("Eliminar voto - id_usuario: $id_usuario, id_voting: $id_voting");
+        $id_usuario = intval($data['id_usuario']);
+        $id_voting = intval($data['id_voting']);
+        $voto = intval($data['voto']);
     
-        // Ejecutar la consulta DELETE
-        $query = "UPDATE event_votes SET totalVotos = totalVotos - 1
-                  WHERE id_usuario = ? AND id_voting = ? AND totalVotos > 0";
+        // Si el voto es -1, restamos el voto
+        $query = "INSERT INTO event_votes (id_usuario, id_voting, totalVotos) 
+                    VALUES (?, ?, ?) 
+                    ON DUPLICATE KEY UPDATE totalVotos = totalVotos + ?";
         $stmt = $con->prepare($query);
     
         if (!$stmt) {
@@ -154,27 +125,97 @@ switch ($method) {
             exit;
         }
     
-        $stmt->bind_param("ii", $id_usuario, $id_voting);
+        $stmt->bind_param("iiii", $id_usuario, $id_voting, $voto, $voto);
     
         if ($stmt->execute()) {
-            if ($stmt->affected_rows > 0) {
-                echo json_encode(["mensaje" => "Voto eliminado correctamente"]);
-            } else {
-                echo json_encode(["error" => "No se encontró el voto para eliminar."]);
-            }
+            echo json_encode(["mensaje" => "Voto registrado correctamente"]);
         } else {
-            echo json_encode(["error" => "Error al ejecutar la consulta: " . $stmt->error]);
+            echo json_encode(["error" => "Error al registrar el voto: " . $stmt->error]);
         }
     
         $stmt->close();
-    } else {
-        echo json_encode(["error" => "Faltan parámetros"]);
-    }
-    break;
+        break;
 
+    case 'DELETE':
+        if (isset($_GET['id_usuario'], $_GET['id_voting'])) {
+            $id_usuario = intval($_GET['id_usuario']);
+            $id_voting = intval($_GET['id_voting']);
         
+            // Log para verificar parámetros recibidos
+            error_log("Eliminar voto - id_usuario: $id_usuario, id_voting: $id_voting");
         
-    
+            // Ejecutar la consulta DELETE
+            $query = "UPDATE event_votes SET totalVotos = totalVotos - 1
+                    WHERE id_usuario = ? AND id_voting = ? AND totalVotos > 0";
+            $stmt = $con->prepare($query);
+        
+            if (!$stmt) {
+                echo json_encode(["error" => "Error al preparar la consulta: " . $con->error]);
+                exit;
+            }
+        
+            $stmt->bind_param("ii", $id_usuario, $id_voting);
+        
+            if ($stmt->execute()) {
+                if ($stmt->affected_rows > 0) {
+                    echo json_encode(["mensaje" => "Voto eliminado correctamente"]);
+                } else {
+                    echo json_encode(["error" => "No se encontró el voto para eliminar."]);
+                }
+            } else {
+                echo json_encode(["error" => "Error al ejecutar la consulta: " . $stmt->error]);
+            }
+        
+            $stmt->close();
+        } elseif (isset($_GET['id_voting'])) {
+            // Nueva funcionalidad: Eliminar una encuesta completa
+            $id_voting = intval($_GET['id_voting']);
+        
+            // Log para verificar parámetros recibidos
+            error_log("Eliminar encuesta - id_voting: $id_voting");
+
+            // Ejecutar la consulta DELETE para votos
+            $query = "DELETE FROM event_votes WHERE id_voting = ?";
+            $stmt = $con->prepare($query);
+
+            if (!$stmt) {
+                echo json_encode(["error" => "Error al preparar la consulta: " . $con->error]);
+                exit;
+            }
+        
+            $stmt->bind_param("i", $id_voting);
+        
+            if (!$stmt->execute()) {
+                echo json_encode(["error" => "Error al ejecutar la consulta: " . $stmt->error]);
+            }
+        
+            // Ejecutar la consulta DELETE para encuestas
+            $query = "DELETE FROM upcoming_events WHERE id_voting = ?";
+            $stmt = $con->prepare($query);
+        
+            if (!$stmt) {
+                echo json_encode(["error" => "Error al preparar la consulta: " . $con->error]);
+                exit;
+            }
+        
+            $stmt->bind_param("i", $id_voting);
+        
+            if ($stmt->execute()) {
+                if ($stmt->affected_rows > 0) {
+                    echo json_encode(["mensaje" => "Encuesta eliminada correctamente"]);
+                } else {
+                    echo json_encode(["error" => "No se encontró la encuesta para eliminar."]);
+                }
+            } else {
+                echo json_encode(["error" => "Error al ejecutar la consulta: " . $stmt->error]);
+            }
+        
+            $stmt->close();
+        } else {
+            echo json_encode(["error" => "Faltan parámetros"]);
+        }
+        break;
+
 }
 
 cerrar_conexion($con);

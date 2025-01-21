@@ -72,7 +72,8 @@ export class HomeUserComponent implements OnInit {
 
 
   cargarEncuestas(): void {
-    this.votoService.obtenerTodasEncuestas().subscribe(
+    const idUsuario = localStorage.getItem('id');
+    this.votoService.obtenerTodasEncuestas(Number(idUsuario)).subscribe(
       (encuestas) => {
         this.encuestas = encuestas;
         this.encuestas = Array.isArray(encuestas) ? encuestas : [];
@@ -137,6 +138,7 @@ export class HomeUserComponent implements OnInit {
           this.eventos = this.eventos.filter((evento) => evento.id_evento !== id_evento);
           this.eventosFiltrados = this.eventosFiltrados.filter((evento) => evento.id_evento !== id_evento);
           alert('Evento eliminado con éxito.');
+          this.cargarEncuestas();
         },
         (error) => {
           console.error('Error al eliminar el evento:', error);
@@ -272,7 +274,6 @@ export class HomeUserComponent implements OnInit {
       return;
     }
     // Llamar al servicio para eliminar el voto
-    console.log("aquíiii", idVoting);
     this.votoService.eliminarVotoEncuesta(Number(idUsuario), idVoting).subscribe(
       () => {
         // Recargar las encuestas con los votos actualizados desde el backend
@@ -286,6 +287,22 @@ export class HomeUserComponent implements OnInit {
       }
     );
   }
+
+  eliminarEncuesta(id_voting: number): void {
+    if (confirm('¿Estás seguro de que deseas eliminar esta encuesta?')) {
+      this.votoService.eliminarEncuesta(id_voting).subscribe({
+        next: () => {
+          alert('Encuesta eliminada con éxito.');
+          this.cargarEncuestas(); 
+        },
+        error: (error) => {
+          console.error('Error al eliminar la encuesta:', error.message);
+          alert('Hubo un error al eliminar la encuesta. Inténtalo nuevamente.');
+        },
+      });
+    }
+  }
+  
 
  resetFilters(): void {
     this.fechaMin = null;

@@ -23,6 +23,16 @@ body {
   justify-content: space-between;
 }
 
+.container {
+  max-width: 1200px; 
+  margin: 0 auto; 
+  padding: 0 15px; 
+}
+
+#title-event{
+  margin-top: 5em;
+}
+
 #app-name-container {
   display: flex;
   align-items: center;
@@ -207,7 +217,7 @@ body {
 
 
 .remove-vote-button {
-  background-color: #dc3545; /* btn-danger */
+  background-color: #e0a800;
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -216,14 +226,23 @@ body {
 }
 
 .remove-vote-button:hover {
-  background-color: #c82333;
+  background-color:  #c99908;
 }
 
 .button-container-votes {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  gap: 0.5rem;
+  gap: 10px;
+  width: 100%;
+}
+
+.button-container-votes button {
+  flex: 1; 
+  max-width: 150px; 
+  height: 50px; 
+  text-align: center; 
+  font-size: 14px; 
 }
 
 /* Responsiveness */
