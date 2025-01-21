@@ -69,16 +69,21 @@ export class VotingComponent implements OnInit {
   addSurvey(): void {
     if (this.encuestaForm.valid) {
       const id = parseInt(localStorage.getItem('id') || '0');
+
+      const rawDate = this.encuestaForm.value.date; // Fecha en formato original
+      const formattedDate = rawDate
+        ? new Date(rawDate).toLocaleDateString('es-ES') // Formato día/mes/año
+        : ""; 
+
       const nuevaEncuesta = {
         id_usuario: id, 
         id_evento: this.encuestaForm.value.id_evento,
         name: this.encuestaForm.value.name,
-        date: this.encuestaForm.value.date ?? "",
+        date: formattedDate ?? "",
         time: this.encuestaForm.value.time ?? "",
         location: this.encuestaForm.value.location ?? "",
       };
 
-      console.log('Datos enviados al backend:', nuevaEncuesta);
 
       this.votoService.crearEncuesta(
         nuevaEncuesta.id_usuario,
@@ -89,7 +94,7 @@ export class VotingComponent implements OnInit {
         nuevaEncuesta.location
       ).subscribe({
         next: () => {
-          console.log('Encuesta creada con éxito.');
+          alert('Encuesta creada con éxito.');
           this.router.navigate(['/home-user']); // Redirigir a Home-User
         },
         error: (error) => {

@@ -1,7 +1,7 @@
 <?php
     $host = "localhost";
     $user = "root";
-    $pass = "Sander123";
+    $pass = "";
     $db_name = "ProyectoDaw";
 
     function init(){
@@ -80,7 +80,7 @@
                     time VARCHAR(15), 
                     date VARCHAR(15),
                     location VARCHAR(255) NOT NULL,
-                    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario),
+                    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
                     FOREIGN KEY (id_evento) REFERENCES eventos(id_evento) ON DELETE CASCADE 
                     )") or die("Error al crear la tabla upcoming_events: " . mysqli_error($con));
     }
@@ -92,8 +92,8 @@
                     id_usuario INT NOT NULL,
                     id_voting INT NOT NULL,
                     totalVotos INT DEFAULT 0,
-                    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario),
-                    FOREIGN KEY (id_voting) REFERENCES upcoming_events(id_voting),
+                    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
+                    FOREIGN KEY (id_voting) REFERENCES upcoming_events(id_voting) ON DELETE CASCADE,
                     UNIQUE(id_usuario, id_voting) 
                     )") or die("Error al crear la tabla event_votes: " . mysqli_error($con));
     }

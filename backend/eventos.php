@@ -101,7 +101,7 @@ switch ($method) {
                         WHERE ep.id_evento = e.id_evento
                     ) AS participants
                 FROM eventos e
-                LEFT JOIN evento_participantes ep ON e.id_evento = ep.id_evento
+                INNER JOIN evento_participantes ep ON e.id_evento = ep.id_evento
                 WHERE ep.id_usuario = $id_usuario
                 GROUP BY e.id_evento";
 
@@ -368,7 +368,7 @@ switch ($method) {
                 }
 
                 // Insertar nuevos participantes
-                foreach ($data['participants'] as $id_usuario) {
+                foreach ($data['participants'] as $id_usuario => $nombre) {
                     $id_usuario = intval($id_usuario);
                     $insert_query = "INSERT INTO evento_participantes (id_evento, id_usuario) VALUES ($id_evento, $id_usuario)";
                     if (!mysqli_query($con, $insert_query)) {

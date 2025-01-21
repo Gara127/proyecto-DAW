@@ -7,12 +7,12 @@ import { catchError, Observable, throwError } from 'rxjs';
   providedIn: 'root',
 })
 export class VotoService {
-  private apiUrl = 'http://localhost/proyecto-DAW/backend/upcomingEvents.php'; 
+  private apiUrl = 'http://localhost/backend/upcomingEvents.php'; 
 
   constructor(private http: HttpClient) {}
 
   // Obtener todas las encuestas
-  obtenerTodasEncuestas(): Observable<any[]> {
+  obtenerTodasEncuestas(idUsuario: number): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl).pipe(
       catchError((error) => {
         console.error('Error al obtener todas las encuestas:', error);
@@ -88,5 +88,10 @@ export class VotoService {
       })
     );
   }
+  eliminarEncuesta(id_voting: number): Observable<void> {
+    const url = `${this.apiUrl}?id_voting=${id_voting}`; 
+    return this.http.delete<void>(url);
+  }
 }
+
 

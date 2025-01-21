@@ -8,7 +8,7 @@ import { Usuario } from '../models/usuario.model';
 })
 
 export class UsuarioService {
-  private apiUrl = 'http://localhost/proyecto-DAW/backend/usuarios.php'; // URL del endpoint PHP
+  private apiUrl = 'http://localhost/backend/usuarios.php'; // URL del endpoint PHP
   
   constructor(private http: HttpClient) {}
 
