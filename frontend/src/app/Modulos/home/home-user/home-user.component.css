@@ -194,6 +194,38 @@ body {
   gap: 20px;
 }
 
+.vote-button {
+  background-color: #007bff; /* btn-info */
+  color: white;
+  border: none;
+
+  padding: 0.5rem 1rem;
+  transition: background-color 0.3s ease;
+  font-size: 0.9rem;
+}
+
+
+
+.remove-vote-button {
+  background-color: #dc3545; /* btn-danger */
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  transition: background-color 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.remove-vote-button:hover {
+  background-color: #c82333;
+}
+
+.button-container-votes {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 /* Responsiveness */
 @media (max-width: 768px) {
   #header {

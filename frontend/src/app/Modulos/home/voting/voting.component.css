@@ -1,100 +1,120 @@
 .voting-system {
-    max-width: 600px;
-    margin: 20px auto;
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .voting-system h2 {
-    text-align: center;
-    color: #333;
-  }
-  
-  .suggestion-form {
-    margin-bottom: 20px;
-  }
-  
-  .suggestion-form input[type="text"],
-  .suggestion-form input[type="date"],
-  .suggestion-form input[type="time"],
-  .suggestion-form input[type="text"] {
-    width: calc(100% - 20px);
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .suggestion-form input:focus {
-    outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 4px rgba(0, 123, 255, 0.4);
-  }
-  
-  .suggestion-form button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  .suggestion-form button:hover {
-    background-color: #0056b3;
-  }
-  
-  .suggestions-list {
-    margin-top: 20px;
-  }
-  
-  .suggestions-list h3 {
-    color: #333;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 10px;
-  }
-  
-  .suggestion-item {
-    padding: 15px;
-    margin: 10px 0;
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .suggestion-item strong {
-    font-size: 18px;
-    color: #007bff;
-  }
-  
-  .suggestion-item button {
-    margin-top: 10px;
-    padding: 5px 10px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .suggestion-item button:hover {
-    background-color: #218838;
-  }
-  
-  /* Errores visuales */
-  input.ng-invalid.ng-touched {
-    border-color: #dc3545;
-  }
-  
-  input.ng-valid.ng-touched {
-    border-color: #28a745;
-  }
-  
+  max-width: 800px; /* Tamaño más acorde al diseño general */
+  margin: 50px auto; /* Espacio suficiente entre encabezado, pie de página y el formulario */
+  font-family: 'Roboto', Arial, sans-serif;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.voting-system h2 {
+  text-align: center;
+  color: #0056b3;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.suggestion-form {
+  margin-top: 20px;
+}
+
+.suggestion-form input,
+.suggestion-form select {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.suggestion-form input:focus,
+.suggestion-form select:focus {
+  outline: none;
+  border-color: #0056b3;
+  box-shadow: 0 0 5px rgba(0, 86, 179, 0.3);
+}
+
+.suggestion-form button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background-color: #0056b3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.suggestion-form button:hover {
+  background-color: #003f8a;
+}
+
+.error {
+  color: #dc3545;
+  font-size: 0.85rem;
+}
+
+/* Espacios para el encabezado y pie de página */
+header {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+footer {
+  margin-top: 50px;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Contenedor de los botones */
+.suggestion-form .form-actions {
+  display: flex;
+  justify-content: space-between; /* Separación uniforme */
+  gap: 20px; /* Espaciado entre los botones */
+  margin-top: 20px; /* Espacio con el resto del formulario */
+}
+
+/* Botón "Agregar Encuesta" */
+.suggestion-form .btn-submit {
+  width: 70%; /* Botón más largo, pero no ocupa todo el espacio */
+  background-color: #0056b3;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 4px;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  text-align: center;
+}
+
+.suggestion-form .btn-submit:hover {
+  background-color: #003f8a;
+  transform: translateY(-2px);
+}
+
+/* Botón "Atrás" */
+.suggestion-form .back-button {
+  width: 25%; /* Botón más corto */
+  background-color: #6c757d; /* Gris */
+  color: white;
+  padding: 10px 15px;
+  border-radius: 4px;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  text-align: center;
+}
+
+.suggestion-form .back-button:hover {
+  background-color: #5a6268; /* Gris más oscuro al pasar el cursor */
+}
+
+.suggestion-form .back-button:active {
+  background-color: #343a40; /* Gris más oscuro al hacer clic */
+}

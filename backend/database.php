@@ -1,7 +1,7 @@
 <?php
     $host = "localhost";
     $user = "root";
-    $pass = "";
+    $pass = "Sander123";
     $db_name = "ProyectoDaw";
 
     function init(){
@@ -91,6 +91,7 @@
                     id_vote INT PRIMARY KEY AUTO_INCREMENT,
                     id_usuario INT NOT NULL,
                     id_voting INT NOT NULL,
+                    totalVotos INT DEFAULT 0,
                     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario),
                     FOREIGN KEY (id_voting) REFERENCES upcoming_events(id_voting),
                     UNIQUE(id_usuario, id_voting) 

@@ -7,7 +7,7 @@ import { catchError, Observable, throwError } from 'rxjs';
   providedIn: 'root',
 })
 export class VotoService {
-  private apiUrl = 'http://localhost/backend/upcomingEvents.php'; 
+  private apiUrl = 'http://localhost/proyecto-DAW/backend/upcomingEvents.php'; 
 
   constructor(private http: HttpClient) {}
 
@@ -60,19 +60,25 @@ export class VotoService {
   // Registrar o actualizar un voto
   votarEncuesta(idUsuario: number, idVoting: number, voto: number): Observable<any> {
     const data = { id_usuario: idUsuario, id_voting: idVoting, voto };
+    return this.http.put(`${this.apiUrl}`, data);
+  }
+  /*obtenerVotosPorEncuesta(idVoting: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}?id_voting=${idVoting}`); // Método GET para obtener votos
+  } */
 
-    return this.http.put(`${this.apiUrl}`, data, {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-      }),
-    }).pipe(
+    // Obtener las encuestas y sus votos acumulados
+  obtenerEncuestasConVotos(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}?votos=true`); // Ajustar para que el backend calcule y devuelva los votos totales
+  }
+
+  obtenerVotos(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}?votos=true`).pipe(
       catchError((error) => {
-        console.error('Error al votar en la encuesta:', error);
-        return throwError(() => new Error('Error al votar en la encuesta'));
+        console.error('Error al obtener votos:', error);
+        return throwError(() => error);
       })
     );
   }
-
   // Eliminar un voto de una encuesta
   eliminarVotoEncuesta(idUsuario: number, idVoting: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}?id_usuario=${idUsuario}&id_voting=${idVoting}`).pipe(

@@ -143,6 +143,11 @@
                 <p class="card-text"><strong>Descripción:</strong> {{ encuesta.name }}</p>
                 <p class="card-text"><strong>Fecha:</strong> {{ encuesta.date }} a las {{ encuesta.time }}</p>
                 <p class="card-text"><strong>Ubicación:</strong> {{ encuesta.location || 'No especificada' }}</p>
+                <p class="card-text"><strong>Votos:</strong> {{ encuesta.total_votos || 0 }}</p>
+                <div class="button-container-votes">
+                  <button class="vote-button btn-sm" (click)="votarEncuesta(encuesta.id_voting)">Votar</button>
+                  <button class="remove-vote-button btn-sm" (click)="eliminarVoto(encuesta.id_voting)">Eliminar Voto</button>
+                </div>
               </div>
             </div>
           </div>
