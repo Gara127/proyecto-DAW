@@ -11,7 +11,7 @@ import { HomeUserComponent } from './home-user/home-user.component';
 @NgModule({
   declarations: [
     EventCreatorComponent,
-    VotingComponent
+    VotingComponent,
     HomeUserComponent
   ],
   imports: [

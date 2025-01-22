@@ -6,6 +6,7 @@ import { Usuario } from '../models/usuario.model';
 @Injectable({
   providedIn: 'root',
 })
+
 export class UsuarioService {
   private apiUrl = 'https://crewconnect.rf.gd/usuarios.php'; // URL del endpoint PHP
   

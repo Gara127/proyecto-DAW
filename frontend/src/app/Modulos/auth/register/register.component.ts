@@ -23,11 +23,16 @@ export class RegisterComponent {
   onSubmit(event: Event) {
     event.preventDefault(); // Evita que la página se recargue
 
+     // Expresión regular para validar el correo electrónico
+     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+     // Verificar si el email es válido
+     if (!emailPattern.test(this.email)) {
+       alert('Por favor, introduce un correo electrónico válido.');
+       return; // Detenemos la ejecución si el correo electrónico no cumple con los requisitos
+     }
     // Expresión regular para validar la contraseña
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=\[\]{};:'",.<>?/\\|`~])[A-Za-z\d!@#$%^&*()_\-+=\[\]{};:'",.<>?/\\|`~]{6,}$/;
-
-
-
     // Comprobamos si la contraseña es válida
     if (!passwordPattern.test(this.password)) {
       alert('La contraseña debe contener al menos una letra mayúscula, una letra minúscula, un número y un carácter especial.');
@@ -52,6 +57,7 @@ export class RegisterComponent {
     this.usuarioService.crearUsuario(registerData).subscribe(
       (response: any) => {
         console.log(response);
+        alert("Usuario creado exitosamente");
         // Redirige a otra página, por ejemplo, a la página de inicio
         this.router.navigate(['./login']);
       },

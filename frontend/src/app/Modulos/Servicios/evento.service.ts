@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Evento } from '../models/evento.model';
 import { Subject } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +12,7 @@ import { Subject } from 'rxjs';
 export class EventoService {
   private apiUrl = 'https://crewconnect.rf.gd/eventos.php'; // URL del endpoint PHP
   private eventoCreado = new Subject<Evento>(); // Subject para emitir eventos creados
+  private apiUrlEncuestas = 'https://crewconnect.rf.gd/upcomingEvents.php';
   constructor(private http: HttpClient) { }
 
   // Obtener todos los eventos
@@ -28,18 +31,37 @@ export class EventoService {
     return this.http.get<Evento>(`${this.apiUrl}?id_evento=${id_evento}`);
   }
 
-  // Actualizar un evento
-  actualizarEvento(evento: Evento): Observable<any> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.put<any>(`${this.apiUrl}?id_evento=${evento.id_evento}`, evento, { headers });
-  }
-
   // Actualizar parcialmente un evento
   actualizarEventoParcial(id_evento: number, cambios: any): Observable<any> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     return this.http.patch<any>(`${this.apiUrl}?id_evento=${id_evento}`, cambios, { headers });
   }
   
+  obtenerTodosEventos(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl).pipe(
+      catchError((error) => {
+        console.error('Error al obtener todos los eventos:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  // Obtener todas las encuestas
+  obtenerEncuestas(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrlEncuestas).pipe(
+      catchError((error) => {
+        console.error('Error al obtener encuestas:', error);
+        return throwError(() => error); // Retorna el error para el manejo adecuado
+        })
+    );
+  }
+
+  getEventosPorUsuario(idUsuario: number): Observable<Evento[]> {
+    const url = `${this.apiUrl}?id_usuario=${idUsuario}`;
+    console.log('URL para obtener eventos:', url); // Log para verificar
+    return this.http.get<Evento[]>(url);
+  }
+
   // Eliminar un evento
   eliminarEvento(id_evento: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}?id_evento=${id_evento}`);

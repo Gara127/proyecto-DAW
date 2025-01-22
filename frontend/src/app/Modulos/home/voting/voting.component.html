@@ -1,57 +1,51 @@
-<div class="voting-system">
-  <h2>Sistema de Votación de Eventos</h2>
-
-  <!-- Formulario para agregar una nueva sugerencia -->
-  <div class="suggestion-form">
-    <!-- Campo para el nombre de la sugerencia -->
-    <input
-      type="text"
-      [(ngModel)]="newSuggestion"
-      placeholder="Nombre de la sugerencia"
-      required
-    />
-
-    <form [formGroup]="eventForm" (ngSubmit)="addSuggestion()">
-      <div>
-        <label for="date">Fecha:</label>
-        <input id="date" type="date" formControlName="date" />
-        <div *ngIf="eventForm.controls['date'].invalid && eventForm.controls['date'].touched" class="error">
-          La fecha es obligatoria.
-        </div>
-      </div>
-    
-      <div>
-        <label for="time">Hora:</label>
-        <input id="time" type="time" formControlName="time" />
-        <div *ngIf="eventForm.controls['time'].invalid && eventForm.controls['time'].touched" class="error">
-          La hora es obligatoria.
-        </div>
-      </div>
-    
-      <div>
-        <label for="location">Ubicación:</label>
-        <input id="location" type="text" formControlName="location" placeholder="Nombre del lugar o enlace" />
-        <div *ngIf="eventForm.controls['location'].invalid && eventForm.controls['location'].touched" class="error">
-          La ubicación es obligatoria.
-        </div>
-      </div>
-    
-      <button type="submit" [disabled]="eventForm.invalid || !newSuggestion.trim()">Agregar Sugerencia</button>
-    </form>
+<!-- Cabecera -->
+<header class="bg-primary text-white py-3">
+  <div class="container d-flex justify-content-between align-items-center gap-3">
+    <div id="app-name-container" class="d-flex align-items-center gap-2">
+      <img id="logo" src="assets/img/fotoLogo.png" alt="Logo" class="img-fluid rounded" style="width: 50px; height: 50px;">
+      <h1 id="app-name" class="h4 mb-0">Crew Connect</h1>
+    </div>
   </div>
+</header>
 
-  <!-- Lista de sugerencias -->
-  <div class="suggestions-list">
-    <h3>Lista de Sugerencias</h3>
-    <div *ngFor="let suggestion of suggestions">
-      <p>
-        <strong>{{ suggestion.name }}</strong><br />
-        Fecha: {{ suggestion.date }}<br />
-        Hora: {{ suggestion.time }}<br />
-        Ubicación: {{ suggestion.location }}<br />
-        Votos: {{ suggestion.votes }}
-      </p>
-      <button (click)="vote(suggestion)">Votar</button>
+<!-- Contenedor principal -->
+<div class="container">
+  <div class="voting-system">
+    <h2>Sistema de Votación de Eventos</h2>
+    <div class="suggestion-form">
+      <form [formGroup]="encuestaForm" (ngSubmit)="addSurvey()">
+        <label for="id_evento">Selecciona un evento:</label>
+        <select formControlName="id_evento" id="id_evento" class="form-control">
+          <option value="" disabled>-- Selecciona un evento --</option>
+          <option *ngFor="let evento of eventosSelect" [value]="evento.id_evento">{{ evento.title }}</option>
+        </select>
+        
+        <label for="name">Descripción:</label>
+        <input id="name" name="name" type="text" formControlName="name" placeholder="Descripción de la encuesta" />
+        <div *ngIf="encuestaForm.controls['name'].invalid && encuestaForm.controls['name'].touched" class="error">
+          La descripción es obligatorio.
+        </div>
+
+        <label for="date">Fecha:</label>
+        <input id="date" name="date" type="date" formControlName="date" />
+        
+        <label for="time">Hora:</label>
+        <input id="time" name="time" type="time" formControlName="time" />
+        
+        <label for="location">Ubicación:</label>
+        <input id="location" name="location" type="text" formControlName="location" placeholder="Nombre del lugar o enlace" />
+        <div class="form-actions">
+        <button type="submit" [disabled]="encuestaForm.invalid">Agregar Encuesta</button>
+        <button class="back-button" type="button" onclick="window.history.back()">Atrás</button>
+      </div>
+      </form>
     </div>
   </div>
 </div>
+
+<!-- Pie de página -->
+<footer class="bg-dark text-white py-4">
+  <div class="container text-center">
+    <p class="mb-0">&copy; 2024 Crew Connect. Todos los derechos reservados.</p>
+  </div>
+</footer>

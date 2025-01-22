@@ -23,6 +23,7 @@ export class EventCreatorComponent implements OnInit {
   userService: any;
   username: string | null = null; // para login usuario
   userID: number = 0; // para login usuario
+  isEditMode: boolean = false; // Por defecto, no es modo edición
 
   constructor(
     private fb: FormBuilder,
@@ -46,15 +47,39 @@ export class EventCreatorComponent implements OnInit {
     
     this.route.queryParams.subscribe(params => {
       if (params['id_evento']) {
+        this.isEditMode = true; // Cambiar a modo edición
         this.cargarEvento(params['id_evento']);
+      } else {
+        this.isEditMode = false; // Modo creación
       }
     });
   }
   
   cargarEvento(id_evento: number): void {
-    this.eventoService.obtenerEventoPorId(id_evento).subscribe(evento => {
-      this.eventForm.patchValue(evento);
-    });
+    this.eventoService.obtenerEventoPorId(id_evento).subscribe(
+      evento => {
+        this.eventForm.patchValue({
+          title: evento.title,
+          date: evento.date,
+          time: evento.time,
+          location: evento.location,
+          description: evento.description,
+        });
+
+        // Mapeo de participantes
+        this.participants = (evento.participants || []).map(participant => ({
+          id_usuario: participant.id_usuario,
+          nombre: participant.nombre,
+          password: '', // Asignar un valor por defecto
+          rol: '' // Asignar un valor por defecto
+        }));
+      },
+      error => {
+        console.error('Error al cargar el evento:', error);
+        alert('No se pudo cargar el evento. Por favor, inténtalo de nuevo.');
+        this.router.navigate(['/home-user']); // Redirigir si falla
+      }
+    );
   }
 
   addParticipant(): void {
@@ -97,66 +122,57 @@ export class EventCreatorComponent implements OnInit {
 
   onSubmit(): void {
     if (this.eventForm.get('title')?.valid) { 
-        // Inicializar como un objeto para crear un array asociativo
-        const participants: { [key: number]: any } = {};
-        
-        // Agregar el usuario actual al objeto
-        participants[this.userID] = this.username;
-        
-        // Recorrer los participantes y agregarlos al objeto asociativo
-        this.participants.forEach(usuario => {
-          participants[usuario.id_usuario] = usuario.nombre;
-        });
-        
-        const formData = this.eventForm.value;
-        const eventData: any = {
-            title: formData.title,
-            ...Object.fromEntries(
-                Object.entries(formData).filter(([key, value]) => value !== '' && key !== 'title')
-            ),
-            participants: participants,
-        };
+      // Inicializar como un objeto para crear un array asociativo
+      const participants: { [key: number]: any } = {};
+      
+      // Agregar el usuario actual al objeto
+      participants[this.userID] = this.username;
+      
+      // Recorrer los participantes y agregarlos al objeto asociativo
+      this.participants.forEach(usuario => {
+        participants[usuario.id_usuario] = usuario.nombre;
+      });
+      
+      const formData = this.eventForm.value;
+      const eventData: any = {
+          title: formData.title,
+          ...Object.fromEntries(
+              Object.entries(formData).filter(([key, value]) => value !== '' && key !== 'title')
+          ),
+          participants: participants,
+      };
 
-        if (this.route.snapshot.queryParams['id_evento']) {
-            eventData.id_evento = this.route.snapshot.queryParams['id_evento'];
-        }
+      if (this.route.snapshot.queryParams['id_evento']) {
+          eventData.id_evento = this.route.snapshot.queryParams['id_evento'];
+      }
 
-        if (eventData.id_evento) {
-            // Editar evento
-            this.eventoService.actualizarEvento(eventData).subscribe(
-                (response: any) => {
-                    console.log('Evento actualizado con éxito:', response);
-                    alert('Evento actualizado con éxito.');
-                    this.router.navigate(['/home-user']);
-                },
-                (error: any) => {
-                    console.error('Error al actualizar evento:', error);
-                    alert('Error al actualizar evento.');
-                }
-            );
-        } else {
-            // Crear evento
-            this.eventoService.crearEvento(eventData).subscribe(
-                (response: any) => {
-                    console.log('Evento creado con éxito:', response);
-
-                    const nuevoEvento = {
-                        ...eventData,
-                        id_evento: response.id_evento,
-                    };
-
-                    this.eventoService.notificarEventoCreado(nuevoEvento);
-                    alert('Evento creado con éxito.');
-                    this.router.navigate(['/home-user']);
-                },
-                (error: any) => {
-                    console.error('Error al crear evento:', error);
-                    alert('Error al crear evento.');
-                }
-            );
-        }
+      if (this.isEditMode) {
+        // Modo edición
+        this.eventoService.editarEvento(eventData).subscribe(
+          response => {
+            alert('Evento actualizado con éxito.');
+            this.router.navigate(['/home-user']);
+          },
+          error => {
+            console.error('Error al actualizar evento:', error);
+            alert('Error al actualizar el evento.');
+          }
+        );
+      } else {
+        // Modo creación
+        this.eventoService.crearEvento(eventData).subscribe(
+          response => {
+            alert('Evento creado con éxito.');
+            this.router.navigate(['/home-user']);
+          },
+          error => {
+            console.error('Error al crear evento:', error);
+            alert('Error al crear el evento.');
+          }
+        );
+      }
     } else {
-        alert('El campo "Título" es obligatorio. Por favor, rellénalo antes de continuar.');
+      alert('El campo "Título" es obligatorio. Por favor, rellénalo antes de continuar.');
     }
   }
 }  

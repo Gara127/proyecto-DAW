@@ -3,6 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { VotoService } from '../../Servicios/voto.service';
+import { EventoService } from '../../Servicios/evento.service';
+import { catchError, Observable, throwError } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-voting',
@@ -12,83 +15,115 @@ import { VotoService } from '../../Servicios/voto.service';
   styleUrls: ['./voting.component.css'],
 })
 export class VotingComponent implements OnInit {
-  eventForm: FormGroup;
-  newSuggestion: string = '';
-  suggestions: { id_voting: number; name: string; votes: number; date: string; time: string; location: string }[] = [];
-  mensaje: string = '';
-  idGrupo: number = 1;
 
-  constructor(private fb: FormBuilder, private votoService: VotoService) {
-    this.eventForm = this.fb.group({
-      date: ['', Validators.required],
-      time: ['', Validators.required],
-      location: ['', Validators.required],
+  encuestaForm: FormGroup; // Nuevo: Formulario específico para encuestas
+  suggestions: any[] = [];
+  mensaje: string = '';
+  newSuggestion: string = '';
+
+  eventosSelect: { id_evento: number; title: string }[] = []; // Lista de eventos para el select
+
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private votoService: VotoService,
+    private eventoService: EventoService
+  ) {
+    this.encuestaForm = this.fb.group({
+      id_evento: ['', Validators.required], // Selección de evento
+      name: ['', Validators.required], // Nombre de la encuesta
+      date: [''], // Fecha de la encuesta
+      time: [''], // Hora de la encuesta
+      location: [''], // Ubicación o detalles
     });
   }
 
   ngOnInit(): void {
-    this.obtenerEventos();
+    // this.obtenerEncuestas();
+    this.cargarEventosParaSelect();
   }
 
-  // Obtener eventos del grupo desde el backend
-  obtenerEventos() {
-    this.votoService.obtenerUpcomingEventsPorGrupo(this.idGrupo).subscribe({
-      next: (data) => (this.suggestions = data),
-      error: () => (this.mensaje = 'Error al cargar los eventos. Intente de nuevo.'),
+  // Cargar eventos para el select
+  cargarEventosParaSelect(): void {
+    const idUsuario = parseInt(localStorage.getItem('id') || '0'); // Obtener ID del usuario logueado
+    if (!idUsuario) {
+      console.error('Usuario no logueado');
+      return;
+    }
+
+    this.eventoService.getEventosPorUsuario(idUsuario).subscribe({
+      next: (data) => {
+        this.eventosSelect = data.map((evento: any) => ({
+          id_evento: evento.id_evento,
+          title: evento.title,
+        }));
+        console.log('Eventos para el select:', this.eventosSelect);
+      },
+      error: (error) => {
+        console.error('Error al cargar eventos para el select:', error);
+      },
     });
   }
 
-  // Agregar una nueva sugerencia
-  addSuggestion() {
-    if (this.newSuggestion.trim() && this.eventForm.valid) {
-      const newEvent = {
-        id_voting: Math.floor(Math.random() * 10000), // Generar un ID aleatorio
-        name: this.newSuggestion,
-        votes: 0,
-        date: this.eventForm.value.date, // Enviar fecha directamente
-        time: this.eventForm.value.time + ':00', // Asegurar el formato HH:mm:ss
-        location: this.eventForm.value.location,
+  // Crear una nueva encuesta
+  addSurvey(): void {
+    if (this.encuestaForm.valid) {
+      const id = parseInt(localStorage.getItem('id') || '0');
+
+      const rawDate = this.encuestaForm.value.date; // Fecha en formato original
+      const formattedDate = rawDate
+        ? new Date(rawDate).toLocaleDateString('es-ES') // Formato día/mes/año
+        : ""; 
+
+      const nuevaEncuesta = {
+        id_usuario: id, 
+        id_evento: this.encuestaForm.value.id_evento,
+        name: this.encuestaForm.value.name,
+        date: formattedDate ?? "",
+        time: this.encuestaForm.value.time ?? "",
+        location: this.encuestaForm.value.location ?? "",
       };
 
-      console.log('Datos enviados al backend:', newEvent); // Verificar datos enviados
 
-      
-      this.votoService.crearUpcomingEvent(1, this.idGrupo, newEvent.name, newEvent.time, newEvent.date, newEvent.location).subscribe({
+      this.votoService.crearEncuesta(
+        nuevaEncuesta.id_usuario,
+        nuevaEncuesta.id_evento,
+        nuevaEncuesta.name,
+        nuevaEncuesta.time,
+        nuevaEncuesta.date,
+        nuevaEncuesta.location
+      ).subscribe({
         next: () => {
-          this.suggestions.push(newEvent); // Agregar la nueva sugerencia localmente
-          this.newSuggestion = ''; // Limpiar el input de texto
-          this.eventForm.reset(); // Limpiar el formulario
-          this.mensaje = 'Propuesta agregada exitosamente.';
+          alert('Encuesta creada con éxito.');
+          this.router.navigate(['/home-user']); // Redirigir a Home-User
         },
         error: (error) => {
-          console.error('Error al crear propuesta plan:', error);
-          this.mensaje = 'Hubo un error al agregar la propuesta.';
+          console.error('Error al crear la encuesta:', error.message);
         },
       });
     }
   }
-// Votar por un evento
-vote(suggestion: { id_voting: number; name: string; votes: number; date: string; time: string; location: string }) {
-  const updatedVotes = suggestion.votes + 1; // Calcula el nuevo número de votos
+ 
+  // Votar por una encuesta
+  // vote(suggestion: {
+  //   id_voting: number;
+  //   name: string;
+  //   votes: number;
+  //   date: string;
+  //   time: string;
+  //   location: string;
+  // }): void {
+  //   const updatedVotes = suggestion.votes + 1;
 
-  this.votoService.votarUpcomingEvent(1, suggestion.id_voting, updatedVotes).subscribe({
-    next: () => {
-      // Actualizar los votos localmente solo si el backend confirma el éxito
-      suggestion.votes = updatedVotes; 
-      console.log(`Voto registrado para ${suggestion.name}. Votos actuales: ${suggestion.votes}`);
-    },
-    error: (error) => {
-      // Manejar errores de forma más informativa
-      console.error(`Error al votar por el evento ${suggestion.name}:`, error);
-      alert(`Hubo un error al registrar tu voto para "${suggestion.name}". Intenta nuevamente.`);
-    },
-  });
+  //   this.votoService.votarEncuesta(1, suggestion.id_voting, updatedVotes).subscribe({
+  //     next: () => {
+  //       suggestion.votes = updatedVotes;
+  //       console.log(`Voto registrado para ${suggestion.name}. Votos actuales: ${suggestion.votes}`);
+  //     },
+  //     error: (error) => {
+  //       console.error(`Error al votar por la encuesta ${suggestion.name}:`, error);
+  //       alert(`Hubo un error al registrar tu voto para "${suggestion.name}". Intenta nuevamente.`);
+  //     },
+  //   });
+  // }
 }
-
-// Getter para ordenar sugerencias por votos
-get sortedSuggestions() {
-  return this.suggestions.slice().sort((a, b) => b.votes - a.votes); // Copiar el array antes de ordenar
-}
-
-}
-

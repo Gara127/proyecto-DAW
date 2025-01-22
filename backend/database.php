@@ -7,10 +7,8 @@
     function init(){
         $con = conectar(); // Conectar a la base de datos
         crear_tabla_usuario($con); // Crear tabla de usuario
-        crear_tabla_grupos($con);
         crear_eventos($con);
         evento_participantes($con);
-        crear_tabla_usuario_grupo($con); // Relacionar usuarios con grupos
         crear_tabla_voting($con);
         crear_tabla_event_votes($con); // Crear tabla de votos 
         cerrar_conexion($con); // Cerrar la conexión
@@ -54,22 +52,14 @@
         mysqli_query($con,"create table if not exists eventos(
                     id_evento INT AUTO_INCREMENT PRIMARY KEY,
                     title VARCHAR(255) NOT NULL,
-                    date DATE NOT NULL,
-                    time TIME NOT NULL,
-                    location VARCHAR(255),
-                    description TEXT,
-                    checklist TEXT -- Agregar la columna checklist como tipo TEXT
+                    date DATE NULL,
+                    time TIME NULL,
+                    location VARCHAR(255) NULL,
+                    description TEXT NULL,
+                    checklist TEXT NULL -- La columna checklist como tipo TEXT
                     )") or die("Error al crear la tabla evento: " . mysqli_error($con));
     
-        // Verificar si la columna 'checklist' ya existe
-        $column_check = mysqli_query($con, "SHOW COLUMNS FROM eventos LIKE 'checklist'");
-        if (mysqli_num_rows($column_check) == 0) {
-            // Si la columna no existe, agregarla
-            mysqli_query($con, "ALTER TABLE eventos ADD COLUMN checklist TEXT") or die("Error al agregar la columna checklist: " . mysqli_error($con));
-        }
     }
-    
-
     function evento_participantes($con){
          mysqli_query($con,"create table if not exists evento_participantes(
             id_evento INT,
@@ -80,38 +70,18 @@
             )") or die("Error al crear la tabla evento_participantes: " . mysqli_error($con));    
     }
 
-    // Tabla de grupos
-    function crear_tabla_grupos($con){
-        mysqli_query($con, "create table if not exists grupos(
-                id_grupo INT PRIMARY KEY AUTO_INCREMENT,
-                nombre VARCHAR(255) DEFAULT 'Grupo Predeterminado'
-                )") or die("Error al crear la tabla grupos: " . mysqli_error($con)); 
-    }
-
-    // Tabla para asociar usuarios a grupos
-    function crear_tabla_usuario_grupo($con){
-       mysqli_query($con, "create table if not exists usuario_grupo(
-                    id_usuario INT NOT NULL,
-                    id_grupo INT NOT NULL,
-                    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario),
-                    FOREIGN KEY (id_grupo) REFERENCES grupos(id_grupo),
-                    UNIQUE(id_usuario, id_grupo) -- Un usuario solo puede pertenecer una vez a un grupo
-                    )") or die("Error al crear la tabla usuario_grupo: " . mysqli_error($con));
-    }
-
     // Tabla de eventos provisionales
     function crear_tabla_voting($con){
         mysqli_query($con, "create table if not exists upcoming_events(
                     id_voting INT PRIMARY KEY AUTO_INCREMENT, 
                     id_usuario INT,
-                    id_grupo INT, 
-                    name VARCHAR(225) UNIQUE NOT NULL,
-                    time VARCHAR(15) NOT NULL, 
-                    date VARCHAR(15) NOT NULL,
+                    id_evento INT,
+                    name VARCHAR(225) UNIQUE,
+                    time VARCHAR(15), 
+                    date VARCHAR(15),
                     location VARCHAR(255) NOT NULL,
-                    votes INT DEFAULT 0,
-                    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario),
-                    FOREIGN KEY (id_grupo) REFERENCES grupos(id_grupo) 
+                    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
+                    FOREIGN KEY (id_evento) REFERENCES eventos(id_evento) ON DELETE CASCADE 
                     )") or die("Error al crear la tabla upcoming_events: " . mysqli_error($con));
     }
 
@@ -121,10 +91,10 @@
                     id_vote INT PRIMARY KEY AUTO_INCREMENT,
                     id_usuario INT NOT NULL,
                     id_voting INT NOT NULL,
-                    voto INT DEFAULT 0,  -- 1 = voto positivo, 0 = voto negativo
-                    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario),
-                    FOREIGN KEY (id_voting) REFERENCES upcoming_events(id_voting),
-                    UNIQUE(id_usuario, id_voting) -- Asegura que un usuario solo pueda votar una vez por evento
+                    totalVotos INT DEFAULT 0,
+                    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
+                    FOREIGN KEY (id_voting) REFERENCES upcoming_events(id_voting) ON DELETE CASCADE,
+                    UNIQUE(id_usuario, id_voting) 
                     )") or die("Error al crear la tabla event_votes: " . mysqli_error($con));
     }
 
