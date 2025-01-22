@@ -7,7 +7,7 @@ import { catchError, Observable, throwError } from 'rxjs';
   providedIn: 'root',
 })
 export class VotoService {
-  private apiUrl = 'http://localhost/backend/upcomingEvents.php'; 
+  private apiUrl = 'https://crewconnect.rf.gd/upcomingEvents.php'; 
 
   constructor(private http: HttpClient) {}
 

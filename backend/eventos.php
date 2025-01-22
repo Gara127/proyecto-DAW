@@ -21,10 +21,10 @@ $con = conectar();
 $method = $_SERVER['REQUEST_METHOD'];
 
 // Instanciar la clase PHPMailer
-// $mail = new PHPMailer(true);
+$mail = new PHPMailer(true);
 
 // Tiempo máximo de espera en segundos
-// $mail->Timeout = 30;
+$mail->Timeout = 30;
 
 // Para mostrar logs de depuración en local
 // $mail->SMTPDebug = 2;
@@ -227,15 +227,15 @@ switch ($method) {
                 }
 
                 // Enviar correo a los participantes
-                // try {
-                //     // Configuración del servidor SMTP
-                //     $mail->isSMTP();
-                //     $mail->Host = 'smtp.gmail.com'; // Servidor SMTP de Gmail
-                //     $mail->SMTPAuth = true; // Habilitar autenticación SMTP
-                //     $mail->Username = 'app.crew.connect@gmail.com'; // Tu dirección de correo Gmail
-                //     $mail->Password = 'yubu vibi ucks qzwd'; // Contraseña o token de aplicación de Gmail
-                //     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Usar encriptación TLS
-                //     $mail->Port = 587; // Puerto para conexiones TLS
+                try {
+                    // Configuración del servidor SMTP
+                    $mail->isSMTP();
+                    $mail->Host = 'smtp.gmail.com'; // Servidor SMTP de Gmail
+                    $mail->SMTPAuth = true; // Habilitar autenticación SMTP
+                    $mail->Username = 'app.crew.connect@gmail.com'; // Tu dirección de correo Gmail
+                    $mail->Password = 'yubu vibi ucks qzwd'; // Contraseña o token de aplicación de Gmail
+                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Usar encriptación TLS
+                    $mail->Port = 587; // Puerto para conexiones TLS
 
                     // Para probar en local descomentar estas líneas
                     // $mail->SMTPOptions = [
@@ -247,33 +247,33 @@ switch ($method) {
                     // ];
                 
                     // Configuración del correo
-                //     $mail->setFrom('app.crew.connect@gmail.com', 'Crew Connect'); // Dirección del remitente
-                //     foreach ($data['participants'] as $id_usuario => $nombre) {
-                //         $mail->addAddress($nombre, 'Usuario');
-                //     }
-                //     $mail->Subject = 'Evento creado';
-                //     $mail->Body = 'Este es un correo de prueba enviado con PHPMailer.';
+                    $mail->setFrom('app.crew.connect@gmail.com', 'Crew Connect'); // Dirección del remitente
+                    foreach ($data['participants'] as $id_usuario => $nombre) {
+                        $mail->addAddress($nombre, 'Usuario');
+                    }
+                    $mail->Subject = 'CrewConnect te invita a un plan';
+                    $mail->Body = 'Hola! Visita tu perfil en CrewConnect para ver los detalles del evento al que has sido invitado. Haz click en el siguiente enlace para acceder: https://crewconnect.netlify.app';
                 
-                //     // Enviar correo
-                //     if (!$mail->send()) {
-                //         http_response_code(500);
-                //         echo json_encode([
-                //             "success" => false,
-                //             "message" => "Error al enviar correo: " . $mail->ErrorInfo
-                //         ]);
-                //         exit;
-                //     }
-                // } catch (Exception $e) {
-                //     http_response_code(500);
-                //     echo json_encode([
-                //         "success" => false,
-                //         "message" => "Excepción al enviar correo: " . $e->getMessage()
-                //     ]);
-                //     exit;
-                // }
+                    // Enviar correo
+                    if (!$mail->send()) {
+                        http_response_code(500);
+                        echo json_encode([
+                            "success" => false,
+                            "message" => "Error al enviar correo: " . $mail->ErrorInfo
+                        ]);
+                        exit;
+                    }
+                } catch (Exception $e) {
+                    http_response_code(500);
+                    echo json_encode([
+                        "success" => false,
+                        "message" => "Excepción al enviar correo: " . $e->getMessage()
+                    ]);
+                    exit;
+                }
                 
-                // // Cerrar la conexión SMTP
-                // $mail->smtpClose();
+                // Cerrar la conexión SMTP
+                $mail->smtpClose();
 
                 // Responder con éxito
                 echo json_encode([
@@ -297,7 +297,7 @@ switch ($method) {
         }
         break;
         
-        // Eliminar un evento
+    // Eliminar un evento
     case 'DELETE':
         // Verificar si se especificó el ID del evento
         if (isset($_GET['id_evento'])) {
